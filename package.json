@@ -11,11 +11,14 @@
     "build-storybook": "storybook build"
   },
   "dependencies": {
-    "next": "15.0.2",
-    "react": "19.0.0-rc-02c0e824-20241028",
-    "react-dom": "19.0.0-rc-02c0e824-20241028"
+    "aws-amplify": "^6.6.4",
+    "next": "14.2.10",
+    "react": "^18",
+    "react-dom": "^18"
   },
   "devDependencies": {
+    "@aws-amplify/backend": "^1.6.0",
+    "@aws-amplify/backend-cli": "^1.4.0",
     "@chromatic-com/storybook": "^3.2.2",
     "@storybook/addon-essentials": "^8.4.1",
     "@storybook/addon-interactions": "^8.4.1",
@@ -27,12 +30,17 @@
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
+    "aws-cdk": "^2.162.0",
+    "aws-cdk-lib": "^2.162.0",
+    "constructs": "^10.3.1",
+    "esbuild": "^0.24.0",
     "eslint": "^8",
     "eslint-config-next": "15.0.2",
     "eslint-plugin-storybook": "^0.10.2",
     "postcss": "^8",
     "storybook": "^8.4.1",
     "tailwindcss": "^3.4.1",
-    "typescript": "^5"
+    "tsx": "^4.19.1",
+    "typescript": "^5.6.3"
   }
 }
