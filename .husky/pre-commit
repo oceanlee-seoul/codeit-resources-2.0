@@ -1,0 +1,38 @@
+#!/bin/bash
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[0;33m'
+RESET='\033[0m'
+
+echo
+echo
+echo "🔍 Checking branch protection and running linting tasks... "
+echo
+
+
+# ------------------- 브랜치 검사 -------------------
+
+CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
+PROTECTED_BRANCHES="^(main)$"
+
+if [[ "$CURRENT_BRANCH" =~ $PROTECTED_BRANCHES ]]
+then
+    printf "\n${RED}🚫 [Commit Blocked] '$CURRENT_BRANCH' 브랜치에 직접 커밋할 수 없습니다!${RESET}\n"
+    printf "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n"
+    printf "❗️ 해당 브랜치는 보호된 브랜치입니다.\n\n"
+    printf "   변경 사항은 별도의 작업 브랜치를 통해 머지해 주세요.\n"
+    printf "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n"
+  exit 1
+fi
+
+echo
+echo "✓ Branch protection check passed"
+
+
+# ------------------- lint 검사 -------------------
+
+# npx lint-staged
+pnpm lint-staged
+
+echo
+echo "✓ Finished linting tasks and fixing code issues"
