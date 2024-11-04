@@ -21,7 +21,9 @@
     "@storybook/blocks": "^8.4.1",
     "@storybook/nextjs": "^8.4.1",
     "@storybook/react": "^8.4.1",
-    "@storybook/test": "^8.4.1"
+    "@storybook/test": "^8.4.1",
+    "@svgr/core": "^8.1.0",
+    "@svgr/webpack": "^8.1.0"
   },
   "devDependencies": {
     "@trivago/prettier-plugin-sort-imports": "^4.3.0",
