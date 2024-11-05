@@ -1,8 +1,8 @@
+import CheckIcon from "@/../public/icons/icon-check-bold.svg";
 import { ToastProps, deleteToastAtom } from "@/store/toastAtom";
 import { useSetAtom } from "jotai";
 import { useEffect, useState } from "react";
 import { PiExclamationMark } from "react-icons/pi";
-import CheckIcon from "@/../public/icons/icon-check-bold.svg";
 
 const DURATION_TIME = 2000;
 

@@ -1,8 +1,8 @@
 import Toast from "@/components/commons/Toast";
 import { toastAtom } from "@/store/toastAtom";
 import { useAtomValue } from "jotai";
+import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
-import { useState, useEffect } from "react";
 
 function ToastProvider() {
   const toast = useAtomValue(toastAtom);
