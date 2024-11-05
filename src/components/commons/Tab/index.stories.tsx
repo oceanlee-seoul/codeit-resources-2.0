@@ -111,7 +111,7 @@ export const TeamTab: Story = {
   render: (args) => (
     <div className="relative">
       <Tab {...args} />
-      <div className="w-50 pointer-events-none absolute right-0 top-0 h-full bg-gradient-to-l from-white to-transparent" />
+      <div className="pointer-events-none absolute right-0 top-0 h-full w-50 bg-gradient-to-l from-white to-transparent" />
     </div>
   ),
 };
