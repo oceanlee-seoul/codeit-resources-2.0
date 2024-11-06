@@ -1,4 +1,5 @@
 import AddMeetingRoomTypeModal from "@/components/pages/admin/meeting-rooms/AddMeetingRoomTypeModal";
+import DeleteMemberModal from "@/components/pages/admin/members/DeleteMemberModal";
 import AddTeamModal from "@/components/pages/admin/teams/AddTeamModal";
 import DeleteTeamModal from "@/components/pages/admin/teams/DeleteTeamModal";
 import UpdateTeamModal from "@/components/pages/admin/teams/UpdateTeamModal";
@@ -45,7 +46,7 @@ function ModalProvider() {
     updateRoomReservationModal: UpdateRoomReservationModal,
     deleteRoomReservationModal: DeleteRoomReservationModal,
     // deleteResourceStatusModal: DeleteResourceStatusModal,
-    // deleteMemberModal: DeleteMemberModal,
+    deleteMemberModal: DeleteMemberModal,
   };
 
   const SpecificModal = modalType ? modalComponents[modalType] : null;
