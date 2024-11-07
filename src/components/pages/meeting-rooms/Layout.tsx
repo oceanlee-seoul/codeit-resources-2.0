@@ -2,19 +2,18 @@ import ChevronLeft from "@/../public/icons/icon-chevron-left.svg";
 import ChevronRight from "@/../public/icons/icon-chevron-right.svg";
 import Badge from "@/components/commons/Badge";
 import Tab from "@/components/commons/Tab";
-import useTabDrag from "@/components/commons/Tab/useTabDrag";
 import getDaysUntilEndOfMonth, {
   getDaysUntilEndOfMonthType,
 } from "@/lib/utils/getDaysUntilEndOfMonth";
+import { isOpenDrawerAtom } from "@/store/isOpenDrawerAtom";
 import { todayDateAtom } from "@/store/todayDateAtom";
 import clsx from "clsx";
 import dayjs from "dayjs";
 import { PrimitiveAtom, useAtomValue, useSetAtom } from "jotai";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
-import ScrollProvider from "./ScrollProvider";
+import ScrollProvider from "../../Layout/ScrollProvider";
 import pickedDateAtom from "./context/pickedDate";
-import { containerRefAtom, targetRefAtom } from "./context/scroll";
 
 interface DateState {
   year: number;
@@ -34,6 +33,8 @@ function Header({ className }: { className?: string }) {
     daysData: currentDaysData,
   });
   const setPickedDate = useSetAtom(pickedDateAtom as PrimitiveAtom<string>);
+
+  const setIsOpenDrawer = useSetAtom(isOpenDrawerAtom);
 
   const isSameMonthAsToday = (
     year: number = currentHeaderDate.year,
@@ -78,7 +79,7 @@ function Header({ className }: { className?: string }) {
     <header className={className}>
       <div className="flex">
         {/* 타이틀 */}
-        <h1 className="mb-16 mr-13 text-24-700 text-gray-100 md:mr-24 md:text-28-700">
+        <h1 className="mr-13 text-24-700 text-gray-100 md:mb-24 md:mr-24 md:text-28-700">
           회의실 예약
         </h1>
         <div>
@@ -124,10 +125,11 @@ function Header({ className }: { className?: string }) {
                   "pb-8": index !== activeIndex,
                 })}
                 onClick={() => {
+                  setIsOpenDrawer(false);
                   handleClick(index);
                   // 선택된 탭의 날짜로 pickedDate 업데이트
                   setPickedDate(
-                    `${currentHeaderDate.year}-${String(currentHeaderDate.month).padStart(2, "0")}-${day}`,
+                    `${currentHeaderDate.year}-${String(currentHeaderDate.month).padStart(2, "0")}-${day.padStart(2, "0")}`,
                   );
                 }}
               >
@@ -142,39 +144,11 @@ function Header({ className }: { className?: string }) {
 }
 
 function Layout({ children }: { children: React.ReactNode }) {
-  const containerRef = useAtomValue(containerRefAtom);
-  const targetRef = useAtomValue(targetRefAtom);
-
-  const [isInitialScrollDone, setIsInitialScrollDone] = useState(false);
-
-  useEffect(() => {
-    if (targetRef?.current && containerRef?.current) {
-      const targetPosition = targetRef.current.offsetLeft;
-      containerRef.current.scrollTo({
-        left: targetPosition,
-        behavior: "smooth",
-      });
-      // 초기 스크롤 완료 후 드래그 활성화
-      setTimeout(() => setIsInitialScrollDone(true), 300);
-    }
-  }, [targetRef, containerRef]);
-
-  const { handleMouseDown, handleMouseMove, handleMouseUpOrLeave } =
-    useTabDrag(containerRef);
-
   return (
     <ScrollProvider>
       <div className="">
         <Header className="px-16 pt-64 md:px-64 md:pt-24" />
-        {/* eslint-disable-next-line */}
-        <section
-          ref={containerRef}
-          className="no-scrollbar min-h-screen overflow-x-auto bg-gray-5 px-16 pb-100 pt-64 md:px-64 md:pb-0 md:pt-48"
-          onMouseDown={isInitialScrollDone ? handleMouseDown : undefined}
-          onMouseMove={isInitialScrollDone ? handleMouseMove : undefined}
-          onMouseLeave={isInitialScrollDone ? handleMouseUpOrLeave : undefined}
-          onMouseUp={isInitialScrollDone ? handleMouseUpOrLeave : undefined}
-        >
+        <section className="min-h-screen overflow-y-visible bg-gray-5 px-16 pb-100 pt-32 md:py-24 md:pl-192 md:pr-64">
           {children}
         </section>
       </div>
