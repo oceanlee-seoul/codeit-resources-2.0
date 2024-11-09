@@ -6,7 +6,10 @@ const schema = a.schema({
     .model({
       name: a.string().required(),
     })
-    .authorization((allow) => [allow.groups(["ADMIN", "MEMBER"])]),
+    .authorization((allow) => [
+      allow.groups(["ADMIN", "MEMBER"]),
+      allow.guest(),
+    ]),
 
   // User Table
   User: a
@@ -20,7 +23,10 @@ const schema = a.schema({
       createdAt: a.datetime(),
       // foo: a.string(),
     })
-    .authorization((allow) => [allow.groups(["ADMIN", "MEMBER"])])
+    .authorization((allow) => [
+      allow.groups(["ADMIN", "MEMBER"]),
+      allow.guest(),
+    ])
     .secondaryIndexes((index) => [
       index("role").sortKeys(["username"]).queryField("listUsersByRoleName"),
       index("role").sortKeys(["createdAt"]).queryField("listUsersByRoleDate"),
@@ -56,6 +62,7 @@ const schema = a.schema({
     .authorization((allow) => [
       allow.authenticated().to(["read"]),
       allow.group("ADMIN"),
+      allow.guest(),
     ]),
 
   // Reservation Table
@@ -113,6 +120,7 @@ const schema = a.schema({
     .authorization((allow) => [
       allow.authenticated().to(["read"]),
       allow.groups(["ADMIN", "MEMBER"]),
+      allow.guest(),
     ]),
 });
 
