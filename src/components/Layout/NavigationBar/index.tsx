@@ -15,7 +15,9 @@ interface NavBarOptionProps {
 
 function NavBarOption({ navOption, mobileOnly = false }: NavBarOptionProps) {
   const router = useRouter();
-  const isActive = router.pathname === navOption.path;
+  const isActive =
+    router.pathname === navOption.path ||
+    (navOption.path === "/mypage" && router.pathname.startsWith("/admin"));
 
   return (
     <Link

@@ -11,6 +11,7 @@ import type { Session } from "next-auth";
 import { SessionProvider } from "next-auth/react";
 import type { AppProps } from "next/app";
 import dynamic from "next/dynamic";
+import Head from "next/head";
 import { useRouter } from "next/router";
 import { useState } from "react";
 
@@ -39,6 +40,15 @@ function App({
   return (
     <SessionProvider session={session}>
       <QueryClientProvider client={queryClient}>
+        <Head>
+          <link rel="icon" href="/images/codeit.svg" />
+          <link
+            rel="apple-touch-icon"
+            sizes="180x180"
+            href="/images/codeit.svg"
+          />
+          <title>Codeit Resources</title>
+        </Head>
         <ToastProvider />
         <MobileSizeWatcher />
         <ModalProvider />

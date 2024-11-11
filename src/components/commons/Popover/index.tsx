@@ -1,13 +1,6 @@
-import React, {
-  ReactNode,
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+// useDropdown 훅을 import
+import useDropdown from "@/hooks/useDropdown";
+import React, { ReactNode, createContext, useContext, useMemo } from "react";
 
 import { PopoverContextType } from "../Dropdown/dropdownType";
 
@@ -22,37 +15,20 @@ const usePopoverContext = () => {
 };
 
 export default function Popover({ children }: { children: React.ReactNode }) {
-  const [isOpen, setIsOpen] = useState(false);
-  const popoverRef = useRef<HTMLDivElement>(null);
-
-  const togglePopover = useCallback(
-    () => setIsOpen((prevState) => !prevState),
-    [],
-  );
-  const closePopover = useCallback(() => setIsOpen(false), []);
+  const { isOpen, toggleDropdown, closeDropdown, dropdownRef } = useDropdown();
 
   const contextValue = useMemo(
-    () => ({ isOpen, togglePopover, closePopover }),
-    [isOpen],
+    () => ({
+      isOpen,
+      togglePopover: toggleDropdown,
+      closePopover: closeDropdown,
+    }),
+    [isOpen, toggleDropdown, closeDropdown],
   );
-
-  // 외부 클릭 시 팝오버 닫기
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        popoverRef.current &&
-        !popoverRef.current.contains(event.target as Node)
-      ) {
-        closePopover();
-      }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [closePopover]);
 
   return (
     <PopoverContext.Provider value={contextValue}>
-      <div ref={popoverRef} className="relative">
+      <div ref={dropdownRef} className="relative">
         {children}
       </div>
     </PopoverContext.Provider>
