@@ -21,6 +21,7 @@ const schema = a.schema({
       teams: a.string().array(), // 소속된 팀 id 목록
       profileImage: a.string(),
       createdAt: a.datetime(),
+      isValid: a.boolean(),
     })
     .authorization((allow) => [
       allow.groups(["ADMIN", "MEMBER"]),
@@ -126,9 +127,6 @@ export type Schema = ClientSchema<typeof schema>;
 export const data = defineData({
   schema,
   authorizationModes: {
-    defaultAuthorizationMode: "userPool",
-    apiKeyAuthorizationMode: {
-      expiresInDays: 30,
-    },
+    defaultAuthorizationMode: "iam",
   },
 });
