@@ -8,13 +8,13 @@ interface Token extends JWT {
 }
 
 export const authOptions: NextAuthOptions = {
+  secret: process.env.NEXTAUTH_SECRET,
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID!,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
       authorization: {
         params: {
-          redirect_uri: "http://localhost:3000/api/auth/callback/google",
           prompt: "select_account",
           access_type: "offline",
           response_type: "code",
@@ -44,10 +44,6 @@ export const authOptions: NextAuthOptions = {
       };
     },
   },
-  // pages: {
-  //   signIn: "/sign-in",
-  //   signOut: "/sign-in",
-  // },
 };
 
 export default NextAuth(authOptions);

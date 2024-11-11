@@ -21,7 +21,6 @@ const schema = a.schema({
       teams: a.string().array(), // 소속된 팀 id 목록
       profileImage: a.string(),
       createdAt: a.datetime(),
-      // foo: a.string(),
     })
     .authorization((allow) => [
       allow.groups(["ADMIN", "MEMBER"]),
@@ -30,8 +29,6 @@ const schema = a.schema({
     .secondaryIndexes((index) => [
       index("role").sortKeys(["username"]).queryField("listUsersByRoleName"),
       index("role").sortKeys(["createdAt"]).queryField("listUsersByRoleDate"),
-      // index("foo").sortKeys(["username"]).queryField("UsersSortByName"),
-      // index("foo").sortKeys(["createdAt"]).queryField("UsersSortByCreatedAt"),
     ]),
 
   ResourceType: a.enum(["ROOM", "SEAT", "EQUIPMENT"]),
