@@ -82,7 +82,7 @@ function NavigationBar() {
       </ul>
       <Link
         href="/mypage"
-        className={`absolute bottom-16 hidden w-142 items-center gap-10 rounded-10 p-8 hover:bg-gray-00-opacity-5 md:flex ${
+        className={`absolute bottom-16 hidden w-168 items-center gap-10 rounded-10 p-8 hover:bg-gray-00-opacity-5 md:flex ${
           router.pathname === "/mypage"
             ? "text-white"
             : "text-gray-00-opacity-60"

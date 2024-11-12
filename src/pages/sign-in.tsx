@@ -1,19 +1,24 @@
 import Button from "@/components/commons/Button";
 import SignInForm from "@/components/pages/sign-in/SignInForm";
-import CodeitTextLogo from "@public/images/codeit-resources.svg";
-import CodeitLogo from "@public/images/codeit.svg";
 import { signIn } from "next-auth/react";
+import Image from "next/image";
 import Link from "next/link";
 
 function SignIn() {
   return (
     <div className="mt-120 flex flex-col items-center justify-center gap-33 px-8 md:mt-240">
       <div className="flex flex-col items-center gap-24">
-        <CodeitLogo width={78} height={78} aria-label="Codeit 로고" />
-        <CodeitTextLogo
+        <Image
+          width={78}
+          height={78}
+          alt="Codeit 로고"
+          src="/images/codeit.svg"
+        />
+        <Image
           width={254}
           height={31}
-          aria-label="Codeit 텍스트 로고"
+          alt="Codeit Resources 텍스트 로고"
+          src="/images/codeit-resources.svg"
         />
       </div>
       <SignInForm />
