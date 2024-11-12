@@ -1,5 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
-import { getImageUrl } from "@/lib/api/storage";
+import QUERY_KEY, { DEFAULT_STALE_TIME } from "@/constants/queryKey";
+import { getImageUrl } from "@/lib/api/amplify/storage";
 import { useQuery } from "@tanstack/react-query";
 import clsx from "clsx";
 import { useEffect, useState } from "react";
@@ -23,10 +24,10 @@ export default function ProfileImage({
   const [imageSrc, setImageSrc] = useState(DEFAULT_IMAGE);
 
   const { data: imageUrl } = useQuery({
-    queryKey: ["profile-image", imagePath],
+    queryKey: [QUERY_KEY.PROFILE_IMAGE, imagePath],
     queryFn: () => imagePath && getImageUrl(imagePath),
     enabled: !!imagePath,
-    staleTime: 10 * 60 * 1000, // 10분
+    staleTime: DEFAULT_STALE_TIME,
   });
 
   const classnames = clsx("rounded-full object-cover", {

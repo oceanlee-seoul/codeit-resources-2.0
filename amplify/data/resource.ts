@@ -64,13 +64,7 @@ const schema = a.schema({
     ]),
 
   // Reservation Table
-  ReservationStatus: a.enum([
-    "CONFIRMED",
-    "CANCELED",
-    "PASSED",
-    "FIXED",
-    "DISABLED",
-  ]),
+  ReservationStatus: a.enum(["CONFIRMED", "CANCELED"]),
 
   Reservation: a
     .model({

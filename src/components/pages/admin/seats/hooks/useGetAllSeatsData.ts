@@ -1,3 +1,4 @@
+import QUERY_KEY from "@/constants/queryKey";
 import { getSeatValidReservationList } from "@/lib/api/amplify/reservation";
 import { getSeatResourceListByResourceStatus } from "@/lib/api/amplify/resource";
 import { useSuspenseQuery } from "@tanstack/react-query";
@@ -38,7 +39,7 @@ export default function useGetAllSeatsData() {
   );
 
   const { data } = useSuspenseQuery({
-    queryKey: ["seats-admin"],
+    queryKey: [QUERY_KEY.SEAT_LIST_ADMIN],
     queryFn: async () => {
       const [
         { data: reservationArray },

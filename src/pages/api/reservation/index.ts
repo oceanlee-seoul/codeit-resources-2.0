@@ -1,43 +1,36 @@
 import type { NextApiRequest, NextApiResponse } from "next";
+import { JWT, getToken } from "next-auth/jwt";
 
-import createReservation from "./create";
+import { createReservation, getReservationList } from "./helper";
 
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse,
 ) {
-  const accessToken = req.headers.authorization?.split(" ")[1];
+  const { email, accessToken } = (await getToken({ req })) as JWT;
 
-  // 액세스 토큰이 없을 경우 처리
   if (!accessToken) {
     return res.status(401).json({ error: "Authorization token is required" });
   }
-
+  if (!email) {
+    return res.status(401).json({ error: "유저 정보가 필요합니다." });
+  }
   try {
     switch (req.method) {
       case "POST":
         return await createReservation(req, res);
 
       case "GET":
-        // GET 요청 처리 로직 (필요한 로직 추가)
-        return res.status(200).send({ message: "GET request processed" });
-
-      case "PATCH":
-        // PATCH 요청 처리 로직 (필요한 로직 추가)
-        return res.status(200).send({ message: "PATCH request processed" });
-
-      case "DELETE":
-        // DELETE 요청 처리 로직 (필요한 로직 추가)
-        return res.status(200).send({ message: "DELETE request processed" });
+        return await getReservationList(req, res);
 
       default:
-        res.setHeader("Allow", ["POST", "GET", "PATCH", "DELETE"]);
+        res.setHeader("Allow", ["POST", "GET"]);
         return res
           .status(405)
           .send({ message: `Method ${req.method} Not Allowed` });
     }
   } catch (error) {
-    console.error(error); // 오류 로깅
+    console.error(error);
     return res.status(500).json({ error: "Internal Server Error" });
   }
 }

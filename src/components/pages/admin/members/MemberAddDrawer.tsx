@@ -1,4 +1,5 @@
 import { ADD_MEMBER_ERROR_MESSAGE } from "@/constants/error-message/user";
+import QUERY_KEY from "@/constants/queryKey";
 import useToast from "@/hooks/useToast";
 import { Team } from "@/lib/api/amplify/helper";
 import { CreateUserParams, createUserData } from "@/lib/api/amplify/user";
@@ -41,7 +42,7 @@ function MemberAddDrawer({ setOpenKey, teamList }: MemberAddDrawerProps) {
   const { mutate } = useMutation({
     mutationFn: (data: CreateUserParams) => createUserData(data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["memberList"] });
+      queryClient.invalidateQueries({ queryKey: [QUERY_KEY.USER_LIST] });
     },
     onError: () => {
       error("추가를 완료하지 못했습니다.");

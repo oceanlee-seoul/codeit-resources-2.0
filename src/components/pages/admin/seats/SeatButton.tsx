@@ -1,3 +1,4 @@
+import QUERY_KEY from "@/constants/queryKey";
 import useModal from "@/hooks/useModal";
 import useToast from "@/hooks/useToast";
 import {
@@ -28,7 +29,7 @@ export default function SeatButton({ name, status, participant }: Props) {
   } = useDrawerContext();
 
   const { data: seatOwnerResponse } = useQuery({
-    queryKey: ["seat-button", name],
+    queryKey: [QUERY_KEY.SEAT_BUTTON, name],
     queryFn: () => {
       if (participant) return getUserData(participant);
       return null;
@@ -45,7 +46,7 @@ export default function SeatButton({ name, status, participant }: Props) {
     onSuccess: () => {
       success("좌석이 수정되었습니다");
       queryClient.invalidateQueries({
-        queryKey: ["seats-admin"],
+        queryKey: [QUERY_KEY.SEAT_LIST_ADMIN],
       });
     },
     onError: () => {

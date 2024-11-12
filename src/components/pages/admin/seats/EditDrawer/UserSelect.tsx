@@ -1,4 +1,5 @@
 import ProfileImage from "@/components/commons/ProfileImage";
+import QUERY_KEY, { DEFAULT_STALE_TIME } from "@/constants/queryKey";
 import useClickOutside from "@/hooks/useClickOutside";
 import { getUserListData } from "@/lib/api/amplify/user";
 import ArrowDown from "@public/icons/icon-arrow-down.svg";
@@ -27,9 +28,9 @@ export default function UserSelect() {
 
   const { data: usersResponse } = useSuspenseQuery({
     // 전체, 가나다순 정렬
-    queryKey: ["memberList", 0, "alphabetical"],
+    queryKey: [QUERY_KEY.USER_LIST, 0, "alphabetical"],
     queryFn: () => getUserListData("0", "alphabetical"),
-    staleTime: 10 * 60 * 1000, // 10분
+    staleTime: DEFAULT_STALE_TIME,
   });
 
   const handleSelect = (id: string) => {

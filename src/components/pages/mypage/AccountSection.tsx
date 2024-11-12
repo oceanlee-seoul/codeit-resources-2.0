@@ -1,7 +1,7 @@
 import Button from "@/components/commons/Button";
 import useToast from "@/hooks/useToast";
+import { clearAllCookies } from "@/lib/utils/cookieUtils";
 import { authAtom } from "@/store/authUserAtom";
-import { clearAllCookies } from "@/utils/cookieUtils";
 import LoadingSpinner from "@public/gifs/loading-spinner.svg";
 import { signOut } from "aws-amplify/auth";
 import { useSetAtom } from "jotai";

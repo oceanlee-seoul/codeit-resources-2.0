@@ -1,3 +1,4 @@
+import QUERY_KEY from "@/constants/queryKey";
 import useToast from "@/hooks/useToast";
 import { getSeatValidReservationList } from "@/lib/api/amplify/reservation";
 import {
@@ -55,7 +56,7 @@ export default function useSeatsAction({
       else error("좌석 수정이 실패하였습니다");
     },
     onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ["seats-admin"] });
+      queryClient.invalidateQueries({ queryKey: [QUERY_KEY.SEAT_LIST_ADMIN] });
       setSeatInfo(null);
       setIsOpen(false);
     },
@@ -71,7 +72,7 @@ export default function useSeatsAction({
     onSuccess: () => {
       success("좌석이 수정되었습니다");
       queryClient.invalidateQueries({
-        queryKey: ["seats-admin"],
+        queryKey: [QUERY_KEY.SEAT_LIST_ADMIN],
       });
     },
     onError: () => {

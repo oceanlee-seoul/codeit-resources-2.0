@@ -1,3 +1,4 @@
+import QUERY_KEY from "@/constants/queryKey";
 import useModal from "@/hooks/useModal";
 import { getUserData } from "@/lib/api/amplify/user";
 import IconXButton from "@public/icons/icon-x-button.svg";
@@ -20,7 +21,7 @@ function SeatButton({ name, status, participant }: Props) {
   const mySeatInfo = useAtomValue(mySeatInfoAtom);
 
   const { data: seatOwnerResponse } = useQuery({
-    queryKey: ["seat-button", name],
+    queryKey: [QUERY_KEY.SEAT_BUTTON, name],
     queryFn: () => {
       if (participant) return getUserData(participant);
       return null;

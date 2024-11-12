@@ -1,6 +1,7 @@
 import Button from "@/components/commons/Button";
 import Input from "@/components/commons/Input";
 import { useGetReservations } from "@/components/pages/meeting-rooms/hooks/useGetReservations";
+import QUERY_KEY from "@/constants/queryKey";
 import useModal from "@/hooks/useModal";
 import useToast from "@/hooks/useToast";
 import { createResource } from "@/lib/api/amplify/resource";
@@ -54,7 +55,7 @@ export default function AddMeetingRoomTypeModal() {
       } else {
         error("회의실을 추가하는데 실패하였습니다.");
       }
-      queryClient.invalidateQueries({ queryKey: ["roomList"] });
+      queryClient.invalidateQueries({ queryKey: [QUERY_KEY.ROOM_LIST] });
       closeModal();
     },
     onError: (err) => {

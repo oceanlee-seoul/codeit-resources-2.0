@@ -1,5 +1,6 @@
 import Button from "@/components/commons/Button";
 import Input from "@/components/commons/Input";
+import QUERY_KEY from "@/constants/queryKey";
 import useModal from "@/hooks/useModal";
 import useToast from "@/hooks/useToast";
 import { User } from "@/lib/api/amplify/helper";
@@ -28,7 +29,7 @@ function DeleteMemberModal({ userData, setOpenKey }: DeleteMemberModalProps) {
     onSuccess: () => {
       success(`${userData.username} 님이 삭제되었습니다.`);
       queryClient.invalidateQueries({
-        queryKey: ["memberList"],
+        queryKey: [QUERY_KEY.USER_LIST],
       });
       setOpenKey(null);
     },

@@ -1,3 +1,4 @@
+import QUERY_KEY from "@/constants/queryKey";
 import useModal from "@/hooks/useModal";
 import useToast from "@/hooks/useToast";
 import { Reservation, User } from "@/lib/api/amplify/helper";
@@ -5,7 +6,7 @@ import {
   cancelReservation,
   createReservation,
   updateReservation,
-} from "@/lib/api/amplify/reservation";
+} from "@/lib/api/reservation";
 import { userAtom } from "@/store/authUserAtom";
 import { isOpenDrawerAtom } from "@/store/isOpenDrawerAtom";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -23,19 +24,12 @@ const useReservationAction = (reservation?: Reservation) => {
 
   const deleteRoomMutation = useMutation({
     mutationFn: async () => {
-      if (reservation?.id)
-        return cancelReservation(reservation || {}, {
-          id: user?.id || "",
-          role: user?.role,
-        });
+      if (reservation?.id) return cancelReservation(reservation, user as User);
       return null;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["rooms"],
-      });
-      queryClient.invalidateQueries({
-        queryKey: ["roomReservations", pickedDate],
+        queryKey: [QUERY_KEY.ROOM_RESERVATION_LIST, pickedDate],
       });
       success("회의실 예약이 취소되었습니다");
     },
@@ -50,10 +44,7 @@ const useReservationAction = (reservation?: Reservation) => {
     onSuccess: () => {
       success("회의실 예약이 생성되었습니다.");
       queryClient.invalidateQueries({
-        queryKey: ["rooms", pickedDate],
-      });
-      queryClient.invalidateQueries({
-        queryKey: ["roomReservations", pickedDate],
+        queryKey: [QUERY_KEY.ROOM_RESERVATION_LIST, pickedDate],
       });
     },
     onError: () => {
@@ -72,10 +63,7 @@ const useReservationAction = (reservation?: Reservation) => {
     onSuccess: () => {
       success("회의실 예약이 업데이트되었습니다.");
       queryClient.invalidateQueries({
-        queryKey: ["rooms", pickedDate],
-      });
-      queryClient.invalidateQueries({
-        queryKey: ["roomReservations", pickedDate],
+        queryKey: [QUERY_KEY.ROOM_RESERVATION_LIST, pickedDate],
       });
     },
     onError: () => {

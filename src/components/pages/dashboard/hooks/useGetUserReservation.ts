@@ -1,10 +1,11 @@
+import QUERY_KEY, { DEFAULT_STALE_TIME } from "@/constants/queryKey";
 import useAutoUpdateDate from "@/hooks/useAutoUpdateDate";
 import { Reservation, ResourceType } from "@/lib/api/amplify/helper";
 import { getReservationListByResourceType } from "@/lib/api/amplify/reservation";
 import { getSeatResourceListByResourceStatus } from "@/lib/api/amplify/resource";
+import { getCurrentTime } from "@/lib/utils/createTime";
 import { convertTimeToMinutes } from "@/lib/utils/timeUtils";
 import { userAtom } from "@/store/authUserAtom";
-import { getCurrentTime } from "@/utils/createTime";
 import { useSuspenseQueries } from "@tanstack/react-query";
 import { useAtomValue } from "jotai";
 import { useCallback, useEffect, useState } from "react";
@@ -44,42 +45,31 @@ export const useGetUserReservation = () => {
 
   /* useSuspenseQueries에서 useQueries로 바꾸니까 타입오류나서 임의로 빈 배열 넣어놨어요 */
   const [
-    // { data: roomReservation },
-    // { data: seatReservation },
-    // { data: fixedSeats },
-    // { data: equipmentReservation },
     { data: roomReservation = [] },
     { data: seatReservation = [] },
     { data: fixedSeats = { data: [] } },
-    { data: equipmentReservation = [] },
   ] = useSuspenseQueries({
     queries: [
       {
-        queryKey: ["rooms", currentDate, "userRoomReservations", user?.id],
-        staleTime: 5 * 60 * 1000,
+        queryKey: [QUERY_KEY.ROOM_RESERVATION_LIST, currentDate, user?.id],
+        staleTime: DEFAULT_STALE_TIME,
         queryFn: () => getTodayUserReservation("ROOM"),
       },
       {
-        queryKey: ["seats", currentDate, "userSeatReservations", user?.id],
-        staleTime: 5 * 60 * 1000,
+        queryKey: [QUERY_KEY.SEAT_LIST, currentDate, user?.id],
+        staleTime: DEFAULT_STALE_TIME,
         queryFn: () => getTodayUserReservation("SEAT"),
       },
       {
-        queryKey: ["fixedSeats", currentDate, "userSeatReservations", user?.id],
-        staleTime: 5 * 60 * 1000,
+        queryKey: [QUERY_KEY.SEAT_LIST, currentDate, user?.id],
+        staleTime: DEFAULT_STALE_TIME,
         queryFn: () => getSeatResourceListByResourceStatus("FIXED"),
-      },
-      {
-        queryKey: [currentDate, "userEquipmentReservations", user?.id],
-        staleTime: 5 * 60 * 1000,
-        queryFn: () => getTodayUserReservation("EQUIPMENT"),
       },
     ],
   });
 
-  const userFixedSeat = fixedSeats.data.filter(
-    ({ owner }) => owner === user?.id,
-  );
+  const userFixedSeat =
+    fixedSeats?.data?.filter(({ owner }) => owner === user?.id) || [];
 
   const userFixedSeatReservation = [
     {
@@ -111,9 +101,8 @@ export const useGetUserReservation = () => {
       // eslint-disable-next-line
       // @ts-ignore
       SEAT: userFixedSeat.length ? userFixedSeatReservation : seatReservation,
-      EQUIPMENT: equipmentReservation || [],
     });
-  }, [roomReservation, seatReservation, fixedSeats, equipmentReservation]);
+  }, [roomReservation, seatReservation, fixedSeats]);
 
   return { userReservations };
 };

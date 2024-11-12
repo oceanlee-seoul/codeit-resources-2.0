@@ -6,12 +6,11 @@ import pickedReservationAtom from "@/components/pages/meeting-rooms/context/pick
 import useReservationAction from "@/components/pages/meeting-rooms/hooks/useReservationAction";
 import { Reservation, Resource } from "@/lib/api/amplify/helper";
 import { isTimeInRange } from "@/lib/utils/timeUtils";
-import { userAtom } from "@/store/authUserAtom";
 import XButton from "@public/icons/icon-x-button.svg";
 import clsx from "clsx";
 import dayjs from "dayjs";
 import { useAtomValue } from "jotai";
-import { LegacyRef, forwardRef, useEffect } from "react";
+import { LegacyRef, forwardRef } from "react";
 
 import useTimeSlot from "../../hooks/useTimeSlot";
 import TimeSlotStyle from "./TIME_SLOT_STLYE";
@@ -50,58 +49,20 @@ export function TimeVerticalLine({
   );
 }
 
-interface ReservationBarProps {
-  slot: TimeSlot;
-  reservation?: Reservation;
-  className?: string;
-  isPastTime: boolean;
-}
-
-export function ReservationBar({
-  slot,
-  reservation,
-  className,
-  isPastTime,
-}: ReservationBarProps) {
-  const currentUser = useAtomValue(userAtom);
-  const handleMutation = useReservationAction(reservation as Reservation);
-
-  const isMyReservation = () => {
-    if (!reservation) return false;
-    if (!currentUser?.id || !reservation.participants) return false;
-    return reservation.participants.includes(currentUser.id);
-  };
-
-  return (
-    <>
-      {isMyReservation() &&
-        !isPastTime &&
-        slot.reservation?.id &&
-        slot.isLastInHoverGroup && (
-          <button
-            type="button"
-            onClick={(e) => {
-              e.stopPropagation();
-              handleMutation.deleteRoomMutation();
-            }}
-            className="absolute -right-8 -top-8 z-[12]"
-          >
-            <XButton />
-          </button>
-        )}
-      <div
-        className={clsx(
-          "time-slot-bar absolute top-21 z-[10] h-12 w-48 md:top-16 md:w-[72px]",
-          className,
-        )}
-      />
-    </>
-  );
-}
-
 export function BottomDottedBar() {
   return (
     <div className="relative bottom-6 w-full border-b border-dotted border-gray-15 md:bottom-32" />
+  );
+}
+
+export function ReservationBar({ className }: { className?: string }) {
+  return (
+    <div
+      className={clsx(
+        "time-slot-bar absolute top-21 z-[10] h-12 w-48 md:top-16 md:w-[72px]",
+        className,
+      )}
+    />
   );
 }
 
@@ -122,9 +83,9 @@ function ThirtyMinutesTimeBox(
   }: ThirtyMinutesTimeBoxProps,
   ref: LegacyRef<HTMLDivElement>,
 ) {
-  const { time, reservation, isCurrentTimePeriod, hasReservation, isHalfHour } =
-    slot;
+  const { time, reservation, isCurrentTimePeriod, isHalfHour } = slot;
   const is24Hour = time === "24:00";
+  const handleMutation = useReservationAction(reservation as Reservation);
 
   const pickedReservation = useAtomValue(pickedReservationAtom);
 
@@ -162,10 +123,6 @@ function ThirtyMinutesTimeBox(
     isFirstInPickedGroup,
     isLastInPickedGroup,
   } = slot;
-
-  // TODO 조건 변수로 분리
-  // TODO 스타일  코드 분리
-  // TODO picked 에 따른 분기 추가
 
   /** 스타일 코드 */
   const MyReservationClass = {
@@ -255,7 +212,7 @@ function ThirtyMinutesTimeBox(
     <li
       className={clsx(
         "flex w-48 flex-col justify-end md:w-75",
-        isPastTime && !hasReservation && "pointer-events-none",
+        isPastTime && !reservation?.id && "pointer-events-none",
       )}
       onClick={handleClick}
       onMouseEnter={handleMouseEnter}
@@ -283,15 +240,25 @@ function ThirtyMinutesTimeBox(
                   : "hover:bg-gray-100-opacity-10 hover:shadow-[inset_0_0_0_1px_#413B541A]",
               )}
             >
-              {(hasReservation || isPickedTimeSlot) && (
-                <ReservationBar
-                  reservation={reservation || undefined}
-                  slot={slot}
-                  className={timeSlotBarClass}
-                  isPastTime={isPastTime}
-                />
+              {(reservation?.id || isPickedTimeSlot) && (
+                <ReservationBar className={timeSlotBarClass} />
               )}
             </div>
+            {isMyReservation &&
+              !isPastTime &&
+              slot.reservation?.id &&
+              slot.isLastInHoverGroup && (
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleMutation.deleteRoomMutation();
+                  }}
+                  className="absolute -right-8 -top-8 z-[21]"
+                >
+                  <XButton />
+                </button>
+              )}
             {slot.isFirstInHoverGroup &&
               slot.reservation?.id === hoveredReservationId &&
               reservation &&

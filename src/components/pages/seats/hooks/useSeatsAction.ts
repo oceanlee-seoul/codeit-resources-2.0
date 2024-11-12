@@ -1,3 +1,4 @@
+import QUERY_KEY from "@/constants/queryKey";
 import useToast from "@/hooks/useToast";
 import {
   createSeatReservation,
@@ -68,7 +69,7 @@ export default function useSeatsAction({
     },
     onSettled: () => {
       queryClient.invalidateQueries({
-        queryKey: ["seats", pickedDate],
+        queryKey: [QUERY_KEY.SEAT_LIST, pickedDate],
       });
     },
   });
@@ -82,7 +83,7 @@ export default function useSeatsAction({
     onSuccess: () => {
       success("좌석이 반납되었습니다");
       queryClient.invalidateQueries({
-        queryKey: ["seats", pickedDate],
+        queryKey: [QUERY_KEY.SEAT_LIST, pickedDate],
       });
     },
     onError: () => {

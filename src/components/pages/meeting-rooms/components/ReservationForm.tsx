@@ -158,12 +158,10 @@ function ReservationForm({ members }: ReservationFormProps) {
     }
   }, [setPickedReservation, isOpenDrawer]);
 
+  // 폼데이터 변경 또는 전역상태 pickedReservation 변경에 따라 폼 데이터를 변경시켜주는 useEffect
   useEffect(() => {
-    // 초기값 설정 또는 수정 모드로 진입할 때만 reset 실행
-    // if (!methods.formState.isDirty) {
-    // 폼이 수정되지 않은 상태일 때만
     reset(defaultReservation);
-    // }
+    methods.trigger();
   }, [pickedReservation, members, currentUser?.id]);
 
   return (

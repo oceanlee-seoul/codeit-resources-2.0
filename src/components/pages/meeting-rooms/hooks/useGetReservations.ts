@@ -1,3 +1,4 @@
+import QUERY_KEY, { DEFAULT_STALE_TIME } from "@/constants/queryKey";
 import { getReservationListByResourceType } from "@/lib/api/amplify/reservation";
 import { getResourceList } from "@/lib/api/amplify/resource";
 import { getTeamListData } from "@/lib/api/amplify/team";
@@ -18,13 +19,13 @@ export const useGetReservations = () => {
   ] = useSuspenseQueries({
     queries: [
       {
-        queryKey: ["roomList", pickedDate],
-        staleTime: 5 * 60 * 1000,
+        queryKey: [QUERY_KEY.ROOM_LIST, pickedDate],
+        staleTime: DEFAULT_STALE_TIME,
         queryFn: () => getResourceList({ resourceType: "ROOM" }),
       },
       {
-        queryKey: ["roomReservations", pickedDate],
-        staleTime: 5 * 60 * 1000,
+        queryKey: [QUERY_KEY.ROOM_RESERVATION_LIST, pickedDate],
+        staleTime: DEFAULT_STALE_TIME,
         queryFn: () =>
           getReservationListByResourceType("ROOM", {
             date: { eq: pickedDate },
@@ -32,13 +33,13 @@ export const useGetReservations = () => {
           }),
       },
       {
-        queryKey: ["users", "0", "alphabetical"],
-        staleTime: 5 * 60 * 1000,
+        queryKey: [QUERY_KEY.USER_LIST, "0", "alphabetical"],
+        staleTime: DEFAULT_STALE_TIME,
         queryFn: () => getUserListData("0", "alphabetical"),
       },
       {
-        queryKey: ["teams"],
-        staleTime: 5 * 60 * 1000,
+        queryKey: [QUERY_KEY.TEAM_LIST],
+        staleTime: DEFAULT_STALE_TIME,
         queryFn: getTeamListData,
       },
     ],

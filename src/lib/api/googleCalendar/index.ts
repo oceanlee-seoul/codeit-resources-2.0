@@ -1,4 +1,7 @@
-import { EventRequest } from "@/lib/types/calendar";
+import {
+  GoogleCalendarEvent,
+  GoogleCalendarEventRequest,
+} from "@/lib/types/google-calendar";
 import axios from "axios";
 
 import { END_POINTS, axiosInstance } from "./helper";
@@ -28,12 +31,17 @@ export const getCalendarList = async (accessToken: string) => {
   }
 };
 
-export const getEvents = async (calendarID: string, accessToken: string) => {
+export const getEvents = async (
+  calendarID: string,
+  accessToken: string,
+  params?: Record<string, unknown>,
+) => {
   try {
     const response = await axiosInstance.get(END_POINTS.events(calendarID), {
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },
+      params,
     });
     return response.data;
   } catch (error) {
@@ -43,11 +51,11 @@ export const getEvents = async (calendarID: string, accessToken: string) => {
 
 export const createEvent = async (
   calendarID: string,
-  event: EventRequest,
+  event: GoogleCalendarEventRequest,
   accessToken: string,
 ) => {
   try {
-    const response = await axiosInstance.post<Event>(
+    const response = await axiosInstance.post<GoogleCalendarEvent>(
       END_POINTS.events(calendarID),
       event,
       {
@@ -65,7 +73,7 @@ export const createEvent = async (
 export const updateEvent = async (
   calendarID: string,
   eventID: string,
-  event: EventRequest,
+  event: GoogleCalendarEventRequest,
   accessToken: string,
 ) => {
   try {

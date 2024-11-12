@@ -10,7 +10,7 @@ import { todayDateAtom } from "@/store/todayDateAtom";
 import clsx from "clsx";
 import dayjs from "dayjs";
 import { PrimitiveAtom, useAtomValue, useSetAtom } from "jotai";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import ScrollProvider from "../../Layout/ScrollProvider";
 import pickedDateAtom from "./context/pickedDate";
@@ -27,12 +27,12 @@ function Header({ className }: { className?: string }) {
     today.format("YYYY-MM-DD"),
   ).days;
 
+  const setPickedDate = useSetAtom(pickedDateAtom as PrimitiveAtom<string>);
   const [currentHeaderDate, setCurrentHeaderDate] = useState<DateState>({
     year: today.year(),
     month: today.month() + 1,
     daysData: currentDaysData,
   });
-  const setPickedDate = useSetAtom(pickedDateAtom as PrimitiveAtom<string>);
 
   const setIsOpenDrawer = useSetAtom(isOpenDrawerAtom);
 
@@ -74,6 +74,10 @@ function Header({ className }: { className?: string }) {
       };
     });
   };
+
+  useEffect(() => {
+    setPickedDate(today.format("YYYY-MM-DD"));
+  }, []);
 
   return (
     <header className={className}>

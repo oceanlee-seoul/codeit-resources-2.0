@@ -1,5 +1,6 @@
 import Button from "@/components/commons/Button";
 import Input from "@/components/commons/Input";
+import QUERY_KEY from "@/constants/queryKey";
 import useModal from "@/hooks/useModal";
 import useToast from "@/hooks/useToast";
 import { deleteTeamAndUpdateUsers } from "@/lib/api/amplify/team/utils";
@@ -28,7 +29,7 @@ function DeleteTeamModal({ teamId, teamName }: DeleteTeamModalProps) {
       } else {
         error("팀을 삭제하는데 실패하였습니다.");
       }
-      queryClient.invalidateQueries({ queryKey: ["teamList"] });
+      queryClient.invalidateQueries({ queryKey: [QUERY_KEY.TEAM_LIST] });
     },
     onError: () => {
       error("팀을 삭제하는데 실패하였습니다.");

@@ -1,4 +1,5 @@
 import Button from "@/components/commons/Button";
+import QUERY_KEY from "@/constants/queryKey";
 import useModal from "@/hooks/useModal";
 import useToast from "@/hooks/useToast";
 import { Team, User } from "@/lib/api/amplify/helper";
@@ -54,7 +55,7 @@ function MemberEditDrawer({
   const { mutate } = useMutation({
     mutationFn: (data: UpdateUserParams) => updateUserData(data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["memberList"] });
+      queryClient.invalidateQueries({ queryKey: [QUERY_KEY.USER_LIST] });
     },
     onError: () => {
       error("수정을 완료하지 못했습니다.");

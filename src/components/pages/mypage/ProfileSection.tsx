@@ -1,12 +1,13 @@
 import Badge from "@/components/commons/Badge";
 import Button from "@/components/commons/Button";
 import ProfileImage from "@/components/commons/ProfileImage";
+import QUERY_KEY, { DEFAULT_STALE_TIME } from "@/constants/queryKey";
 import useIsMobile from "@/hooks/useIsMobile";
 import useToast from "@/hooks/useToast";
 import { User, client } from "@/lib/api/amplify/helper";
+import { uploadImage } from "@/lib/api/amplify/storage";
 import { getTeamListData } from "@/lib/api/amplify/team";
 import { updateUserData } from "@/lib/api/amplify/user";
-import { uploadImage } from "@/lib/api/storage";
 import { userAtom } from "@/store/authUserAtom";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
@@ -27,15 +28,15 @@ export default function ProfileSection() {
   };
 
   const { data: userData, isLoading: isUserLoading } = useQuery({
-    queryKey: ["user", user?.id],
+    queryKey: [QUERY_KEY.USER, user?.id],
     queryFn: fetchUser,
     enabled: Boolean(user),
   });
 
   const { data: teamData, isLoading: isTeamLoading } = useQuery({
-    queryKey: ["teamList"],
+    queryKey: [QUERY_KEY.TEAM_LIST],
     queryFn: () => getTeamListData(),
-    staleTime: 1 * 60 * 1000,
+    staleTime: DEFAULT_STALE_TIME,
   });
 
   useEffect(() => {

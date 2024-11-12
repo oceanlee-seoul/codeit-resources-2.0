@@ -1,4 +1,4 @@
-import { uploadImage } from "@/lib/api/storage";
+import { uploadImage } from "@/lib/api/amplify/storage";
 import { useMutation } from "@tanstack/react-query";
 
 interface UploadImageParams {

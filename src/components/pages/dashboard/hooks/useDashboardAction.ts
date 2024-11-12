@@ -1,4 +1,4 @@
-import pickedDateAtom from "@/components/pages/meeting-rooms/context/pickedDate";
+import QUERY_KEY from "@/constants/queryKey";
 import useModal from "@/hooks/useModal";
 import useToast from "@/hooks/useToast";
 import { Reservation, ResourceType, User } from "@/lib/api/amplify/helper";
@@ -7,6 +7,7 @@ import {
   deleteSeatReservation,
 } from "@/lib/api/amplify/reservation";
 import { userAtom } from "@/store/authUserAtom";
+import { todayDateAtom } from "@/store/todayDateAtom";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAtomValue } from "jotai";
 
@@ -17,7 +18,7 @@ const useDashboardAction = (
   const queryClient = useQueryClient();
   const { success, error } = useToast();
   const { openModal, closeModal } = useModal();
-  const pickedDate = useAtomValue(pickedDateAtom);
+  const today = useAtomValue(todayDateAtom).format("YYYY-MM-DD");
 
   const deleteSeatMutation = useMutation({
     mutationFn: async () => {
@@ -27,7 +28,7 @@ const useDashboardAction = (
     onSuccess: () => {
       success("좌석이 반납되었습니다");
       queryClient.invalidateQueries({
-        queryKey: ["seats"],
+        queryKey: [QUERY_KEY.SEAT_LIST],
       });
     },
     onError: () => {
@@ -42,10 +43,7 @@ const useDashboardAction = (
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["rooms"],
-      });
-      queryClient.invalidateQueries({
-        queryKey: ["roomReservations", pickedDate],
+        queryKey: [QUERY_KEY.ROOM_RESERVATION_LIST, today],
       });
       success("회의가 종료 되었습니다");
     },

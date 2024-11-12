@@ -10,7 +10,7 @@
 /**
  * 캘린더 목록을 나타내는 인터페이스
  */
-export interface CalendarList {
+export interface GoogleCalendarList {
   /** 리소스 유형을 나타내는 문자열. 예: "calendar#calendarList" */
   kind: string;
   /** 리소스 버전 정보를 제공하는 문자열 */
@@ -18,13 +18,13 @@ export interface CalendarList {
   /** 다음 동기화에 사용할 수 있는 토큰 (선택적) */
   nextSyncToken?: string;
   /** CalendarListEntry 객체의 배열 */
-  items: CalendarListEntry[];
+  items: GoogleCalendarListEntry[];
 }
 
 /**
  * 개별 캘린더 항목을 나타내는 인터페이스
  */
-export interface CalendarListEntry {
+export interface GoogleCalendarListEntry {
   /** 리소스 유형을 나타내는 문자열. 예: "calendar#calendarListEntry" */
   kind: string;
   /** 항목 버전 정보를 제공하는 문자열 */
@@ -55,7 +55,7 @@ export interface CalendarListEntry {
 /**
  * 알림 설정을 나타내는 인터페이스
  */
-export interface Reminder {
+export interface GoogleCalendarReminder {
   /** 알림 방법을 나타내는 문자열 (예: "email", "popup") */
   method: string;
   /** 알림이 발생하기 전의 분 수 */
@@ -65,15 +65,15 @@ export interface Reminder {
 /**
  * 캘린더의 알림 설정을 나타내는 인터페이스
  */
-export interface NotificationSettings {
+export interface GoogleCalendarNotificationSettings {
   /** 알림 설정을 포함하는 Notification 객체의 배열 */
-  notifications: Notification[];
+  notifications: GoogleCalendarNotification[];
 }
 
 /**
  * 개별 알림을 나타내는 인터페이스
  */
-export interface Notification {
+export interface GoogleCalendarNotification {
   /** 알림의 유형을 나타내는 문자열 (예: "eventCreation", "eventChange") */
   type: string;
   /** 알림을 받을 방법을 나타내는 문자열 (예: "email", "sms") */
@@ -83,7 +83,7 @@ export interface Notification {
 /**
  * Google Calendar의 이벤트를 나타내는 인터페이스
  */
-export interface Event {
+export interface GoogleCalendarEvent {
   /** 리소스 유형을 나타내는 문자열. 예: "calendar#event" */
   kind: string;
   /** 항목 버전 정보를 제공하는 문자열 */
@@ -194,13 +194,20 @@ export interface Event {
 /**
  * 이벤트 요청 객체
  */
-export type EventRequest = Partial<
+export type GoogleCalendarEventRequest = Partial<
   Pick<
-    Event,
-    "id" | "description" | "location" | "status" | "organizer" | "attendees"
+    GoogleCalendarEvent,
+    | "id"
+    | "description"
+    | "location"
+    | "status"
+    | "organizer"
+    | "attendees"
+    | "reminders"
+    | "creator"
   >
 > &
-  Pick<Event, "summary" | "start" | "end" | "creator">;
+  Pick<GoogleCalendarEvent, "summary" | "start" | "end">;
 
 /**
   {
@@ -236,7 +243,7 @@ export type EventRequest = Partial<
 /**
  * Google Calendar API의 이벤트 목록 응답 형식을 정의하는 인터페이스
  */
-export interface EventList {
+export interface GoogleCalendarEventList {
   /**
    * 리소스 유형을 나타냅니다. 이벤트 목록에서는 항상 'calendar#events'로 반환됩니다.
    */
@@ -287,7 +294,7 @@ export interface EventList {
 /**
  * Google Calendar API 이벤트 리스트 요청을 위한 파라미터 타입 정의
  */
-export interface CalendarEventListParams {
+export interface GoogleCalendarEventListParams {
   /**
    * 캘린더 식별자입니다. 'primary'로 설정 시 현재 로그인된 사용자의 기본 캘린더에 액세스합니다.
    */

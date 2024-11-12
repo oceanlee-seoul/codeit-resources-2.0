@@ -8,6 +8,7 @@ export LC_ALL=en_US.UTF-8
 
 COMMIT_MSG_FILE=$1
 ORIGINAL_COMMIT_MSG=$(cat $COMMIT_MSG_FILE)
+FIRST_LINE=$(sed -n '1p' "$COMMIT_MSG_FILE")
 COMMIT_MSG=$ORIGINAL_COMMIT_MSG
 
 # 커밋메세지 형식 
@@ -16,7 +17,7 @@ COMMIT_MESSAGE_REGEX="^[a-z]+: .+"
 
 format_commit_message() {
   # 타입과 요약 추출
-  TYPE=$(echo "$ORIGINAL_COMMIT_MSG" | cut -d ':' -f1 | sed 's/^ *//')
+  TYPE=$(echo "$FIRST_LINE" | cut -d ':' -f1 | sed 's/^ *//')
   SUMMARY=$(echo "$ORIGINAL_COMMIT_MSG" | cut -d ':' -f2- | sed 's/^ *//')
 
   # 이모지 맵
@@ -50,7 +51,7 @@ format_commit_message() {
 
 validate_commit_message() {
   # 형식 검증
-  if ! echo "$COMMIT_MSG" | grep -qE "$COMMIT_MESSAGE_REGEX"; then
+  if ! echo "$FIRST_LINE" | grep -qE "$COMMIT_MESSAGE_REGEX"; then
     printf "\n${RED}🚫 [Commit Blocked] 커밋 메시지는 'type: summary' 형식이어야 합니다!${RESET}\n"
     printf "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n"
     printf "💡 올바른 타입을 소문자로 입력해주세요.\n"

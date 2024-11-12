@@ -1,3 +1,4 @@
+import QUERY_KEY from "@/constants/queryKey";
 import { getSeatReservationListByDate } from "@/lib/api/amplify/reservation";
 import { getSeatResourceListByResourceStatus } from "@/lib/api/amplify/resource";
 import { userAtom } from "@/store/authUserAtom";
@@ -45,7 +46,7 @@ export default function useGetAllSeatsData() {
   const setMySeatInfo = useSetAtom(mySeatInfoAtom);
 
   const { data } = useSuspenseQuery({
-    queryKey: ["seats", pickedDate],
+    queryKey: [QUERY_KEY.SEAT_LIST, pickedDate],
     queryFn: async () => {
       const [
         { data: reservationArray },

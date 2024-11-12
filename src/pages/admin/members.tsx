@@ -3,6 +3,7 @@ import Drawer from "@/components/commons/Drawer";
 import MemberAddDrawer from "@/components/pages/admin/members/MemberAddDrawer";
 import MemberList from "@/components/pages/admin/members/MemberList";
 import MemberTap from "@/components/pages/admin/members/MemberTap";
+import QUERY_KEY, { DEFAULT_STALE_TIME } from "@/constants/queryKey";
 import { Team } from "@/lib/api/amplify/helper";
 import { getTeamListData } from "@/lib/api/amplify/team";
 import { useQuery } from "@tanstack/react-query";
@@ -13,9 +14,9 @@ function AdminMemberPage() {
   const [openKey, setOpenKey] = useState<string | null>(null);
 
   const { data, isLoading } = useQuery<Team[]>({
-    queryKey: ["teamList"],
+    queryKey: [QUERY_KEY.TEAM_LIST],
     queryFn: () => getTeamListData(),
-    staleTime: 5 * 60 * 1000,
+    staleTime: DEFAULT_STALE_TIME,
   });
 
   return (

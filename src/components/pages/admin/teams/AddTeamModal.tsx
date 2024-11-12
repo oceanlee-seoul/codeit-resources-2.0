@@ -1,6 +1,7 @@
 /* eslint-disable no-console */
 import Button from "@/components/commons/Button";
 import Input from "@/components/commons/Input";
+import QUERY_KEY from "@/constants/queryKey";
 import useModal from "@/hooks/useModal";
 import useToast from "@/hooks/useToast";
 import { createTeamData } from "@/lib/api/amplify/team";
@@ -41,7 +42,7 @@ function AddTeamModal() {
         } else {
           error("팀을 추가하는데 실패하였습니다.");
         }
-        queryClient.invalidateQueries({ queryKey: ["teamList"] });
+        queryClient.invalidateQueries({ queryKey: [QUERY_KEY.TEAM_LIST] });
       },
       onError: (err) => {
         error(err.message || "팀을 추가하는데 실패하였습니다.");

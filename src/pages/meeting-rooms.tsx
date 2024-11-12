@@ -9,6 +9,7 @@ import pickedDateAtom from "@/components/pages/meeting-rooms/context/pickedDate"
 import pickedReservationAtom from "@/components/pages/meeting-rooms/context/pickedReservation";
 import { useGetReservations } from "@/components/pages/meeting-rooms/hooks/useGetReservations";
 import Error from "@/components/pages/seats/Error";
+import QUERY_KEY from "@/constants/queryKey";
 import { Resource } from "@/lib/api/amplify/helper";
 import { getGroupedResourceListBySubtype } from "@/lib/api/amplify/resource/utils";
 import { isOpenDrawerAtom } from "@/store/isOpenDrawerAtom";
@@ -66,7 +67,7 @@ function MeetingRoomsPage() {
   const handleReservationSuccess = () => {
     setIsOpenDrawer(false);
     queryClient.invalidateQueries({
-      queryKey: ["roomReservations", pickedDate],
+      queryKey: [QUERY_KEY.ROOM_RESERVATION_LIST, pickedDate],
     });
   };
 

@@ -110,18 +110,18 @@ const useTimeSlot = ({ slot, room }: UseTimeSlotProps) => {
       } else {
         // 1-2. 다른 사람 예약 || 지난 내 예약
         setIsOpenDrawer(false);
+        setPickedReservation(null);
       }
     } else {
       // 2. 예약이 없을 경우
       setIsOpenDrawer(true);
-
       setPickedReservation({
-        ...pickedReservation,
         startTime: time,
         endTime: add30Minutes(time || ""),
         resourceSubtype: room.resourceSubtype,
         resourceName: room.name,
         resourceId: room.id,
+        participants: pickedReservation?.participants,
       });
     }
   }

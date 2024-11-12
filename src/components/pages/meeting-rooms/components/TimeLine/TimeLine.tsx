@@ -1,12 +1,17 @@
 import pickedDateAtom from "@/components/pages/meeting-rooms/context/pickedDate";
 import useIsMobile from "@/hooks/useIsMobile";
 import { Reservation, Resource } from "@/lib/api/amplify/helper";
-import { compareTimes, getRoundedCurrentTime } from "@/lib/utils/timeUtils";
+import { createTimeSlots } from "@/lib/utils/createTime";
+import {
+  compareTimes,
+  getRoundedCurrentTime,
+  isTimeInRange,
+} from "@/lib/utils/timeUtils";
 import { targetRefAtom } from "@/store/scrollAtom";
-import { createTimeSlots } from "@/utils/createTime";
 import dayjs from "dayjs";
 import { useAtomValue } from "jotai";
 
+import pickedReservationAtom from "../../context/pickedReservation";
 import useGroupManager from "../../hooks/useGroupManager";
 import ThirtyMinutesTimeBox from "./ThirtyMinutesTimeBox";
 
@@ -24,6 +29,7 @@ function TimeLine({ isHeaderShow, room, reservations = [] }: TimeLineProps) {
   const pickedDate = useAtomValue(pickedDateAtom);
   const currentDay = dayjs().format("YYYY-MM-DD");
   const isToday = pickedDate === currentDay;
+  const pickedReservation = useAtomValue(pickedReservationAtom);
 
   const roomReservations = reservations.filter(
     (reservation) => reservation.resourceName === room.name,
@@ -41,7 +47,7 @@ function TimeLine({ isHeaderShow, room, reservations = [] }: TimeLineProps) {
     return {
       ...slot,
       reservation,
-      hasReservation: !!reservation,
+      resource: room,
       isCurrentTimePeriod,
     };
   });
@@ -71,6 +77,12 @@ function TimeLine({ isHeaderShow, room, reservations = [] }: TimeLineProps) {
           const isPicked =
             (pickedGroup.reservationId &&
               slot.reservation?.id === pickedGroup.reservationId) ||
+            (pickedReservation?.resourceId === room.id &&
+              isTimeInRange(
+                pickedReservation?.startTime || "",
+                pickedReservation?.endTime || "",
+                slot.time || "",
+              )) ||
             false;
           const isFirstInPickedGroup =
             isPicked && index === pickedGroup.groupFirstIndex;

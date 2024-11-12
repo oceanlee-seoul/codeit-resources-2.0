@@ -4,6 +4,7 @@ import Drawer from "@/components/commons/Drawer";
 import ProfileImage from "@/components/commons/ProfileImage";
 import Skeleton from "@/components/commons/Skeleton";
 import { OrderType } from "@/constants/dropdownConstants";
+import QUERY_KEY, { DEFAULT_STALE_TIME } from "@/constants/queryKey";
 import { Team } from "@/lib/api/amplify/helper";
 import { getUserListData } from "@/lib/api/amplify/user";
 import ChevronRight from "@public/icons/icon-chevron-right.svg";
@@ -30,9 +31,9 @@ function MemberList({ openKey, setOpenKey, teamList }: MemberListProps) {
   const orderBy = (query.order as OrderType) || "latest";
 
   const { data, isLoading, error } = useQuery({
-    queryKey: ["memberList", categoryId, orderBy],
+    queryKey: [QUERY_KEY.USER_LIST, categoryId, orderBy],
     queryFn: () => getUserListData(categoryId, orderBy),
-    staleTime: 3 * 60 * 1000,
+    staleTime: DEFAULT_STALE_TIME,
   });
 
   const teamMap = useMemo(

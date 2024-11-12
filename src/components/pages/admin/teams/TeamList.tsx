@@ -1,6 +1,7 @@
 import ListItem from "@/components/commons/ListItem";
 import Popover from "@/components/commons/Popover";
 import Skeleton from "@/components/commons/Skeleton";
+import QUERY_KEY, { DEFAULT_STALE_TIME } from "@/constants/queryKey";
 import useModal from "@/hooks/useModal";
 import { getTeamListData } from "@/lib/api/amplify/team";
 import KebabIcon from "@public/icons/icon-kebab.svg";
@@ -11,9 +12,9 @@ function TeamList() {
   const { openModal } = useModal();
 
   const { data, error, isLoading } = useQuery({
-    queryKey: ["teamList"],
+    queryKey: [QUERY_KEY.TEAM_LIST],
     queryFn: () => getTeamListData(),
-    staleTime: 1 * 60 * 1000,
+    staleTime: DEFAULT_STALE_TIME,
   });
 
   if (isLoading) {

@@ -1,5 +1,6 @@
 import ListItem from "@/components/commons/ListItem";
 import Popover from "@/components/commons/Popover";
+import QUERY_KEY from "@/constants/queryKey";
 import useToast from "@/hooks/useToast";
 import {
   createResource,
@@ -101,7 +102,7 @@ export default function MeetingRoomList({
         });
         success(`회의실 ${newResourceData.name}이(가) 추가되었습니다.`);
         setEditId(null); // 편집 모드 종료
-        queryClient.invalidateQueries({ queryKey: ["roomList"] }); // 쿼리 무효화
+        queryClient.invalidateQueries({ queryKey: [QUERY_KEY.ROOM_LIST] }); // 쿼리 무효화
       }
     } catch (err) {
       error("새로운 회의실 추가에 실패했습니다. 다시 시도해 주세요.");
@@ -138,7 +139,7 @@ export default function MeetingRoomList({
       );
       success("회의실 이름이 성공적으로 변경되었습니다.");
       setEditId(null);
-      queryClient.invalidateQueries({ queryKey: ["roomList"] });
+      queryClient.invalidateQueries({ queryKey: [QUERY_KEY.ROOM_LIST] });
     } catch (err) {
       error("이름 변경에 실패했습니다. 다시 시도해 주세요.");
     }
@@ -150,7 +151,7 @@ export default function MeetingRoomList({
       await deleteResource(id);
       setListItems((prevItems) => prevItems.filter((item) => item.id !== id));
       success(`회의실 ${name}이(가) 성공적으로 삭제되었습니다.`);
-      queryClient.invalidateQueries({ queryKey: ["roomList"] });
+      queryClient.invalidateQueries({ queryKey: [QUERY_KEY.ROOM_LIST] });
     } catch (err) {
       error(`회의실 ${name} 삭제를 실패했습니다. 다시 시도해 주세요.`);
     }
