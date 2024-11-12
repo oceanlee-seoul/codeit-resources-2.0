@@ -18,8 +18,13 @@ export const authOptions: NextAuthOptions = {
           prompt: "select_account",
           access_type: "offline",
           response_type: "code",
-          scope:
-            "https://www.googleapis.com/auth/calendar openid email profile",
+          scope: [
+            "https://www.googleapis.com/auth/calendar",
+            "openid",
+            "email",
+            "profile",
+            "https://www.googleapis.com/auth/cloud-identity.groups.readonly",
+          ].join(" "),
         },
       },
     }),

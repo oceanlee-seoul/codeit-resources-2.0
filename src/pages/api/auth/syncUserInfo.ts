@@ -30,28 +30,47 @@ export default async function handler(
     // DynamoDB에 유저가 있음
     if (resultList.data && resultList.data.length) {
       const userData = resultList.data[0];
-      // 아직 인증되지 않은 유저라면
-      if (userData.isValid === false) {
-        const updateParam = {
-          id: userData.id,
-          isValid: true,
-        };
-        const updateUser = await updateUserData(updateParam);
-        if (!updateUser.data) {
-          return res
-            .status(500)
-            .json({ error: "사용자 정보 업데이트에 실패했습니다." });
-        }
-        return res.status(200).json(updateUser.data);
+      // 이미 유효한 유저라면 바로 반환
+      if (userData.isValid === true) {
+        return res.status(200).json(userData);
       }
-      return res.status(200).json(userData);
+
+      // 아직 인증되지 않은 유저라면 업데이트
+      const updateParam = {
+        id: userData.id,
+        isValid: true,
+      };
+
+      const updateUser = await updateUserData(updateParam);
+      if (!updateUser.data) {
+        return res
+          .status(500)
+          .json({ error: "사용자 정보 업데이트에 실패했습니다." });
+      }
+      return res.status(200).json(updateUser.data);
+    }
+
+    // 신규 사용자인 경우에만 프로필 사진 가져오기
+    const photoResponse = await fetch(
+      `${process.env.NEXTAUTH_URL}/api/auth/profilePhoto`,
+      {
+        headers: {
+          Cookie: req.headers.cookie || "",
+        },
+      },
+    );
+
+    let profilePhoto;
+    if (photoResponse.ok) {
+      const photoData = await photoResponse.json();
+      profilePhoto = photoData.photoUrl;
     }
 
     // DynamoDB에 유저가 없으면
     const param: CreateGoogleUserParams = {
       username: token.name,
       email: token.email,
-      profileImage: token.picture || undefined,
+      profileImage: profilePhoto,
       role: "MEMBER",
       teams: [],
       isValid: true,
