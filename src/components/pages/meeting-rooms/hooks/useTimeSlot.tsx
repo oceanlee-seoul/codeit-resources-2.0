@@ -116,6 +116,7 @@ const useTimeSlot = ({ slot, room }: UseTimeSlotProps) => {
       setIsOpenDrawer(true);
 
       setPickedReservation({
+        ...pickedReservation,
         startTime: time,
         endTime: add30Minutes(time || ""),
         resourceSubtype: room.resourceSubtype,

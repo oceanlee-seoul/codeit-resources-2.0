@@ -17,7 +17,7 @@ function useReservationSchema() {
       endTime: z
         .string()
         .min(1, "필수 입력란")
-        .regex(/^([01]\d|2[0-3]):([0-5]\d)$/, "유효하지 않은 형식"),
+        .regex(/^([01]\d|2[0-4]):([0-5]\d)$/, "유효하지 않은 형식"),
       participants: z
         .array(
           z.object({

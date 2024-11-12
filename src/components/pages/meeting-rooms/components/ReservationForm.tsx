@@ -102,6 +102,8 @@ function ReservationForm({ members }: ReservationFormProps) {
   const resource = roomList.find((room) => room.id === resourceId);
   const startTime = watch("startTime");
   const endTime = watch("endTime");
+  const title = watch("title");
+  const participants = watch("participants");
 
   const onSubmit = async (data: CreateReservationData) => {
     // pickedDate가 없을 경우 함수 실행 중단
@@ -132,14 +134,23 @@ function ReservationForm({ members }: ReservationFormProps) {
     if (startTime && endTime && resourceId) {
       setPickedReservation((prev) => ({
         ...prev,
+        title,
         startTime,
         endTime,
         resourceName: resource?.name || "",
         resourceSubtype: resource?.resourceSubtype || "",
         resourceId,
+        participants: participants.map((participant) => participant.id),
       }));
     }
-  }, [startTime, endTime, resourceId, setPickedReservation]);
+  }, [
+    title,
+    participants.length,
+    startTime,
+    endTime,
+    resourceId,
+    setPickedReservation,
+  ]);
 
   useEffect(() => {
     if (!isOpenDrawer) {

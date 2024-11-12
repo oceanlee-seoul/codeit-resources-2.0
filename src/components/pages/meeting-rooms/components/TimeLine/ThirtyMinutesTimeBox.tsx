@@ -170,9 +170,11 @@ function ThirtyMinutesTimeBox(
   /** 스타일 코드 */
   const MyReservationClass = {
     TIME_SLOT_BAR: isMyReservationOrPicked && "bg-purple-70",
-    TIME_SLOT_HOVER_GROUP:
-      isMyReservationOrPicked &&
-      TimeSlotStyle.purpleBorder(isFirstInHoverGroup, isLastInHoverGroup),
+    TIME_SLOT_HOVER_GROUP: slot.isHovered &&
+      isMyReservationOrPicked && {
+        "bg-[#9933FF1A]": !isConflictReservation,
+        "bg-[#FBDBE366]": isConflictReservation,
+      },
   };
 
   const PickedReservationClass = {
@@ -223,13 +225,31 @@ function ThirtyMinutesTimeBox(
     otherReservationClass.TIME_SLOT_BAR,
   );
 
-  const timeSlotHoverGroupClass = clsx(
-    PickedReservationClass.TIME_SLOT_HOVER_GROUP,
-    MyReservationClass.TIME_SLOT_HOVER_GROUP,
-    otherReservationClass.TIME_SLOT_HOVER_GROUP,
-  );
+  const generalTimeSlotClass = {
+    TIME_SLOT_BACKGROUND: slot.isHovered && "bg-[#3332361A]",
+    TIME_SLOT_BORDER: slot.isHovered && {
+      // 일반 예약 (회색)
+      [TimeSlotStyle.grayBorder(isFirstInHoverGroup, isLastInHoverGroup)]:
+        !isMyReservationOrPicked,
 
-  const timeSlotClassBorder = clsx();
+      // 내 예약 또는 선택된 예약 (보라색)
+      [TimeSlotStyle.purpleBorder(isFirstInHoverGroup, isLastInHoverGroup)]:
+        isMyReservationOrPicked && !isConflictReservation,
+
+      // 충돌하는 예약 (빨간색)
+      [TimeSlotStyle.redBorder(isFirstInHoverGroup, isLastInHoverGroup)]:
+        isPickedTimeSlot && isConflictReservation,
+    },
+  };
+
+  const timeSlotHoverGroupClass = clsx(
+    // 호버 시 배경색 클래스
+    generalTimeSlotClass.TIME_SLOT_BACKGROUND,
+    // 나의 예약이거나 선택된 예약인 경우
+    MyReservationClass.TIME_SLOT_HOVER_GROUP,
+    // 보더 스타일
+    generalTimeSlotClass.TIME_SLOT_BORDER,
+  );
 
   return (
     <li
@@ -258,10 +278,9 @@ function ThirtyMinutesTimeBox(
               className={clsx(
                 "absolute inset-0 left-1 z-20 -mx-1",
                 PickedReservationClass.TIME_SLOT_GROUP,
-                slot.isHovered && timeSlotHoverGroupClass,
-                slot.isHovered && timeSlotClassBorder,
-                !slot.isHovered &&
-                  "hover:bg-gray-100-opacity-10 hover:shadow-[inset_0_0_0_1px_#413B541A]",
+                slot.isHovered
+                  ? timeSlotHoverGroupClass
+                  : "hover:bg-gray-100-opacity-10 hover:shadow-[inset_0_0_0_1px_#413B541A]",
               )}
             >
               {(hasReservation || isPickedTimeSlot) && (
