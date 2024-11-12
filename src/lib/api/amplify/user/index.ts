@@ -54,6 +54,7 @@ export type UpdateUserParams = {
   email?: string;
   profileImage?: string;
   teams?: string[];
+  isValid?: boolean;
 };
 /**
  * @description [유저 정보 수정하기]
@@ -116,7 +117,7 @@ export type CreateGoogleUserParams = {
   role: Role; // 유저 역할 ADMIN | MEMBER
   teams: string[]; // 소속 팀
   profileImage?: string; // 유저 프로필 이미지
-  // cognitoId: string;
+  isValid: boolean;
 };
 /**
  * @description [유저 생성하기] - 구글 로그인
