@@ -4,9 +4,7 @@ import { generateClient } from "aws-amplify/data";
 import { type Schema } from "../../../../amplify/data/resource";
 import outputs from "../../../../amplify_outputs.json";
 
-Amplify.configure(outputs, {
-  ssr: true,
-});
+Amplify.configure(outputs);
 
 export type AmplifyResponseType<T> = {
   data: T;

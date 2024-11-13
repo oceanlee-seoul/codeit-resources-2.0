@@ -30,7 +30,7 @@ function SeatBlockSkeleton({ length }: { length: number }) {
 
 function SeatButtonSkeleton() {
   return (
-    <div className="relative mb-5 h-36 w-60 overflow-hidden rounded-3 border border-gray-100-opacity-20 bg-white px-10 md:h-48 md:w-90">
+    <div className="relative h-36 w-60 overflow-hidden rounded-3 border border-gray-100-opacity-20 bg-white px-10 md:h-48 md:w-90">
       <div className="animate-shimmer absolute inset-0 bg-gradient-to-r from-transparent via-gray-70 to-transparent opacity-10" />
     </div>
   );

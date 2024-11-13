@@ -51,7 +51,7 @@ function SeatButton({ name, status, participant }: Props) {
   };
 
   const classnames = clsx(
-    "rounded-3 relative border-gray-100-opacity-20 text-12 md:text-16 md:w-90 px-10 h-36 w-60 border focus:bg-[#E9CCFF] hover:enabled:bg-[#E9CCFF] disabled:cursor-not-allowed md:h-48 transition-colors duration-300",
+    "rounded-3 relative select-none border-gray-100-opacity-20 text-12 md:text-16 md:w-90 px-10 h-36 w-60 border focus:bg-[#E9CCFF] hover:enabled:bg-[#E9CCFF] disabled:cursor-not-allowed md:h-48 transition-colors duration-300",
     {
       "bg-white text-gray-30 hover:text-white": status === "enable",
       "bg-[#3332360D] overflow-hidden": status === "disabled",
@@ -62,7 +62,7 @@ function SeatButton({ name, status, participant }: Props) {
   );
 
   return (
-    <div className="group relative">
+    <div className="group relative h-36 md:h-48">
       <button
         type="button"
         disabled={

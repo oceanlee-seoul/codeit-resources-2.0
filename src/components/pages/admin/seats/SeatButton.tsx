@@ -87,7 +87,7 @@ export default function SeatButton({ name, status, participant }: Props) {
   };
 
   const classnames = clsx(
-    "rounded-3 border-gray-100-opacity-20 text-12 md:text-16 md:w-90 relative h-36 w-60 border px-10 transition-colors duration-300 disabled:cursor-not-allowed md:h-48",
+    "rounded-3 select-none border-gray-100-opacity-20 text-12 md:text-16 md:w-90 relative h-36 w-60 border px-10 transition-colors duration-300 disabled:cursor-not-allowed md:h-48",
     {
       "bg-white hover:outline-gray-100-opacity-100 hover:outline hover:outline-1 text-gray-30 hover:text-gray-70":
         status === "enable",
@@ -102,7 +102,7 @@ export default function SeatButton({ name, status, participant }: Props) {
   );
 
   return (
-    <div className="group relative">
+    <div className="group relative h-36 md:h-48">
       <button
         type="button"
         className={classnames}

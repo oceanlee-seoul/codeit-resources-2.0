@@ -6,7 +6,7 @@ export default function SeatGrid() {
   const allSeatsData = useGetAllSeatsData();
 
   return (
-    <div className="mx-16 mb-200 overflow-x-auto md:mx-60 lg:mx-118">
+    <div className="no-scrollbar mx-16 mb-200 overflow-x-auto md:mx-60 lg:mx-118">
       <div className="my-28 grid w-[668px] auto-rows-auto grid-cols-2 gap-40 md:mx-0 md:w-[1004px] xl:flex-shrink-0">
         <SeatBlock seatsData={allSeatsData.A} />
         <SeatBlock seatsData={allSeatsData.B} />

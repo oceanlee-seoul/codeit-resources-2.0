@@ -1,6 +1,6 @@
 export default function Loading() {
   return (
-    <div className="mb-200 overflow-x-auto md:mx-60">
+    <div className="no-scrollbar mb-200 overflow-x-auto md:mx-60">
       <div className="mx-16 my-28 grid w-[668px] auto-rows-auto grid-cols-2 gap-40 md:my-70 md:w-[1004px] xl:flex-shrink-0">
         <SeatBlockSkeleton length={4} />
         <SeatBlockSkeleton length={5} />
@@ -30,7 +30,7 @@ function SeatBlockSkeleton({ length }: { length: number }) {
 
 function SeatButtonSkeleton() {
   return (
-    <div className="relative mb-5 h-36 w-60 overflow-hidden rounded-3 border border-gray-100-opacity-20 bg-white px-10 md:h-48 md:w-90">
+    <div className="relative h-36 w-60 overflow-hidden rounded-3 border border-gray-100-opacity-20 bg-white px-10 md:h-48 md:w-90">
       <div className="animate-shimmer absolute inset-0 bg-gradient-to-r from-transparent via-gray-70 to-transparent opacity-10" />
     </div>
   );
