@@ -1,13 +1,12 @@
 import Button from "@/components/commons/Button";
 import TeamsSelectDropdown from "@/components/commons/Dropdown/MultiSelectDropdown/TeamsSelectDropdown";
 import Input from "@/components/commons/Input";
+import ProfileImage from "@/components/commons/ProfileImage";
 import Radio from "@/components/commons/Radio";
 import { Team } from "@/lib/api/amplify/helper";
 import { TeamInput } from "@/lib/zod-schema/user";
 import LoadingSpinner from "@public/gifs/loading-spinner.svg";
 import { useFormContext } from "react-hook-form";
-
-import MemberProfileImage from "./MemberProfileImage";
 
 interface MemberFormProps {
   teamList: Team[];
@@ -15,6 +14,7 @@ interface MemberFormProps {
   setSelectedTeams: (value: (prev: Team[]) => Team[]) => void;
   isLoading: boolean;
   mode: "edit" | "add";
+  isValidUser?: boolean;
 }
 
 function MemberForm({
@@ -23,9 +23,11 @@ function MemberForm({
   setSelectedTeams,
   isLoading,
   mode,
+  isValidUser,
 }: MemberFormProps) {
   const {
     register,
+    watch,
     formState: { errors, isValid },
   } = useFormContext<TeamInput>();
 
@@ -66,6 +68,7 @@ function MemberForm({
           id="email"
           label="멤버 이메일"
           register={register("email")}
+          disabled={isValidUser}
         />
         <TeamsSelectDropdown
           selectedTeams={selectedTeams}
@@ -73,7 +76,7 @@ function MemberForm({
           onRemove={handleRemove}
           departmentList={teamList}
         />
-        <MemberProfileImage />
+        {mode === "edit" && <ProfileImage size="xl" />}
       </div>
 
       <div>

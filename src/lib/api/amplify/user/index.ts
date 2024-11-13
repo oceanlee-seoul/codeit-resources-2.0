@@ -132,10 +132,29 @@ export type CreateGoogleUserParams = {
  *
  * id, username, email, role, teams 모두 입력받아야 합니다.
  */
-export const createGoogleUser = async (param: CreateGoogleUserParams) => {
-  const userList = await getUserListByEmail(param.email);
-  if (userList.data.length) {
-    return null;
+export const createGoogleUser = async (param: CreateGoogleUserParams) =>
+  client.models.User.create(param);
+
+/**
+ * 관리자가 유저 수정하기
+ */
+export const updateUserByAdmin = async (param: UpdateUserParams) => {
+  if (param.email) {
+    const userData = await getUserListByEmail(param.email);
+    if (userData.data.length) {
+      throw new Error("이미 존재하는 이메일입니다.");
+    }
+  }
+  return client.models.User.update(param);
+};
+
+/**
+ * 관리자가 유저 추가하기
+ */
+export const createUserByAdmin = async (param: CreateGoogleUserParams) => {
+  const userData = await getUserListByEmail(param.email);
+  if (userData.data.length) {
+    throw new Error("이미 존재하는 이메일입니다.");
   }
   return client.models.User.create(param);
 };

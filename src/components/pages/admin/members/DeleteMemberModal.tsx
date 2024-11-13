@@ -5,7 +5,6 @@ import useModal from "@/hooks/useModal";
 import useToast from "@/hooks/useToast";
 import { User } from "@/lib/api/amplify/helper";
 import { deleteUserData } from "@/lib/api/amplify/user";
-import { removeUserFromCognito } from "@/lib/utils/autoAuthUser";
 import LoadingSpinner from "@public/gifs/loading-spinner.svg";
 import IconAlert from "@public/icons/icon-modal-alert.svg";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -18,13 +17,12 @@ interface DeleteMemberModalProps {
 
 function DeleteMemberModal({ userData, setOpenKey }: DeleteMemberModalProps) {
   const [input, setInput] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
 
   const { closeModal } = useModal();
   const { success, error } = useToast();
   const queryClient = useQueryClient();
 
-  const { mutate } = useMutation({
+  const { mutate, isPending } = useMutation({
     mutationFn: () => deleteUserData(userData.id),
     onSuccess: () => {
       success(`${userData.username} 님이 삭제되었습니다.`);
@@ -34,25 +32,13 @@ function DeleteMemberModal({ userData, setOpenKey }: DeleteMemberModalProps) {
       setOpenKey(null);
     },
     onError: () => {
-      error("멤버를 삭제하는데 실패하였습니다.");
+      error(`${userData.username} 님을 삭제하는데 실패하였습니다.`);
     },
+    onSettled: () => closeModal(),
   });
 
   const handleDeleteModal = async () => {
-    setIsLoading(true);
-    try {
-      await removeUserFromCognito(userData.email);
-      mutate();
-    } catch (err) {
-      if (err instanceof Error) {
-        error(err.message);
-      } else {
-        error(`${userData.username} 님을 삭제하지 못했습니다.`);
-      }
-    } finally {
-      closeModal();
-      setIsLoading(false);
-    }
+    mutate();
   };
 
   return (
@@ -72,6 +58,7 @@ function DeleteMemberModal({ userData, setOpenKey }: DeleteMemberModalProps) {
           label="탈퇴할 멤버 이름을 입력해주세요"
           value={input}
           onChange={(e) => setInput(e.target.value)}
+          autoComplete="off"
         />
       </div>
       <div className="flex gap-20">
@@ -89,9 +76,9 @@ function DeleteMemberModal({ userData, setOpenKey }: DeleteMemberModalProps) {
           size="modal"
           width="w-86"
           height="h-40"
-          disabled={input !== userData.username || isLoading}
+          disabled={input !== userData.username || isPending}
         >
-          {isLoading ? <LoadingSpinner height={27} width="100%" /> : "탈퇴하기"}
+          {isPending ? <LoadingSpinner height={27} width="100%" /> : "탈퇴하기"}
         </Button>
       </div>
     </div>

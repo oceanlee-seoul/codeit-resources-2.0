@@ -31,7 +31,7 @@ body {
 }
 
 .input-base {
-  @apply block h-56 w-full appearance-none rounded-8 border px-16 text-16-500 text-gray-100 outline-none duration-200 hover:bg-gray-10;
+  @apply block h-56 w-full appearance-none rounded-8 border px-16 text-16-500 outline-none duration-200 hover:bg-gray-10;
 }
 
 .label-base {

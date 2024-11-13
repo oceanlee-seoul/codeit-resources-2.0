@@ -21,6 +21,7 @@ function Input({
   errorMessage = "",
   type = "text",
   register,
+  disabled,
   ...props
 }: InputProps) {
   return (
@@ -31,11 +32,14 @@ function Input({
           name={id}
           required
           type={type}
+          disabled={disabled}
           {...register}
           className={clsx("input-base autofill-target peer", {
             "border-status-negative": errorMessage,
             "border-gray-100-opacity-60 placeholder-shown:border-gray-100-opacity-20 focus:border-purple-70 focus:bg-purple-5":
               !errorMessage,
+            "cursor-not-allowed bg-gray-10 text-gray-100-opacity-50": disabled,
+            "text-gray-100": !disabled,
           })}
           placeholder=" "
           {...props}
