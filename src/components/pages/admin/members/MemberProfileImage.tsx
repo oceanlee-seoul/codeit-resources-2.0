@@ -63,7 +63,7 @@ function MemberProfileImage() {
         ) : (
           <ProfileImage imagePath={imagePath} size="xl" />
         )}
-        <div className="relative">
+        {/* <div className="relative">
           <Button variant="secondary" size="small" width="w-90" height="h-32">
             사진 업로드
           </Button>
@@ -79,7 +79,7 @@ function MemberProfileImage() {
             onChange={handleImageUpload}
             style={{ display: "none" }}
           />
-        </div>
+        </div> */}
       </div>
       {errorMessage && (
         <p className="text-13-500 text-status-negative">※{errorMessage}</p>

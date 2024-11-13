@@ -3,6 +3,7 @@ import QUERY_KEY, { DEFAULT_STALE_TIME } from "@/constants/queryKey";
 import { getImageUrl } from "@/lib/api/amplify/storage";
 import { useQuery } from "@tanstack/react-query";
 import clsx from "clsx";
+import Image from "next/image";
 import { useEffect, useState } from "react";
 
 interface Props {
@@ -16,37 +17,49 @@ interface Props {
 
 const DEFAULT_IMAGE = "/images/default-profile.png";
 
+const sizeMap = {
+  sm: 32,
+  md: 40,
+  lg: 72,
+  xl: 120,
+};
+
 export default function ProfileImage({
   imagePath,
   size = "md",
   userName,
 }: Props) {
-  const [imageSrc, setImageSrc] = useState(DEFAULT_IMAGE);
+  const widthHeight = sizeMap[size];
+  // const [imageSrc, setImageSrc] = useState(imagePath);
 
-  const { data: imageUrl } = useQuery({
-    queryKey: [QUERY_KEY.PROFILE_IMAGE, imagePath],
-    queryFn: () => imagePath && getImageUrl(imagePath),
-    enabled: !!imagePath,
-    staleTime: DEFAULT_STALE_TIME,
-  });
+  // const { data: imageUrl } = useQuery({
+  //   queryKey: [QUERY_KEY.PROFILE_IMAGE, imagePath],
+  //   queryFn: () => imagePath && getImageUrl(imagePath),
+  //   enabled: !!imagePath,
+  //   staleTime: DEFAULT_STALE_TIME,
+  // });
 
-  const classnames = clsx("rounded-full object-cover", {
-    "size-32": size === "sm",
-    "size-40": size === "md",
-    "size-72": size === "lg",
-    "size-120": size === "xl",
-  });
+  // const classnames = clsx("rounded-full object-cover", {
+  //   "size-32": size === "sm",
+  //   "size-40": size === "md",
+  //   "size-72": size === "lg",
+  //   "size-120": size === "xl",
+  // });
 
-  useEffect(() => {
-    if (imageUrl) setImageSrc(imageUrl);
-  }, [imageUrl]);
+  // useEffect(() => {
+  //   if (imagePath) setImageSrc(imagePath);
+
+  //   console.log(imageSrc);
+  // }, [imagePath]);
 
   return (
-    <img
-      src={imageSrc}
+    <Image
+      src={imagePath || DEFAULT_IMAGE}
       alt={userName ? `${userName}의 profile` : "profile"}
-      className={classnames}
-      onError={() => setImageSrc(DEFAULT_IMAGE)}
+      width={widthHeight}
+      height={widthHeight}
+      className="rounded-full object-cover"
+      // onError={() => setImageSrc(DEFAULT_IMAGE)}
     />
   );
 }

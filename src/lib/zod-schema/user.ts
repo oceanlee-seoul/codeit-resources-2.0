@@ -25,29 +25,6 @@ const loginSchema = z.object({
   password: passwordSchema,
 });
 
-const passwordChangeSchema = z
-  .object({
-    currentPassword: z.string().min(1, "현재 비밀번호는 필수 입력입니다."),
-    newPassword: passwordSchema,
-    confirmPassword: z.string().min(1, "비밀번호 확인은 필수 입력입니다."),
-  })
-  .superRefine((data, ctx) => {
-    if (data.newPassword === data.currentPassword) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: "새 비밀번호는 현재 비밀번호와 같을 수 없습니다.",
-        path: ["newPassword"],
-      });
-    }
-    if (data.newPassword !== data.confirmPassword) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: "비밀번호 확인이 일치하지 않습니다.",
-        path: ["confirmPassword"],
-      });
-    }
-  });
-
 const memberSchema = z.object({
   role: z.enum(["MEMBER", "ADMIN"]),
   username: z
@@ -85,7 +62,6 @@ export {
   emailSchema,
   passwordSchema,
   loginSchema,
-  passwordChangeSchema,
   memberSchema,
   findPasswordSchema,
 };

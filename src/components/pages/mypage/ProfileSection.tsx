@@ -52,15 +52,8 @@ export default function ProfileSection() {
     return <ProfileSectionSkeleton />;
   }
 
-  const teamBadges = userData?.teams
-    ?.map((teamId) => {
-      const team = teamData?.find((teamItem) => teamItem.id === teamId);
-      return team ? (
-        <Badge key={teamId} variant="secondarySmall">
-          {team.name}
-        </Badge>
-      ) : null;
-    })
+  const myTeamList = userData?.teams
+    ?.map((teamId) => teamData?.find((teamItem) => teamItem.id === teamId))
     .filter(Boolean);
 
   return (
@@ -79,7 +72,6 @@ export default function ProfileSection() {
                   imagePath={user?.profileImage ?? undefined}
                 />
               )}
-              <ProfileImageUploader />
             </div>
             <div className="flex flex-col gap-5 rounded-8 border bg-gray-10 px-16 py-12">
               <div className="flex items-center">
@@ -106,7 +98,19 @@ export default function ProfileSection() {
                   팀
                 </span>
                 <span className="ml-30 inline-block text-16-400 text-gray-100">
-                  <div className="flex gap-3">{teamBadges}</div>
+                  <div className="flex gap-3">
+                    {myTeamList && myTeamList.length > 0 ? (
+                      myTeamList.map((team) => (
+                        <Badge key={team?.id} variant="secondarySmall">
+                          {team?.name}
+                        </Badge>
+                      ))
+                    ) : (
+                      <span className="text-gray-100-opacity-70">
+                        소속된 팀이 없습니다
+                      </span>
+                    )}
+                  </div>
                 </span>
               </div>
             </div>
@@ -137,7 +141,19 @@ export default function ProfileSection() {
                 팀
               </span>
               <span className="ml-30 inline-block text-16-400 text-gray-100">
-                <div className="flex gap-3">{teamBadges}</div>
+                <div className="flex gap-3">
+                  {myTeamList && myTeamList.length > 0 ? (
+                    myTeamList.map((team) => (
+                      <Badge key={team?.id} variant="secondarySmall">
+                        {team?.name}
+                      </Badge>
+                    ))
+                  ) : (
+                    <span className="text-gray-100-opacity-70">
+                      소속된 팀이 없습니다
+                    </span>
+                  )}
+                </div>
               </span>
             </div>
             <div className="flex items-center">
@@ -151,7 +167,6 @@ export default function ProfileSection() {
                     imagePath={user?.profileImage ?? undefined}
                   />
                 )}
-                <ProfileImageUploader />
               </div>
             </div>
           </>
