@@ -1,29 +1,12 @@
-/* eslint-disable no-useless-escape */
 import { z } from "zod";
 
 const emailSchema = z
   .string()
   .min(1, "이메일은 필수 입력입니다.")
-  .email("이메일 형식으로 작성해 주세요.");
-// .refine((email) => email.endsWith("@codeit.kr"), {
-//   message: "이메일 도메인은 @codeit.kr 이어야 합니다.",
-// }),
-
-const passwordSchema = z
-  .string()
-  .min(1, "비밀번호는 필수 입력입니다.")
-  .min(8, "비밀번호는 최소 8자 이상입니다.")
-  .regex(
-    /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?`~^$*\s]/,
-    "비밀번호는 최소 1개 이상의 특수문자를 포함해야 합니다.",
-  )
-  .regex(/[a-z]/, "비밀번호는 최소 1개 이상의 소문자를 포함해야 합니다.")
-  .regex(/\d/, "비밀번호는 최소 1개 이상의 숫자를 포함해야 합니다.");
-
-const loginSchema = z.object({
-  email: emailSchema,
-  password: passwordSchema,
-});
+  .email("이메일 형식으로 작성해 주세요.")
+  .refine((email) => email.endsWith("@codeit.kr"), {
+    message: "이메일 도메인은 @codeit.kr 이어야 합니다.",
+  });
 
 const memberSchema = z.object({
   role: z.enum(["MEMBER", "ADMIN"]),
@@ -34,34 +17,11 @@ const memberSchema = z.object({
   email: emailSchema,
 });
 
-const findPasswordSchema = z
-  .object({
-    code: z.string(),
-    newPassword: passwordSchema,
-    confirmPassword: passwordSchema,
-  })
-  .superRefine((data, ctx) => {
-    if (data.newPassword !== data.confirmPassword) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: "비밀번호가 일치하지 않습니다.",
-        path: ["confirmPassword"],
-      });
-    }
-  });
-
 export type TeamInput = {
   username: string;
   email: string;
   teams: string[];
   role: "MEMBER" | "ADMIN";
-  image: File | string | null;
 };
 
-export {
-  emailSchema,
-  passwordSchema,
-  loginSchema,
-  memberSchema,
-  findPasswordSchema,
-};
+export { emailSchema, memberSchema };

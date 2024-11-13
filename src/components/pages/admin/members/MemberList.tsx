@@ -52,22 +52,6 @@ function MemberList({ openKey, setOpenKey, teamList }: MemberListProps) {
     setOpenKey(null);
   }, [categoryId, orderBy]);
 
-  // 카테고리 업데이트 시 쿼리 파라미터 변경
-  const handleCategoryChange = (newCategoryId: string) => {
-    router.push({
-      pathname: router.pathname,
-      query: { ...query, category: newCategoryId },
-    });
-  };
-
-  // 정렬 업데이트 시 쿼리 파라미터 변경
-  const handleOrderChange = (newOrder: OrderType) => {
-    router.push({
-      pathname: router.pathname,
-      query: { ...query, order: newOrder },
-    });
-  };
-
   if (isLoading) {
     return (
       <div className="mt-24 flex flex-col gap-16">
