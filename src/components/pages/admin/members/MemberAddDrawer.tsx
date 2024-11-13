@@ -1,10 +1,7 @@
 import QUERY_KEY from "@/constants/queryKey";
 import useToast from "@/hooks/useToast";
 import { Team } from "@/lib/api/amplify/helper";
-import {
-  CreateGoogleUserParams,
-  createUserByAdmin,
-} from "@/lib/api/amplify/user";
+import { CreateUserParams, createUserData } from "@/lib/api/amplify/user";
 import { TeamInput, memberSchema } from "@/lib/zod-schema/user";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -36,7 +33,7 @@ function MemberAddDrawer({ setOpenKey, teamList }: MemberAddDrawerProps) {
   });
 
   const { mutate, isPending } = useMutation({
-    mutationFn: (data: CreateGoogleUserParams) => createUserByAdmin(data),
+    mutationFn: (data: CreateUserParams) => createUserData(data),
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: [QUERY_KEY.USER_LIST] });
       success(`${variables.username} 님을 추가했습니다.`);
@@ -50,7 +47,7 @@ function MemberAddDrawer({ setOpenKey, teamList }: MemberAddDrawerProps) {
   });
 
   const onSubmit: SubmitHandler<TeamInput> = async (data) => {
-    const formData: CreateGoogleUserParams = {
+    const formData: CreateUserParams = {
       ...data,
       teams: selectedTeams.map((t) => t.id),
       isValid: false,

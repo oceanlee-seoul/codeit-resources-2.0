@@ -3,24 +3,6 @@ import { OrderType } from "@/constants/dropdownConstants";
 import { Role, client } from "../helper";
 import { fetchUsersByRole, sortUserList } from "./utils";
 
-// TODO: 팀이 새롭게 생성되어서 멤버 목록 관련된 API는 추후에 해보겠습니다.
-
-export type CreateUserParams = {
-  id: string; // cognito에서 생성된 id값으로 진행합니다.
-  username: string; // 유저 이름
-  email: string; // 유저 이메일
-  role: Role; // 유저 역할 ADMIN | MEMBER
-  teams: string[]; // 소속 팀
-  profileImage?: string; // 유저 프로필 이미지
-};
-/**
- * @description [유저 생성하기] - 관리자 페이지
- *
- * id, username, email, role, teams 모두 입력받아야 합니다.
- */
-export const createUserData = async (param: CreateUserParams) =>
-  client.models.User.create(param);
-
 /**
  * @description [특정 유저 정보 가져오기]
  *
@@ -117,9 +99,9 @@ export const getUserListByEmail = async (email: string) =>
   });
 
 /**
- * 구글 로그인한 유저 생성하기
+ * 유저 생성하기
  */
-export type CreateGoogleUserParams = {
+export type CreateUserParams = {
   username: string; // 유저 이름
   email: string; // 유저 이메일
   role: Role; // 유저 역할 ADMIN | MEMBER
@@ -128,15 +110,20 @@ export type CreateGoogleUserParams = {
   isValid: boolean;
 };
 /**
- * @description [유저 생성하기] - 구글 로그인
+ * @description [유저 생성하기]
  *
  * id, username, email, role, teams 모두 입력받아야 합니다.
  */
-export const createGoogleUser = async (param: CreateGoogleUserParams) =>
-  client.models.User.create(param);
+export const createUserData = async (param: CreateUserParams) => {
+  const userData = await getUserListByEmail(param.email);
+  if (userData.data.length) {
+    throw new Error("이미 존재하는 이메일입니다.");
+  }
+  return client.models.User.create(param);
+};
 
 /**
- * 관리자가 유저 수정하기
+ * 유저 수정하기
  */
 export const updateUserByAdmin = async (param: UpdateUserParams) => {
   if (param.email) {
@@ -146,15 +133,4 @@ export const updateUserByAdmin = async (param: UpdateUserParams) => {
     }
   }
   return client.models.User.update(param);
-};
-
-/**
- * 관리자가 유저 추가하기
- */
-export const createUserByAdmin = async (param: CreateGoogleUserParams) => {
-  const userData = await getUserListByEmail(param.email);
-  if (userData.data.length) {
-    throw new Error("이미 존재하는 이메일입니다.");
-  }
-  return client.models.User.create(param);
 };

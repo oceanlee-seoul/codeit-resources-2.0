@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 import NextAuth, { NextAuthOptions } from "next-auth";
 import { JWT } from "next-auth/jwt";
 import GoogleProvider from "next-auth/providers/google";
@@ -30,6 +31,31 @@ export const authOptions: NextAuthOptions = {
     }),
   ],
   callbacks: {
+    async signIn({ user, account }) {
+      try {
+        if (account?.access_token) {
+          const response = await fetch(
+            "https://people.googleapis.com/v1/people/me?personFields=photos",
+            {
+              headers: {
+                Authorization: `Bearer ${account.access_token}`,
+                Accept: "application/json",
+              },
+            },
+          );
+
+          if (response.ok) {
+            const data = await response.json();
+            if (data.photos && data.photos[0]?.url) {
+              user.image = data.photos[0].url;
+            }
+          }
+        }
+        return true;
+      } catch {
+        return true;
+      }
+    },
     async jwt({ token, account }): Promise<Token> {
       if (account) {
         const newToken = {
