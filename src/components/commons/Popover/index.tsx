@@ -1,5 +1,7 @@
 // useDropdown 훅을 import
+import { VARIANTS } from "@/constants/dropdownConstants";
 import useDropdown from "@/hooks/useDropdown";
+import { AnimatePresence, motion } from "framer-motion";
 import React, { ReactNode, createContext, useContext, useMemo } from "react";
 
 import { PopoverContextType } from "../Dropdown/dropdownType";
@@ -58,11 +60,22 @@ function Toggle({ icon }: ToggleProps) {
 function Wrapper({ children }: { children: React.ReactNode }) {
   const { isOpen } = usePopoverContext();
 
-  return isOpen ? (
-    <div className="absolute left-auto right-0 z-[100] mt-3 flex w-auto flex-col gap-3 rounded-8 border border-gray-20 bg-gray-5 p-8 shadow-dropdown-wrapper">
-      {children}
-    </div>
-  ) : null;
+  return (
+    <AnimatePresence>
+      {isOpen && (
+        <motion.div
+          className="dropdown-wrapper-base left-auto right-0 w-auto"
+          initial="hidden"
+          animate="visible"
+          exit="exit"
+          variants={VARIANTS.fade}
+          transition={{ duration: 0.1 }}
+        >
+          {children}
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
 }
 
 // Item 컴포넌트

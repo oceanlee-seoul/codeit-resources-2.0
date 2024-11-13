@@ -9,4 +9,12 @@ export const ORDER_OPTIONS = {
   oldest: "오래된순",
 } as const;
 
+export const VARIANTS = {
+  fade: {
+    hidden: { opacity: 0 },
+    visible: { opacity: 1 },
+    exit: { opacity: 0 },
+  },
+} as const;
+
 export type OrderType = keyof typeof ORDER_OPTIONS;

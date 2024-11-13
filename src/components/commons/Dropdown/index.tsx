@@ -1,7 +1,12 @@
 import CheckIcon from "@/../public/icons/icon-check.svg";
-import { ORDER_OPTIONS, ROLE_OPTIONS } from "@/constants/dropdownConstants";
+import {
+  ORDER_OPTIONS,
+  ROLE_OPTIONS,
+  VARIANTS,
+} from "@/constants/dropdownConstants";
 import useDropdown from "@/hooks/useDropdown";
 import clsx from "clsx";
+import { AnimatePresence, motion } from "framer-motion";
 import React, {
   createContext,
   useCallback,
@@ -221,20 +226,26 @@ function Wrapper({ children }: { children: React.ReactNode }) {
     }
   }, [isOpen]);
 
-  return isOpen ? (
-    <div
-      ref={wrapperRef}
-      className={clsx(
-        "absolute z-50 mt-3 flex max-h-168 flex-col gap-3 overflow-y-auto rounded-8 border border-gray-20 bg-gray-5 p-8 shadow-dropdown-wrapper",
-        {
-          "right-0 w-96": variant === "order",
-          "w-full": variant !== "order",
-        },
+  return (
+    <AnimatePresence>
+      {isOpen && (
+        <motion.div
+          ref={wrapperRef}
+          className={clsx("dropdown-wrapper-base max-h-168", {
+            "right-0 w-96": variant === "order",
+            "w-full": variant !== "order",
+          })}
+          initial="hidden"
+          animate="visible"
+          exit="exit"
+          variants={VARIANTS.fade}
+          transition={{ duration: 0.1 }}
+        >
+          {children}
+        </motion.div>
       )}
-    >
-      {children}
-    </div>
-  ) : null;
+    </AnimatePresence>
+  );
 }
 
 // 클릭 시 value가 변경되는 드랍다운 Item

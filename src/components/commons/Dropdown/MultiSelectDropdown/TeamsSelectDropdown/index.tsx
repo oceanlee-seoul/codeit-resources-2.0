@@ -1,10 +1,13 @@
+import Badge from "@/components/commons/Badge";
+import { VARIANTS } from "@/constants/dropdownConstants";
+import useDropdown from "@/hooks/useDropdown";
 import ArrowDown from "@public/icons/icon-arrow-down.svg";
 import CheckedBox from "@public/icons/icon-checkbox-active.svg";
 import UnCheckedBox from "@public/icons/icon-checkbox.svg";
-import Badge from "@/components/commons/Badge";
-import useDropdown from "@/hooks/useDropdown";
 import clsx from "clsx";
+import { AnimatePresence, motion } from "framer-motion";
 import React, { createContext, useContext, useMemo } from "react";
+
 import {
   Team,
   TeamsSelectDropdownContextType,
@@ -67,9 +70,15 @@ function Toggle() {
     <button
       type="button"
       onClick={toggleDropdown}
-      className="group relative flex h-56 w-full items-center justify-between rounded-8 border border-gray-100-opacity-20 px-20 py-14 text-left text-16 hover:border-purple-70"
+      className={clsx(
+        "group relative flex h-56 w-full items-center justify-between rounded-8 border px-20 py-14 text-left text-16 hover:border-purple-70",
+        {
+          "border-gray-100-opacity-20": selectedTeams.length === 0,
+          "border-gray-100-opacity-60": selectedTeams.length > 0,
+        },
+      )}
     >
-      <span className="absolute left-15 top-[-9px] bg-white px-4 text-13 text-gray-100-opacity-80 group-hover:text-purple-70">
+      <span className="absolute left-10 top-[-9px] bg-white text-13 text-gray-100-opacity-60 group-hover:text-purple-70">
         팀
       </span>
       <span
@@ -93,9 +102,12 @@ function Toggle() {
         </div>
       </span>
       <ArrowDown
-        className={clsx("ml-8 w-12 flex-shrink-0", {
-          "rotate-180": isOpen,
-        })}
+        className={clsx(
+          "ml-8 w-12 flex-shrink-0 transition-transform duration-100",
+          {
+            "rotate-180": isOpen,
+          },
+        )}
       />
     </button>
   );
@@ -104,11 +116,22 @@ function Toggle() {
 function Wrapper({ children }: { children: React.ReactNode }) {
   const { isOpen } = useTeamsSelectDropdownContext();
 
-  return isOpen ? (
-    <div className="absolute z-50 mt-3 flex max-h-168 w-full flex-col gap-3 overflow-y-auto rounded-8 border border-gray-20 bg-gray-5 p-8 shadow-dropdown-wrapper">
-      {children}
-    </div>
-  ) : null;
+  return (
+    <AnimatePresence>
+      {isOpen && (
+        <motion.div
+          className="dropdown-wrapper-base max-h-168 w-full"
+          initial="hidden"
+          animate="visible"
+          exit="exit"
+          variants={VARIANTS.fade}
+          transition={{ duration: 0.1 }}
+        >
+          {children}
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
 }
 
 function TeamItem({ team }: { team: Team }) {

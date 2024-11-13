@@ -16,7 +16,7 @@ export default function MeetingRoomToggle({
       type="button"
       onClick={toggleDropdown}
       className={clsx(
-        "group relative flex w-full items-center justify-between rounded-8 border border-gray-100-opacity-20 px-20 py-14 text-left text-16 hover:border-purple-70",
+        "group relative flex w-full items-center justify-between rounded-8 border border-gray-100-opacity-60 px-20 py-14 text-left text-16 hover:border-purple-70",
         {
           "border-purple-70": isOpen,
         },
@@ -24,7 +24,7 @@ export default function MeetingRoomToggle({
     >
       <span
         className={clsx(
-          "absolute left-15 top-[-9px] bg-white px-4 text-13 text-gray-100-opacity-80 group-hover:text-purple-70",
+          "absolute left-10 top-[-9px] bg-white text-13 text-gray-100-opacity-60 group-hover:text-purple-70",
           {
             "text-purple-70": isOpen,
           },
@@ -41,7 +41,7 @@ export default function MeetingRoomToggle({
         {renderText() === "" ? "회의실을 선택해 주세요." : renderText()}
       </span>
       <ArrowDown
-        className={clsx("ml-8", {
+        className={clsx("ml-8 transition-transform duration-100", {
           "rotate-180": isOpen,
         })}
       />

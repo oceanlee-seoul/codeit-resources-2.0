@@ -1,11 +1,13 @@
 import Badge from "@/components/commons/Badge";
 import ProfileImage from "@/components/commons/ProfileImage";
+import { VARIANTS } from "@/constants/dropdownConstants";
 import useDropdown from "@/hooks/useDropdown";
 import ArrowDown from "@public/icons/icon-arrow-down.svg";
 import CheckedBox from "@public/icons/icon-checkbox-active.svg";
 import UnCheckedBox from "@public/icons/icon-checkbox.svg";
 import SearchIcon from "@public/icons/icon-search.svg";
 import clsx from "clsx";
+import { AnimatePresence, motion } from "framer-motion";
 import { createContext, useContext, useMemo, useState } from "react";
 
 import {
@@ -67,9 +69,9 @@ function Toggle() {
     <button
       type="button"
       onClick={toggleDropdown}
-      className="text-leftborder-gray-100-opacity-20 group relative flex h-56 w-full items-center justify-between rounded-8 border px-20 py-14 text-16 hover:border-purple-70"
+      className="group relative flex h-56 w-full items-center justify-between rounded-8 border border-gray-100-opacity-60 px-20 py-14 text-left text-16 hover:border-purple-70"
     >
-      <span className="absolute left-15 top-[-9px] bg-white px-4 text-13 text-gray-100-opacity-80 group-hover:text-purple-70">
+      <span className="absolute left-10 top-[-9px] bg-white pr-1 text-13 text-gray-100-opacity-60 group-hover:text-purple-70">
         참여자
       </span>
       <span
@@ -93,9 +95,12 @@ function Toggle() {
         </div>
       </span>
       <ArrowDown
-        className={clsx("ml-8 w-12 flex-shrink-0", {
-          "rotate-180": isOpen,
-        })}
+        className={clsx(
+          "ml-8 w-12 flex-shrink-0 transition-transform duration-100",
+          {
+            "rotate-180": isOpen,
+          },
+        )}
       />
     </button>
   );
@@ -116,37 +121,43 @@ function SearchWrapper({ allMembers }: { allMembers: Member[] }) {
       ),
   );
 
-  // isDropdownOpen이 false면 null 반환
-  if (!isOpen) {
-    return null;
-  }
-
   return (
-    <div className="absolute z-50 mt-3 flex max-h-168 w-full flex-col gap-3 overflow-y-auto rounded-8 border border-gray-20 bg-gray-5 p-8 shadow-dropdown-wrapper">
-      <div className="relative">
-        <SearchIcon className="absolute left-10 top-12" />
-        <input
-          type="text"
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          className="mb-2 h-40 w-full rounded-8 border border-gray-30 bg-gray-10 pl-30 pr-2 text-16-400"
-          placeholder="이름 및 부서로 검색"
-        />
-      </div>
+    <AnimatePresence>
+      {isOpen && (
+        <motion.div
+          className="dropdown-wrapper-base max-h-168 w-full"
+          initial="hidden"
+          animate="visible"
+          exit="exit"
+          variants={VARIANTS.fade}
+          transition={{ duration: 0.1 }}
+        >
+          <div className="relative">
+            <SearchIcon className="absolute left-10 top-12" />
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="mb-2 h-40 w-full rounded-8 border border-gray-30 bg-gray-10 pl-30 pr-2 text-16-400"
+              placeholder="이름 및 부서로 검색"
+            />
+          </div>
 
-      {/* 필터링된 멤버 목록을 렌더링 */}
-      {filteredMembers.map((member) => (
-        <MemberItem
-          key={member.id}
-          member={member}
-          isSelected={selectedMembers.some(
-            (selectedMember) => selectedMember.name === member.name,
-          )}
-          onSelect={onSelect}
-          onRemove={onRemove}
-        />
-      ))}
-    </div>
+          {/* 필터링된 멤버 목록을 렌더링 */}
+          {filteredMembers.map((member) => (
+            <MemberItem
+              key={member.id}
+              member={member}
+              isSelected={selectedMembers.some(
+                (selectedMember) => selectedMember.name === member.name,
+              )}
+              onSelect={onSelect}
+              onRemove={onRemove}
+            />
+          ))}
+        </motion.div>
+      )}
+    </AnimatePresence>
   );
 }
 

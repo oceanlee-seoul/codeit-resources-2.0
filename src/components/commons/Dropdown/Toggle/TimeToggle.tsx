@@ -39,7 +39,7 @@ export default function TimeToggle({
         className={clsx(
           "group relative flex w-full items-center justify-between rounded-8 px-20 py-14 text-left text-16",
           "border",
-          isError ? "border-status-negative" : "border-gray-100-opacity-20",
+          isError ? "border-status-negative" : "border-gray-100-opacity-60",
           {
             "hover:border-purple-70": !isError,
           },
@@ -47,10 +47,10 @@ export default function TimeToggle({
       >
         <span
           className={clsx(
-            "absolute left-15 top-[-9px] bg-white px-4 text-13",
+            "absolute left-10 top-[-9px] bg-white text-13",
             isError
               ? "text-status-negative"
-              : "text-gray-100-opacity-80 group-hover:text-purple-70",
+              : "text-gray-100-opacity-60 group-hover:text-purple-70",
             {
               "text-purple-70": isOpen && !isError,
             },
@@ -79,7 +79,7 @@ export default function TimeToggle({
           )}
         </span>
         <ArrowDown
-          className={clsx("ml-8", {
+          className={clsx("ml-8 transition-transform duration-200", {
             "rotate-180": isOpen,
           })}
         />
