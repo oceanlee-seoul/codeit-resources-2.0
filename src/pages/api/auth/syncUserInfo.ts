@@ -77,12 +77,15 @@ export default async function handler(
     };
 
     const newUser = await createGoogleUser(param);
+    console.log("newUser", newUser);
+    if (!newUser) {
+      return res.status(500).json({ error: "이미 존재하는 유저입니다." });
+    }
     if (!newUser.data) {
       return res.status(500).json({ error: "새 사용자 등록에 실패했습니다." });
     }
     return res.status(200).json(newUser.data);
   } catch (error) {
-    console.error("사용자 처리 오류:", error);
     return res
       .status(500)
       .json({ error: "사용자 정보 처리 중 오류가 발생했습니다." });

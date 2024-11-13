@@ -21,21 +21,27 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             method: "POST",
           });
           if (!response.ok) {
-            throw new Error();
+            const errorData = await response.json();
+            throw new Error(errorData.error);
           }
           const userData = await response.json();
           if (userData) {
             setUser(userData);
             setIsAdmin(userData?.role === "ADMIN");
           } else {
-            throw new Error();
+            const errorData = await response.json();
+            throw new Error(errorData.error);
           }
         } else {
           setUser(null);
           setIsAdmin(false);
         }
       } catch (err) {
-        error("유저 인증 문제가 생겼습니다.");
+        if (err instanceof Error) {
+          error(err.message || "유저 인증 문제가 생겼습니다.");
+        } else {
+          error("유저 인증 문제가 생겼습니다.");
+        }
         setUser(null);
         setIsAdmin(false);
       }

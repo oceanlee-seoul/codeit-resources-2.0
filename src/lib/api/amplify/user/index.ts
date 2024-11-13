@@ -109,6 +109,14 @@ export const getUserListData = async (category: string, order: OrderType) => {
 // #################### ver 2.0 ####################
 
 /**
+ * 해당 이메일을 가진 유저 가져오기
+ */
+export const getUserListByEmail = async (email: string) =>
+  client.models.User.list({
+    filter: { email: { eq: email } },
+  });
+
+/**
  * 구글 로그인한 유저 생성하기
  */
 export type CreateGoogleUserParams = {
@@ -124,13 +132,10 @@ export type CreateGoogleUserParams = {
  *
  * id, username, email, role, teams 모두 입력받아야 합니다.
  */
-export const createGoogleUser = async (param: CreateGoogleUserParams) =>
-  client.models.User.create(param);
-
-/**
- * 해당 이메일을 가진 유저 가져오기
- */
-export const getUserListByEmail = async (email: string) =>
-  client.models.User.list({
-    filter: { email: { eq: email } },
-  });
+export const createGoogleUser = async (param: CreateGoogleUserParams) => {
+  const userList = await getUserListByEmail(param.email);
+  if (userList.data.length) {
+    return null;
+  }
+  return client.models.User.create(param);
+};
