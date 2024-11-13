@@ -1,5 +1,14 @@
-import { generateTimeSlots } from "@/lib/utils/timeUtils";
+import {
+  generateTimeSlots,
+  getAvailableTimeSlots,
+  getCurrentTime,
+} from "@/lib/utils/timeUtils";
 
-const TIME_SLOT: string[] = generateTimeSlots();
+const ALL_TIME_SLOT_ITEMS: string[] = generateTimeSlots();
 
-export default TIME_SLOT;
+const TIME_SLOT_ITEMS = getAvailableTimeSlots(
+  ALL_TIME_SLOT_ITEMS,
+  getCurrentTime(),
+);
+
+export { ALL_TIME_SLOT_ITEMS, TIME_SLOT_ITEMS };

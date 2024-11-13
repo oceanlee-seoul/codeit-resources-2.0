@@ -1,9 +1,9 @@
-import pickedReservationAtom from "@/components/pages/meeting-rooms/context/pickedReservation";
 import { isTimeInRange } from "@/lib/utils/timeUtils";
 import { useAtomValue } from "jotai";
 import { useEffect, useState } from "react";
 
 import { TimeSlot } from "../components/TimeLine/TimeLineType";
+import { pickedReservationAtom } from "../context";
 
 function useGroupManager(timeSlots: TimeSlot[], groupType: "hover" | "picked") {
   const pickedReservation = useAtomValue(pickedReservationAtom);
@@ -15,6 +15,34 @@ function useGroupManager(timeSlots: TimeSlot[], groupType: "hover" | "picked") {
 
   const handleGroup = (id: string | undefined) => {
     setReservationId(id);
+  };
+
+  const handleGroupItem = (slot: TimeSlot, index: number) => {
+    const isTyped = reservationId && slot.reservation?.id === reservationId;
+    const isHovered = isTyped || false;
+    const isPicked =
+      isTyped ||
+      (pickedReservation?.resourceId === slot.resource.id &&
+        isTimeInRange(
+          pickedReservation?.startTime || "",
+          pickedReservation?.endTime || "",
+          slot.time || "",
+        )) ||
+      false;
+    const isFirstInHoverGroup = isHovered && index === groupFirstIndex;
+    const isLastInHoverGroup = isHovered && index === groupLastIndex;
+    const isFirstInPickedGroup = isPicked && index === groupFirstIndex;
+    const isLastInPickedGroup = isPicked && index === groupLastIndex;
+
+    return {
+      isTyped,
+      isHovered,
+      isPicked,
+      isFirstInHoverGroup,
+      isLastInHoverGroup,
+      isFirstInPickedGroup,
+      isLastInPickedGroup,
+    };
   };
 
   useEffect(() => {
@@ -61,6 +89,7 @@ function useGroupManager(timeSlots: TimeSlot[], groupType: "hover" | "picked") {
     groupFirstIndex,
     groupLastIndex,
     handleGroup,
+    handleGroupItem,
     groupType, // 그룹 타입을 반환해 필요할 때 조건문으로 구분 가능
   };
 }

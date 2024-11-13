@@ -1,7 +1,7 @@
 import Badge from "@/components/commons/Badge";
 import Button from "@/components/commons/Button";
 import useIsOngoing from "@/hooks/useIsOngoing";
-import { Reservation } from "@/lib/api/amplify/helper";
+import { Reservation, RoomReservation } from "@/lib/api/amplify/helper";
 import { compareTimes, getCurrentTime } from "@/lib/utils/timeUtils";
 
 import { getResourceDetails } from "../RESOURCE_INFO";
@@ -85,7 +85,7 @@ function ReservationCard({
   reservation,
   isDetailed = false,
 }: {
-  reservation: Reservation;
+  reservation: Reservation | RoomReservation;
   isDetailed?: boolean;
 }) {
   const buttonActions = useDashboardAction(reservation);

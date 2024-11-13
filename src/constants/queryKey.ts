@@ -7,6 +7,7 @@ const QUERY_KEY = {
   USER: "user",
   USER_LIST: "users",
   TEAM_LIST: "teams",
+  MEMBER_LIST: "members", // teamMap과 결합된 Member[] 타입 배열
   PROFILE_IMAGE: "profileImage",
 };
 

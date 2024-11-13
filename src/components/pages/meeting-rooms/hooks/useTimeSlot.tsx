@@ -1,12 +1,5 @@
-import pickedDateAtom from "@/components/pages/meeting-rooms/context/pickedDate";
-import pickedReservationAtom from "@/components/pages/meeting-rooms/context/pickedReservation";
 import { Resource } from "@/lib/api/amplify/helper";
-import {
-  add30Minutes,
-  convertTimeToMinutes,
-  getCurrentTime,
-  isTimeOverlap,
-} from "@/lib/utils/timeUtils";
+import * as timeUtils from "@/lib/utils/timeUtils";
 import { userAtom } from "@/store/authUserAtom";
 import { isOpenDrawerAtom } from "@/store/isOpenDrawerAtom";
 import { todayDateAtom } from "@/store/todayDateAtom";
@@ -15,6 +8,7 @@ import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { useMemo } from "react";
 
 import { TimeSlot } from "../components/TimeLine/TimeLineType";
+import { pickedDateAtom, pickedReservationAtom } from "../context";
 
 export interface UseTimeSlotProps {
   slot: TimeSlot;
@@ -31,23 +25,23 @@ const useTimeSlot = ({ slot, room }: UseTimeSlotProps) => {
   //    - 예약 생성 드로어 (생성 시에만! 기존 예약이랑 겹치면 에러 표시)
 
   const { time, reservation } = slot;
-  const pickedDate = useAtomValue(pickedDateAtom);
 
   const currentUser = useAtomValue(userAtom);
-  const currentTime = getCurrentTime();
-
+  const pickedDate = useAtomValue(pickedDateAtom);
   const currentDate = useAtomValue(todayDateAtom).format("YYYY-MM-DD");
-
-  const setIsOpenDrawer = useSetAtom(isOpenDrawerAtom);
-
+  const currentTime = timeUtils.getCurrentTime();
   const [pickedReservation, setPickedReservation] = useAtom(
     pickedReservationAtom,
   );
 
+  const setIsOpenDrawer = useSetAtom(isOpenDrawerAtom);
+
   const isMyReservation = () => {
     if (!currentUser?.id || !reservation?.participants) return false;
 
-    return reservation.participants.includes(currentUser.id);
+    return reservation.participants.some(
+      (participant) => participant.email === currentUser.email,
+    );
   };
 
   const isMyReservationNotExpired = () => {
@@ -55,8 +49,8 @@ const useTimeSlot = ({ slot, room }: UseTimeSlotProps) => {
     if (!reservation?.endTime) return false;
     if (pickedDate !== currentDate) return true;
 
-    const timeCurrent = convertTimeToMinutes(currentTime);
-    const timeEnd = convertTimeToMinutes(reservation.endTime);
+    const timeCurrent = timeUtils.convertTimeToMinutes(currentTime);
+    const timeEnd = timeUtils.convertTimeToMinutes(reservation.endTime);
     const isExpired = timeEnd <= timeCurrent;
     return !isExpired;
   };
@@ -72,13 +66,13 @@ const useTimeSlot = ({ slot, room }: UseTimeSlotProps) => {
     const start2 = pickedReservation.startTime as string;
     const end2 = pickedReservation.endTime as string;
 
-    return isTimeOverlap(start1, end1, start2, end2);
+    return timeUtils.isTimeOverlap(start1, end1, start2, end2);
   };
 
   const isPastTime = useMemo(() => {
     if (!time || !pickedDate || pickedDate !== currentDate) return false;
     const now = dayjs();
-    const endTime = add30Minutes(time);
+    const endTime = timeUtils.add30Minutes(time);
     const [hours, minutes] = endTime.split(":").map(Number);
 
     // 선택된 날짜와 시간을 합쳐서 비교
@@ -117,7 +111,7 @@ const useTimeSlot = ({ slot, room }: UseTimeSlotProps) => {
       setIsOpenDrawer(true);
       setPickedReservation({
         startTime: time,
-        endTime: add30Minutes(time || ""),
+        endTime: timeUtils.add30Minutes(time || ""),
         resourceSubtype: room.resourceSubtype,
         resourceName: room.name,
         resourceId: room.id,

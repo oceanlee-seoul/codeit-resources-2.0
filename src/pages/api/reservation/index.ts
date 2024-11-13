@@ -1,7 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { JWT, getToken } from "next-auth/jwt";
 
-import { createReservation, getReservationList } from "./helper";
+import { createReservation, getRoomReservationList } from "./helper";
 
 export default async function handler(
   req: NextApiRequest,
@@ -21,7 +21,7 @@ export default async function handler(
         return await createReservation(req, res);
 
       case "GET":
-        return await getReservationList(req, res);
+        return await getRoomReservationList(req, res);
 
       default:
         res.setHeader("Allow", ["POST", "GET"]);
@@ -29,8 +29,8 @@ export default async function handler(
           .status(405)
           .send({ message: `Method ${req.method} Not Allowed` });
     }
+    // eslint-disable-next-line
   } catch (error) {
-    console.error(error);
     return res.status(500).json({ error: "Internal Server Error" });
   }
 }

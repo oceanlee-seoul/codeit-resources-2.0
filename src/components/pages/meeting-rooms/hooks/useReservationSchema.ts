@@ -23,7 +23,8 @@ function useReservationSchema() {
           z.object({
             id: z.string(),
             name: z.string(),
-            departments: z.array(z.string()),
+            email: z.string(),
+            teams: z.array(z.string()),
             profileImage: z.string(),
           }),
         )

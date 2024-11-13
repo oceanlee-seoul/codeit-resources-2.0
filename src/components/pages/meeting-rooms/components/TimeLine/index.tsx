@@ -1,35 +1,27 @@
-import pickedDateAtom from "@/components/pages/meeting-rooms/context/pickedDate";
-import useIsMobile from "@/hooks/useIsMobile";
-import { Reservation, Resource } from "@/lib/api/amplify/helper";
+import { Resource, RoomReservation } from "@/lib/api/amplify/helper";
 import { createTimeSlots } from "@/lib/utils/createTime";
-import {
-  compareTimes,
-  getRoundedCurrentTime,
-  isTimeInRange,
-} from "@/lib/utils/timeUtils";
+import * as timeUtils from "@/lib/utils/timeUtils";
 import { targetRefAtom } from "@/store/scrollAtom";
+import clsx from "clsx";
 import dayjs from "dayjs";
 import { useAtomValue } from "jotai";
 
-import pickedReservationAtom from "../../context/pickedReservation";
+import { pickedDateAtom } from "../../context";
 import useGroupManager from "../../hooks/useGroupManager";
 import ThirtyMinutesTimeBox from "./ThirtyMinutesTimeBox";
 
 interface TimeLineProps {
   isHeaderShow: boolean;
   room: Resource;
-  reservations?: Reservation[];
+  reservations?: RoomReservation[];
 }
 
 function TimeLine({ isHeaderShow, room, reservations = [] }: TimeLineProps) {
-  const isMobile = useIsMobile();
-
-  const currentPeriod = getRoundedCurrentTime();
+  const currentPeriod = timeUtils.getRoundedCurrentTime();
 
   const pickedDate = useAtomValue(pickedDateAtom);
   const currentDay = dayjs().format("YYYY-MM-DD");
   const isToday = pickedDate === currentDay;
-  const pickedReservation = useAtomValue(pickedReservationAtom);
 
   const roomReservations = reservations.filter(
     (reservation) => reservation.resourceName === room.name,
@@ -38,8 +30,8 @@ function TimeLine({ isHeaderShow, room, reservations = [] }: TimeLineProps) {
   const timeSlots = createTimeSlots().map((slot) => {
     const reservation = roomReservations?.find(
       (res) =>
-        compareTimes(slot.time, res.endTime) &&
-        compareTimes(res.startTime, slot.time, true),
+        timeUtils.compareTimes(slot.time, res.endTime) &&
+        timeUtils.compareTimes(res.startTime, slot.time, true),
     );
 
     const isCurrentTimePeriod = slot.time === currentPeriod;
@@ -52,42 +44,25 @@ function TimeLine({ isHeaderShow, room, reservations = [] }: TimeLineProps) {
     };
   });
 
-  const timelineWidth = isMobile
-    ? `${timeSlots.length * 48}px`
-    : `${timeSlots.length * 72}px`;
-
   const hoverGroup = useGroupManager(timeSlots, "hover");
   const pickedGroup = useGroupManager(timeSlots, "picked");
 
+  /** 현재 시간대로 이동을 위한 ref */
   const targetRef = useAtomValue(targetRefAtom);
 
   return (
     <div className="no-scrollbar relative mb-[-1px] w-full overflow-x-auto pb-24 pl-30 pt-27 md:overflow-visible md:py-0">
-      <ul className="flex h-full md:h-75" style={{ width: timelineWidth }}>
+      <ul
+        className={clsx(
+          `flex h-full md:h-75 ${timeSlots.length * 48}px md:${timeSlots.length * 72}px`,
+        )}
+      >
         {timeSlots.map((slot, index) => {
-          const isHovered =
-            (hoverGroup.reservationId &&
-              slot.reservation?.id === hoverGroup.reservationId) ||
-            false;
-          const isFirstInHoverGroup =
-            isHovered && index === hoverGroup.groupFirstIndex;
-          const isLastInHoverGroup =
-            isHovered && index === hoverGroup.groupLastIndex;
+          const { isHovered, isFirstInHoverGroup, isLastInHoverGroup } =
+            hoverGroup.handleGroupItem(slot, index);
 
-          const isPicked =
-            (pickedGroup.reservationId &&
-              slot.reservation?.id === pickedGroup.reservationId) ||
-            (pickedReservation?.resourceId === room.id &&
-              isTimeInRange(
-                pickedReservation?.startTime || "",
-                pickedReservation?.endTime || "",
-                slot.time || "",
-              )) ||
-            false;
-          const isFirstInPickedGroup =
-            isPicked && index === pickedGroup.groupFirstIndex;
-          const isLastInPickedGroup =
-            isPicked && index === pickedGroup.groupLastIndex;
+          const { isPicked, isFirstInPickedGroup, isLastInPickedGroup } =
+            pickedGroup.handleGroupItem(slot, index);
 
           return (
             <ThirtyMinutesTimeBox
@@ -97,6 +72,7 @@ function TimeLine({ isHeaderShow, room, reservations = [] }: TimeLineProps) {
                 isHovered,
                 isFirstInHoverGroup,
                 isLastInHoverGroup,
+                isPicked,
                 isFirstInPickedGroup,
                 isLastInPickedGroup,
               }}

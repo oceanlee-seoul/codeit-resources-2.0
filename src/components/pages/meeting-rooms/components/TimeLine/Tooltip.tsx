@@ -1,6 +1,8 @@
+import { Member } from "@/components/commons/Dropdown/dropdownType";
+
 interface TooltipProps {
   title: string | null | undefined;
-  participants?: string[] | null | undefined;
+  participants?: string[] | Member[] | null;
 }
 
 export function Tooltip({ title, participants }: TooltipProps) {

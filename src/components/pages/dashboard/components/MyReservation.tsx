@@ -1,5 +1,9 @@
 import { RESOURCE_LABELS } from "@/constants/common";
-import { Reservation, ResourceType } from "@/lib/api/amplify/helper";
+import {
+  Reservation,
+  ResourceType,
+  RoomReservation,
+} from "@/lib/api/amplify/helper";
 
 import EmptyReservation from "./EmptyReservation";
 import ReservationCard from "./ReservationCard";
@@ -21,7 +25,7 @@ function MyReservation({
   reservationList,
 }: {
   resourceType: ResourceType;
-  reservationList: Reservation[];
+  reservationList: Reservation[] | RoomReservation[];
 }) {
   return (
     <section className="mb-80 flex flex-col gap-16">
@@ -36,7 +40,7 @@ function MyReservation({
         {reservationList.length === 0 ? (
           <EmptyReservation resourceType={resourceType} />
         ) : (
-          reservationList?.map((reservation: Reservation) => (
+          reservationList?.map((reservation: Reservation | RoomReservation) => (
             <ReservationCard
               key={reservation.id}
               reservation={reservation}

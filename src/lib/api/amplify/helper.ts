@@ -1,3 +1,4 @@
+import { Member } from "@/components/commons/Dropdown/dropdownType";
 import { Amplify } from "aws-amplify";
 import { generateClient } from "aws-amplify/data";
 
@@ -26,6 +27,9 @@ export type User = Schema["User"]["type"];
 export type Team = Schema["Team"]["type"];
 export type Resource = Schema["Resource"]["type"];
 export type Reservation = Schema["Reservation"]["type"];
+export type RoomReservation = Omit<Reservation, "participants"> & {
+  participants: Member[];
+};
 
 export type Role = Schema["User"]["type"]["role"];
 

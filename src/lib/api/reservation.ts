@@ -1,16 +1,14 @@
-import { Reservation, User } from "./amplify/helper";
+import { RoomReservation, User } from "./amplify/helper";
 import { axiosInstance, handleAxiosError } from "./helper";
 
-export const getRoomReservationList = async () => {
+export const getRoomReservationList = async (
+  params: Record<string, string>,
+) => {
   try {
     const response = await axiosInstance.get(`/reservation`, {
-      params: {
-        // calendarId: resource.googleResourceId
-        timeMax: "2024-11-12T19:00:00+09:00",
-        timeMin: "2024-11-11T19:00:00+09:00",
-      },
+      params,
     });
-    return response.data;
+    return response;
   } catch (error) {
     return handleAxiosError(error);
   }
@@ -25,7 +23,7 @@ export const getRoomReservation = async (reservationId: string) => {
   }
 };
 
-export const createReservation = async (data: Reservation) => {
+export const createReservation = async (data: RoomReservation) => {
   try {
     const response = await axiosInstance.post(`/reservation`, data);
     return response.data;
@@ -34,7 +32,7 @@ export const createReservation = async (data: Reservation) => {
   }
 };
 
-export const updateReservation = async (data: Reservation, user: User) => {
+export const updateReservation = async (data: RoomReservation, user: User) => {
   try {
     const response = await axiosInstance.patch(`/reservation/${data.id}`, {
       data,
@@ -46,7 +44,7 @@ export const updateReservation = async (data: Reservation, user: User) => {
   }
 };
 
-export const cancelReservation = async (data: Reservation, user: User) => {
+export const cancelReservation = async (data: RoomReservation, user: User) => {
   try {
     const response = await axiosInstance.patch(`/reservation/${data.id}`, {
       data: { ...data, status: "CANCELED" },

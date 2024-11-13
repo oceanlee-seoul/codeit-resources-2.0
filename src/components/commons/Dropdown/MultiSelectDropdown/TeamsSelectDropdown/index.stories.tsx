@@ -1,6 +1,7 @@
 import TeamsSelectDropdown from "@/components/commons/Dropdown/MultiSelectDropdown/TeamsSelectDropdown";
 import { Meta, StoryObj } from "@storybook/react";
 import { useState } from "react";
+
 import { Team } from "../../dropdownType";
 
 const meta: Meta<typeof TeamsSelectDropdown> = {
@@ -13,7 +14,7 @@ export default meta;
 
 type Story = StoryObj<typeof meta>;
 
-const departments = [
+const teams = [
   {
     id: "7db1e478-125d-4d01-b839-01d6ad20911a",
     name: "ETC",
@@ -82,7 +83,7 @@ export const Default: Story = {
           selectedTeams={selectedTeams}
           onSelect={handleSelect}
           onRemove={handleRemove}
-          departmentList={departments}
+          departmentList={teams}
         />
       </div>
     );

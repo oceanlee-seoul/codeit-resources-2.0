@@ -7,8 +7,10 @@ export interface Member {
   id: string;
   /** 멤버의 이름 */
   name: string;
+  /** 멤버의 이메일 */
+  email?: string;
   /** 멤버가 속한 부서들의 목록 */
-  departments: string[];
+  teams: string[];
   /** 멤버의 프로필 이미지 (없을 경우 null) */
   profileImage: string | null;
 }

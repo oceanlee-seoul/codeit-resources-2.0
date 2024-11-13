@@ -1,7 +1,10 @@
+import { Member } from "@/components/commons/Dropdown/dropdownType";
 import { GoogleCalendarEventRequest } from "@/lib/types/google-calendar";
 import axios from "axios";
+import { JWT } from "next-auth/jwt";
 
-import { Reservation, ReservationStatus } from "../amplify/helper";
+import { Reservation, RoomReservation, client } from "../amplify/helper";
+import { getMemberList } from "../amplify/team/utils";
 
 export const BASE_URL = "https://www.googleapis.com/calendar/v3";
 
@@ -27,10 +30,26 @@ export const axiosInstance = axios.create({
 });
 
 // Reservation -> GoogleCalendarEvent 변환 함수
-export function reservationToGoogleEvent(
-  reservation: Reservation,
-): GoogleCalendarEventRequest {
+export async function reservationToGoogleEvent(
+  reservation: Omit<Reservation, "participants"> & { participants?: Member[] },
+  jwt?: JWT,
+): Promise<GoogleCalendarEventRequest> {
+  const { data: amplifyResource, errors } = await client.models.Resource.get({
+    id: reservation.resourceId,
+  });
+  if (errors || !amplifyResource || !amplifyResource.googleResourceId) {
+    throw new Error(
+      "Failed to fetch resource info from Amplify or Google Calendar Id is null",
+    );
+  }
+  const formattedParticipants =
+    reservation?.participants?.map((participant) => ({
+      email: participant.email || "",
+      organizer: jwt?.email === participant.email,
+    })) ?? [];
+
   return {
+    ...(reservation.status === "CANCELED" ? { status: "cancelled" } : {}),
     summary: reservation?.title || "",
     start: {
       dateTime: `${reservation.date}T${reservation.startTime}:00+09:00`,
@@ -40,25 +59,13 @@ export function reservationToGoogleEvent(
       dateTime: `${reservation.date}T${reservation.endTime}:00+09:00`,
       timeZone: "Asia/Seoul",
     },
+
     attendees: [
-      // { email: reservation.resourceId, resource: true },
-      // 오렌지 1로 고정
+      ...formattedParticipants,
       {
-        email: "c_1880l1li4dikehesi178q5s3pfn4a@resource.calendar.google.com",
+        email: amplifyResource.googleResourceId,
         resource: true,
-        responseStatus:
-          reservation.status === "CANCELED" ? "declined" : "accepted",
       },
-      { email: "eprnf21@dev.resource.codeit.kr", organizer: true },
-      //
-      //    {
-      //   "email": "eprnf21@dev.resource.codeit.kr",
-      //   "organizer": true,
-      //   "responseStatus": "accepted"
-      // },
-      // ...reservation.participants.map((participant) => ({
-      //   email: participant,
-      // })),
     ],
     reminders: {
       useDefault: true,
@@ -69,36 +76,61 @@ export function reservationToGoogleEvent(
 const DATE_TIME_REGEX = /^(\d{4}-\d{2}-\d{2})T(\d{2}:\d{2})/;
 
 // GoogleCalendarEvent -> Reservation 변환 함수
-export function googleEventToReservation(
+export async function googleEventToReservation(
   event: GoogleCalendarEventRequest,
-): Partial<Reservation> {
+  // token?: JWT,
+): Promise<Partial<RoomReservation>> {
   if (!event.start.dateTime || !event.end.dateTime || !event.attendees) {
     throw new Error("Google Calendar Event is not valid.");
   }
 
-  // ["YYYY-MM-DD", "HH:mm"]
+  // ["fullDate", "YYYY-MM-DD", "HH:mm"]
   const startDateTime = event.start.dateTime.match(DATE_TIME_REGEX) ?? [];
   const endDateTime = event.end.dateTime.match(DATE_TIME_REGEX) ?? [];
 
   const resource = event.attendees.find((attendee) => attendee.resource) ?? {};
+  const { data: amplifyResource, errors } = await client.models.Resource.list({
+    filter: {
+      googleResourceId: { eq: resource.email },
+    },
+  });
+  // console.log("amplifyResource", amplifyResource);
+  if (errors || amplifyResource.length === 0) {
+    throw new Error("Failed to fetch resource info from Amplify");
+  }
+
+  const members = await getMemberList();
+  const formattedParticipants = event.attendees.reduce(
+    (acc: Member[], attendee) => {
+      const memberData = members.find(
+        (member) => member.email === attendee.email,
+      );
+      if (memberData) {
+        acc.push(memberData);
+      }
+      return acc;
+    },
+    [],
+  );
+
+  const { data: reservation } = await client.models.Reservation.list({
+    filter: { googleEventId: { eq: event?.id || "" } },
+  });
 
   return {
+    id: reservation?.[0]?.id || `googleCalenderOnly-${event.id}`,
     title: event.summary,
-    // resourceId: resource?.email || "",
-    resourceId: "a69da7e9-32b0-46b5-b4a4-6bbca7c85fe1",
-    resourceType: "ROOM", // 외부 데이터 소스로부터 결정
-    resourceSubtype: "오렌지룸", // 외부 데이터 소스로부터 결정
-    resourceName: "오렌지룸A", // 외부 데이터 소스로부터 결정
+    resourceId: amplifyResource[0]?.id,
+    resourceType: amplifyResource[0].resourceType || "ROOM",
+    resourceSubtype: amplifyResource[0].resourceSubtype,
+    resourceName: amplifyResource[0].name,
 
     date: startDateTime[1],
     startTime: startDateTime[2],
     endTime: endDateTime[2],
 
-    status: (resource.responseStatus as ReservationStatus) || "CANCELED",
-    // participants: event.attendees
-    //   .filter((attendee) => !attendee.resource)
-    //   .map((attendee) => attendee.email),
-
+    status: resource.responseStatus === "cancelled" ? "CANCELED" : "CONFIRMED",
+    participants: formattedParticipants,
     googleEventId: event.id,
   };
 }

@@ -1,3 +1,4 @@
+import { RoomReservation } from "@/lib/api/amplify/helper";
 import { useAtomValue } from "jotai";
 
 import pickedReservationAtom from "../context/pickedReservation";
@@ -17,7 +18,7 @@ function useReservationTimeValidation() {
       return false;
     }
 
-    return roomReservations.data.some((reservation) => {
+    return roomReservations.data.some((reservation: RoomReservation) => {
       if (pickedReservation?.id && reservation.id === pickedReservation.id) {
         return false;
       }

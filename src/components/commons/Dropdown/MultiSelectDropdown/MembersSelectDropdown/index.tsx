@@ -111,7 +111,7 @@ function SearchWrapper({ allMembers }: { allMembers: Member[] }) {
   const filteredMembers = allMembers.filter(
     (member) =>
       member.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      member.departments.some((dept) =>
+      member.teams.some((dept) =>
         dept.toLowerCase().includes(searchQuery.toLowerCase()),
       ),
   );
@@ -189,7 +189,7 @@ function MemberItem({
       <span className="mt-2 flex-shrink-0">{member.name}</span>
       <div className="flex-grow overflow-x-auto">
         <div className="flex gap-3">
-          {member.departments.map((dept) => (
+          {member.teams.map((dept) => (
             <Badge key={dept} variant="secondarySmall">
               {dept}
             </Badge>

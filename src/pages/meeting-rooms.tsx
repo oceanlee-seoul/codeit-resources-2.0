@@ -2,26 +2,27 @@ import Drawer from "@/components/commons/Drawer";
 import ErrorBoundary from "@/components/commons/ErrorBoundary";
 import useTabDrag from "@/components/commons/Tab/useTabDrag";
 import Layout from "@/components/pages/meeting-rooms/Layout";
-import MeetingRoomsSkeleton from "@/components/pages/meeting-rooms/components/MeetingRoomsSkeleton";
-import ReservationForm from "@/components/pages/meeting-rooms/components/ReservationForm";
-import RoomSelection from "@/components/pages/meeting-rooms/components/RoomSelection";
-import pickedDateAtom from "@/components/pages/meeting-rooms/context/pickedDate";
-import pickedReservationAtom from "@/components/pages/meeting-rooms/context/pickedReservation";
+import {
+  MeetingRoomsSkeleton,
+  ReservationForm,
+  RoomSelection,
+} from "@/components/pages/meeting-rooms/components";
+import {
+  pickedDateAtom,
+  pickedReservationAtom,
+} from "@/components/pages/meeting-rooms/context";
 import { useGetReservations } from "@/components/pages/meeting-rooms/hooks/useGetReservations";
 import Error from "@/components/pages/seats/Error";
-import QUERY_KEY from "@/constants/queryKey";
 import { Resource } from "@/lib/api/amplify/helper";
 import { getGroupedResourceListBySubtype } from "@/lib/api/amplify/resource/utils";
 import { isOpenDrawerAtom } from "@/store/isOpenDrawerAtom";
 import { containerRefAtom, targetRefAtom } from "@/store/scrollAtom";
-import { useQueryClient } from "@tanstack/react-query";
 import { AnimatePresence } from "framer-motion";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { Suspense, useEffect, useMemo, useState } from "react";
 
 function MeetingRoomsPage() {
-  const queryClient = useQueryClient();
-  const { rooms, roomReservations, users, teams } = useGetReservations();
+  const { rooms, roomReservations, members } = useGetReservations();
 
   const pickedDate = useAtomValue(pickedDateAtom);
   const setPickedReservation = useSetAtom(pickedReservationAtom);
@@ -34,48 +35,12 @@ function MeetingRoomsPage() {
     [rooms],
   );
 
-  // 팀 매핑 데이터 생성
-  const teamMap = useMemo(
-    () =>
-      teams.reduce(
-        (acc, team) => {
-          acc[team.id] = team.name;
-          return acc;
-        },
-        {} as Record<string, string>,
-      ),
-    [teams],
-  );
-
-  // 멤버 데이터 가공
-  const members = useMemo(
-    () =>
-      // if (!teamMap) return [];
-
-      users.map((user) => ({
-        id: user.id,
-        name: user.username,
-        departments: (user.teams || [])
-          .filter((teamId): teamId is string => teamId !== null)
-          .map((teamId) => teamMap[teamId] || ""),
-        profileImage: user.profileImage || "",
-        email: user.email,
-      })),
-    [users, teamMap],
-  );
-
-  const handleReservationSuccess = () => {
-    setIsOpenDrawer(false);
-    queryClient.invalidateQueries({
-      queryKey: [QUERY_KEY.ROOM_RESERVATION_LIST, pickedDate],
-    });
-  };
-
   const handleDrawerClose = () => {
     setIsOpenDrawer(false);
     setPickedReservation(null);
   };
 
+  /**  ---- 현재 시간으로 스크롤 이동  ---- */
   const containerRef = useAtomValue(containerRefAtom);
   const targetRef = useAtomValue(targetRefAtom);
   const [isInitialScrollDone, setIsInitialScrollDone] = useState(false);
@@ -86,12 +51,12 @@ function MeetingRoomsPage() {
         left: targetPosition - 100,
         behavior: "smooth",
       });
-      // 초기 스크롤 완료 후 드래그 활성화
-      setTimeout(() => setIsInitialScrollDone(true), 300);
+      setTimeout(() => setIsInitialScrollDone(true), 300); // 초기 스크롤 완료 후 드래그 활성화
     }
   }, [targetRef, containerRef, pickedDate]);
   const { handleMouseDown, handleMouseMove, handleMouseUpOrLeave } =
     useTabDrag(containerRef);
+  /**  ------------------------------- */
 
   return (
     <>
@@ -126,11 +91,7 @@ function MeetingRoomsPage() {
       <AnimatePresence>
         {isOpenDrawer && (
           <Drawer onClose={handleDrawerClose}>
-            <ReservationForm
-              actionType="create"
-              members={members}
-              onSuccess={handleReservationSuccess}
-            />
+            <ReservationForm rooms={rooms?.data ?? []} members={members} />
           </Drawer>
         )}
       </AnimatePresence>

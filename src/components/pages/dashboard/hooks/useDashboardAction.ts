@@ -1,18 +1,21 @@
 import QUERY_KEY from "@/constants/queryKey";
 import useModal from "@/hooks/useModal";
 import useToast from "@/hooks/useToast";
-import { Reservation, ResourceType, User } from "@/lib/api/amplify/helper";
 import {
-  cancelReservation,
-  deleteSeatReservation,
-} from "@/lib/api/amplify/reservation";
+  Reservation,
+  ResourceType,
+  RoomReservation,
+  User,
+} from "@/lib/api/amplify/helper";
+import { deleteSeatReservation } from "@/lib/api/amplify/reservation";
+import { cancelReservation } from "@/lib/api/reservation";
 import { userAtom } from "@/store/authUserAtom";
 import { todayDateAtom } from "@/store/todayDateAtom";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAtomValue } from "jotai";
 
 const useDashboardAction = (
-  reservation: Reservation,
+  reservation: Reservation | RoomReservation,
 ): Record<ResourceType, () => void> => {
   const user = useAtomValue(userAtom);
   const queryClient = useQueryClient();
@@ -38,7 +41,8 @@ const useDashboardAction = (
 
   const deleteRoomMutation = useMutation({
     mutationFn: async () => {
-      if (reservation.id) return cancelReservation(reservation, user as User);
+      if (reservation.id)
+        return cancelReservation(reservation as RoomReservation, user as User);
       return null;
     },
     onSuccess: () => {

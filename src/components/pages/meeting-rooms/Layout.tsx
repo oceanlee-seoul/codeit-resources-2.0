@@ -1,5 +1,6 @@
 import ChevronLeft from "@/../public/icons/icon-chevron-left.svg";
 import ChevronRight from "@/../public/icons/icon-chevron-right.svg";
+import ScrollProvider from "@/components/Layout/ScrollProvider";
 import Badge from "@/components/commons/Badge";
 import Tab from "@/components/commons/Tab";
 import getDaysUntilEndOfMonth, {
@@ -12,8 +13,8 @@ import dayjs from "dayjs";
 import { PrimitiveAtom, useAtomValue, useSetAtom } from "jotai";
 import { useEffect, useState } from "react";
 
-import ScrollProvider from "../../Layout/ScrollProvider";
 import pickedDateAtom from "./context/pickedDate";
+import pickedReservationAtom from "./context/pickedReservation";
 
 interface DateState {
   year: number;
@@ -35,6 +36,7 @@ function Header({ className }: { className?: string }) {
   });
 
   const setIsOpenDrawer = useSetAtom(isOpenDrawerAtom);
+  const setPickedReservation = useSetAtom(pickedReservationAtom);
 
   const isSameMonthAsToday = (
     year: number = currentHeaderDate.year,
@@ -42,6 +44,7 @@ function Header({ className }: { className?: string }) {
   ) => year === today.year() && month === today.month() + 1;
 
   const handlePrevButton = () => {
+    setPickedReservation(null);
     setCurrentHeaderDate((prev) => {
       const prevDate = dayjs(
         `${prev.year}-${String(prev.month).padStart(2, "0")}-01`,
@@ -62,6 +65,7 @@ function Header({ className }: { className?: string }) {
   };
 
   const handleNextButton = () => {
+    setPickedReservation(null);
     setCurrentHeaderDate((prev) => {
       const nextDate = dayjs(
         `${prev.year}-${String(prev.month).padStart(2, "0")}-01`,
@@ -75,6 +79,7 @@ function Header({ className }: { className?: string }) {
     });
   };
 
+  // 초기 진입 시 pickedDate를 오늘 날짜로 설정
   useEffect(() => {
     setPickedDate(today.format("YYYY-MM-DD"));
   }, []);
@@ -130,6 +135,7 @@ function Header({ className }: { className?: string }) {
                 })}
                 onClick={() => {
                   setIsOpenDrawer(false);
+                  setPickedReservation(null);
                   handleClick(index);
                   // 선택된 탭의 날짜로 pickedDate 업데이트
                   setPickedDate(

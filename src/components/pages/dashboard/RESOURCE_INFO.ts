@@ -1,4 +1,8 @@
-import { Reservation, ResourceType } from "@/lib/api/amplify/helper";
+import {
+  Reservation,
+  ResourceType,
+  RoomReservation,
+} from "@/lib/api/amplify/helper";
 
 const RESOURCE_EMPTY_INFO: Record<ResourceType, Record<string, string>> = {
   ROOM: {
@@ -18,7 +22,9 @@ const RESOURCE_EMPTY_INFO: Record<ResourceType, Record<string, string>> = {
   },
 };
 
-export const getResourceDetails = (reservation: Reservation) => {
+export const getResourceDetails = (
+  reservation: Reservation | RoomReservation,
+) => {
   const { title, resourceType, resourceName, date, startTime, endTime } =
     reservation;
 

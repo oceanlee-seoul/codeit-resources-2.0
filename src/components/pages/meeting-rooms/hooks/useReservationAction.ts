@@ -1,7 +1,7 @@
 import QUERY_KEY from "@/constants/queryKey";
 import useModal from "@/hooks/useModal";
 import useToast from "@/hooks/useToast";
-import { Reservation, User } from "@/lib/api/amplify/helper";
+import { RoomReservation, User } from "@/lib/api/amplify/helper";
 import {
   cancelReservation,
   createReservation,
@@ -14,7 +14,7 @@ import { useAtomValue, useSetAtom } from "jotai";
 
 import pickedDateAtom from "../context/pickedDate";
 
-const useReservationAction = (reservation?: Reservation) => {
+const useReservationAction = (reservation?: RoomReservation) => {
   const user = useAtomValue(userAtom);
   const pickedDate = useAtomValue(pickedDateAtom);
   const queryClient = useQueryClient();
@@ -40,7 +40,7 @@ const useReservationAction = (reservation?: Reservation) => {
 
   // 회의실 예약 생성
   const createRoomMutation = useMutation({
-    mutationFn: (re: Reservation) => createReservation(re),
+    mutationFn: (re: RoomReservation) => createReservation(re),
     onSuccess: () => {
       success("회의실 예약이 생성되었습니다.");
       queryClient.invalidateQueries({
@@ -54,7 +54,7 @@ const useReservationAction = (reservation?: Reservation) => {
 
   // 회의실 예약 업데이트
   const updateRoomMutation = useMutation({
-    mutationFn: async (re: Reservation) => {
+    mutationFn: async (re: RoomReservation) => {
       if (re.id) {
         return updateReservation(re, user as User);
       }
@@ -80,7 +80,7 @@ const useReservationAction = (reservation?: Reservation) => {
         },
       });
     },
-    createRoomMutation: (re: Reservation) => {
+    createRoomMutation: (re: RoomReservation) => {
       openModal("createRoomReservationModal", {
         onConfirm: () => {
           createRoomMutation.mutate(re);
@@ -89,7 +89,7 @@ const useReservationAction = (reservation?: Reservation) => {
         },
       });
     },
-    updateRoomMutation: (re: Reservation) => {
+    updateRoomMutation: (re: RoomReservation) => {
       openModal("updateRoomReservationModal", {
         onConfirm: () => {
           updateRoomMutation.mutate(re);

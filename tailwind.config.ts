@@ -197,6 +197,12 @@ const config: Config = {
       boxShadow: {
         "dropdown-wrapper": "0px 2px 4px 0px #3332360F",
       },
+      zIndex: {
+        "timeline-vertical-line": "1",
+        "timeline-slot": "2",
+        "timeline-slot-button": "3",
+        "timeline-tooltip": "4",
+      },
     },
   },
   keyframes: {
