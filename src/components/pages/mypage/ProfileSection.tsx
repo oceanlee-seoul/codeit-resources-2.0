@@ -1,17 +1,13 @@
 import Badge from "@/components/commons/Badge";
-import Button from "@/components/commons/Button";
 import ProfileImage from "@/components/commons/ProfileImage";
 import QUERY_KEY, { DEFAULT_STALE_TIME } from "@/constants/queryKey";
 import useIsMobile from "@/hooks/useIsMobile";
-import useToast from "@/hooks/useToast";
-import { User, client } from "@/lib/api/amplify/helper";
-import { uploadImage } from "@/lib/api/amplify/storage";
+import { client } from "@/lib/api/amplify/helper";
 import { getTeamListData } from "@/lib/api/amplify/team";
-import { updateUserData } from "@/lib/api/amplify/user";
 import { userAtom } from "@/store/authUserAtom";
-import { useMutation, useQuery } from "@tanstack/react-query";
-import { useAtom, useAtomValue, useSetAtom } from "jotai";
-import { ChangeEvent, useEffect, useRef, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { useAtomValue, useSetAtom } from "jotai";
+import { useEffect } from "react";
 
 import MobileProfileSectionSkeleton from "./MobileProfileSectionSkeleton";
 import ProfileSectionSkeleton from "./ProfileSectionSkeleton";
@@ -173,79 +169,5 @@ export default function ProfileSection() {
         )}
       </div>
     </section>
-  );
-}
-
-function ProfileImageUploader() {
-  const inputRef = useRef<HTMLInputElement>(null);
-  const [user, setUser] = useAtom(userAtom);
-  const { success, error } = useToast();
-
-  const [errorMessage, setErrorMessage] = useState("");
-
-  const uploadImageMutation = useMutation({
-    mutationFn: async (selectedFile: File) => {
-      if (!user) return null;
-
-      const imagePath = await uploadImage({
-        id: user.id,
-        image: selectedFile,
-      });
-
-      return imagePath;
-    },
-    onSuccess: async (imagePath) => {
-      if (!imagePath) return;
-      setUser((prev) => ({ ...prev, profileImage: imagePath }) as User);
-      await updateUserData({ id: user?.id as string, profileImage: imagePath });
-      success("사진이 수정되었습니다");
-    },
-    onError: () => {
-      error("사진 수정이 실패하였습니다");
-    },
-  });
-
-  const handleClick = () => {
-    inputRef.current?.click();
-  };
-
-  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const selectedFile = event.target.files?.[0] || null;
-    if (!selectedFile) return;
-
-    if (!selectedFile.type.startsWith("image/")) {
-      setErrorMessage("이미지 파일만 업로드할 수 있습니다.");
-      inputRef.current!.value = "";
-      return;
-    }
-
-    if (selectedFile.size > 10 * 1024 * 1024) {
-      setErrorMessage("이미지는 10MB 이하여야 합니다.");
-      inputRef.current!.value = "";
-      return;
-    }
-
-    setErrorMessage("");
-    uploadImageMutation.mutate(selectedFile);
-  };
-
-  return (
-    <div className="flex items-center gap-16">
-      <input
-        type="file"
-        ref={inputRef}
-        accept="image/*"
-        onChange={handleChange}
-        className="hidden"
-      />
-      <div className="h-34 w-76">
-        <Button variant="secondary" size="small" onClick={handleClick}>
-          사진 변경
-        </Button>
-      </div>
-      {errorMessage && (
-        <p className="text-13-500 text-status-negative">※{errorMessage}</p>
-      )}
-    </div>
   );
 }

@@ -1,10 +1,4 @@
-/* eslint-disable @next/next/no-img-element */
-import QUERY_KEY, { DEFAULT_STALE_TIME } from "@/constants/queryKey";
-import { getImageUrl } from "@/lib/api/amplify/storage";
-import { useQuery } from "@tanstack/react-query";
-import clsx from "clsx";
 import Image from "next/image";
-import { useEffect, useState } from "react";
 
 interface Props {
   /** imagePath를 지정합니다. */
@@ -30,27 +24,6 @@ export default function ProfileImage({
   userName,
 }: Props) {
   const widthHeight = sizeMap[size];
-  // const [imageSrc, setImageSrc] = useState(imagePath);
-
-  // const { data: imageUrl } = useQuery({
-  //   queryKey: [QUERY_KEY.PROFILE_IMAGE, imagePath],
-  //   queryFn: () => imagePath && getImageUrl(imagePath),
-  //   enabled: !!imagePath,
-  //   staleTime: DEFAULT_STALE_TIME,
-  // });
-
-  // const classnames = clsx("rounded-full object-cover", {
-  //   "size-32": size === "sm",
-  //   "size-40": size === "md",
-  //   "size-72": size === "lg",
-  //   "size-120": size === "xl",
-  // });
-
-  // useEffect(() => {
-  //   if (imagePath) setImageSrc(imagePath);
-
-  //   console.log(imageSrc);
-  // }, [imagePath]);
 
   return (
     <Image
