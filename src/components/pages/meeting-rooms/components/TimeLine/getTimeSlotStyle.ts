@@ -43,10 +43,16 @@ const GroupBorderStyle = {
     }),
 };
 
+interface TimeSlotStatus {
+  isMyReservation: boolean;
+  isConflictReservation: boolean;
+  isPastTime: boolean;
+}
+
 const getTimeSlotStyle = (
   slot: TimeSlot,
   room: Resource,
-  status: Record<string, unknown>,
+  status: TimeSlotStatus,
 ) => {
   const {
     isHovered,
@@ -56,8 +62,10 @@ const getTimeSlotStyle = (
     isFirstInPickedGroup,
     isLastInPickedGroup,
   } = slot;
-  const { isMyReservation, isConflictReservation } = status;
+  const { isMyReservation, isConflictReservation, isPastTime } = status;
   const isMyReservationOrPicked = isMyReservation || isPicked;
+
+  const shouldShowPointer = !isPastTime && isMyReservation;
 
   const myReservationClass = {
     TIME_SLOT_BAR: isMyReservationOrPicked && "bg-purple-70",
@@ -111,6 +119,8 @@ const getTimeSlotStyle = (
       [GroupBorderStyle.red(isFirstInHoverGroup, isLastInHoverGroup)]:
         isPicked && isConflictReservation,
     },
+
+    CURSOR_STYLE: shouldShowPointer && "cursor-pointer",
   };
 
   const timeSlotHoverGroupClass = clsx(
@@ -120,6 +130,8 @@ const getTimeSlotStyle = (
     myReservationClass.TIME_SLOT_HOVER_GROUP,
     // 보더 스타일
     generalTimeSlotClass.TIME_SLOT_BORDER,
+    // 호버시 커서 포인터 적용
+    generalTimeSlotClass.CURSOR_STYLE,
   );
 
   return { pickedReservationClass, timeSlotHoverGroupClass, timeSlotBarClass };

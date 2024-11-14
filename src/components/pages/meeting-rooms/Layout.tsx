@@ -44,6 +44,7 @@ function Header({ className }: { className?: string }) {
   ) => year === today.year() && month === today.month() + 1;
 
   const handlePrevButton = () => {
+    setIsOpenDrawer(false);
     setPickedReservation(null);
     setCurrentHeaderDate((prev) => {
       const prevDate = dayjs(
@@ -65,6 +66,7 @@ function Header({ className }: { className?: string }) {
   };
 
   const handleNextButton = () => {
+    setIsOpenDrawer(false);
     setPickedReservation(null);
     setCurrentHeaderDate((prev) => {
       const nextDate = dayjs(
@@ -156,7 +158,7 @@ function Header({ className }: { className?: string }) {
 function Layout({ children }: { children: React.ReactNode }) {
   return (
     <ScrollProvider>
-      <div className="">
+      <div>
         <Header className="px-16 pt-64 md:px-64 md:pt-24" />
         <section className="min-h-screen overflow-y-visible bg-gray-5 px-16 pb-100 pt-32 md:py-24 md:pl-192 md:pr-64">
           {children}

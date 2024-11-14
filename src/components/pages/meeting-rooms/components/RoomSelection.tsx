@@ -1,11 +1,12 @@
 import useIsMobile from "@/hooks/useIsMobile";
 import { Resource, RoomReservation } from "@/lib/api/amplify/helper";
 import { isOpenDrawerAtom } from "@/store/isOpenDrawerAtom";
+import { targetRefAtom } from "@/store/scrollAtom";
 import clsx from "clsx";
 import { useAtom, useAtomValue } from "jotai";
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 
-import { pickedReservationAtom } from "../context";
+import { pickedDateAtom, pickedReservationAtom } from "../context";
 import TimeLine from "./TimeLine";
 
 interface RoomSelectionProps {
@@ -24,10 +25,13 @@ function RoomSelection({
   const [pickedReservation, setPickedReservation] = useAtom(
     pickedReservationAtom,
   );
+  const pickedDate = useAtomValue(pickedDateAtom);
 
   const isOpenDrawer = useAtomValue(isOpenDrawerAtom);
   const isMobile = useIsMobile();
-  const containerRef = useRef<HTMLUListElement>(null);
+
+  const containerRefs = useRef<(HTMLUListElement | null)[]>([]);
+  const targetRef = useAtomValue(targetRefAtom);
 
   const handleRoomClick = (room: Resource) => {
     setPickedReservation({
@@ -37,6 +41,22 @@ function RoomSelection({
       resourceId: room.id,
     });
   };
+
+  /**  ---- 모바일에서 각 타임라인 현재 시간으로 스크롤 이동  ---- */
+  useEffect(() => {
+    if (isMobile && targetRef?.current) {
+      const targetPosition = targetRef.current.offsetLeft;
+
+      containerRefs.current.forEach((containerRef) => {
+        if (containerRef) {
+          containerRef.scrollTo({
+            left: targetPosition - 16,
+            behavior: "smooth",
+          });
+        }
+      });
+    }
+  }, [isMobile, targetRef, pickedDate]);
 
   return (
     <>
@@ -49,10 +69,7 @@ function RoomSelection({
           {subType}
         </span>
       </h3>
-      <ul
-        ref={containerRef}
-        className="flex flex-col overflow-x-auto overflow-y-hidden pb-24 md:overflow-visible"
-      >
+      <ul className="flex flex-col overflow-x-auto overflow-y-hidden pb-24 md:overflow-visible">
         {roomList.map((room, index) => {
           const isPickedRoom =
             pickedReservation?.resourceName === room.name && isOpenDrawer;
@@ -60,6 +77,15 @@ function RoomSelection({
             <li
               key={room.name}
               className="group flex flex-col md:h-75 md:flex-row md:items-center"
+              ref={(el) => {
+                if (el) {
+                  const timelineContainer = el.querySelector(
+                    'div[class*="overflow-x-auto"]',
+                  );
+                  containerRefs.current[index] =
+                    timelineContainer as HTMLUListElement;
+                }
+              }}
             >
               <button
                 type="button"

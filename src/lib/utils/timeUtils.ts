@@ -124,7 +124,7 @@ export function add30Minutes(time: string): string {
   }
 
   if (hours >= 24) {
-    hours -= 24;
+    return "23:59";
   }
 
   const formattedHours = hours.toString().padStart(2, "0");

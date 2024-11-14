@@ -12,6 +12,7 @@ import { isOpenDrawerAtom } from "@/store/isOpenDrawerAtom";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAtomValue, useSetAtom } from "jotai";
 
+import { pickedReservationAtom } from "../context";
 import pickedDateAtom from "../context/pickedDate";
 
 const useReservationAction = (reservation?: RoomReservation) => {
@@ -21,6 +22,7 @@ const useReservationAction = (reservation?: RoomReservation) => {
   const { success, error } = useToast();
   const { openModal, closeModal } = useModal();
   const setIsOpenDrawer = useSetAtom(isOpenDrawerAtom);
+  const setPickedReservation = useSetAtom(pickedReservationAtom);
 
   const deleteRoomMutation = useMutation({
     mutationFn: async () => {
@@ -42,6 +44,7 @@ const useReservationAction = (reservation?: RoomReservation) => {
   const createRoomMutation = useMutation({
     mutationFn: (re: RoomReservation) => createReservation(re),
     onSuccess: () => {
+      setPickedReservation(null);
       success("회의실 예약이 생성되었습니다.");
       queryClient.invalidateQueries({
         queryKey: [QUERY_KEY.ROOM_RESERVATION_LIST, pickedDate],

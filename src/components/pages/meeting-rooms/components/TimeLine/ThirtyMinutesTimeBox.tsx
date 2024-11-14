@@ -5,8 +5,10 @@ import { Member } from "@/components/commons/Dropdown/dropdownType";
 import { Resource, RoomReservation } from "@/lib/api/amplify/helper";
 import XButton from "@public/icons/icon-x-button.svg";
 import clsx from "clsx";
+import { useAtomValue } from "jotai";
 import { LegacyRef, forwardRef } from "react";
 
+import { pickedReservationAtom } from "../../context";
 import useReservationAction from "../../hooks/useReservationAction";
 import useTimeSlot from "../../hooks/useTimeSlot";
 import { BottomDottedBar, TimeVerticalLine } from "./TimeLineBackground";
@@ -46,6 +48,7 @@ function ThirtyMinutesTimeBox(
   const { time, reservation, isCurrentTimePeriod, isHalfHour, isPicked } = slot;
   const is24Hour = time === "24:00";
   const handleMutation = useReservationAction(reservation as RoomReservation);
+  const pickedReservation = useAtomValue(pickedReservationAtom);
 
   const {
     isMyReservation,
@@ -59,14 +62,18 @@ function ThirtyMinutesTimeBox(
   });
 
   const handleMouseEnter = () => {
-    if (reservation?.id) onHoverGroup(reservation.id);
+    if (!pickedReservation && reservation?.id) onHoverGroup(reservation.id);
   };
   const handleMouseLeave = () => {
     onHoverGroup(undefined);
   };
 
   const { pickedReservationClass, timeSlotHoverGroupClass, timeSlotBarClass } =
-    getTimeSlotStyle(slot, room, { isMyReservation, isConflictReservation });
+    getTimeSlotStyle(slot, room, {
+      isMyReservation,
+      isConflictReservation,
+      isPastTime,
+    });
 
   return (
     <li
@@ -93,11 +100,11 @@ function ThirtyMinutesTimeBox(
           <>
             <div
               className={clsx(
-                "absolute inset-0 left-1 z-timeline-slot -mx-1",
+                "absolute inset-0 left-1 z-timeline-slot -mx-1 md:w-72",
                 pickedReservationClass.TIME_SLOT_GROUP,
                 slot.isHovered
                   ? timeSlotHoverGroupClass
-                  : "hover:bg-gray-100-opacity-10 hover:shadow-[inset_0_0_0_1px_#413B541A]",
+                  : "cursor-pointer hover:bg-gray-100-opacity-10 hover:shadow-[inset_0_0_0_1px_#413B541A]",
               )}
             >
               {(reservation?.id || isPicked) && (

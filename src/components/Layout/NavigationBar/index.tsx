@@ -47,7 +47,7 @@ function NavigationBar() {
   const isAdmin = useAtomValue(adminAtom);
 
   return (
-    <nav className="fixed bottom-0 z-20 w-full min-w-[360px] max-w-[767px] bg-gray-100 p-16 md:bottom-auto md:h-screen md:w-[200px] md:min-w-0 md:max-w-none">
+    <nav className="fixed bottom-0 z-[30] w-full min-w-[360px] max-w-[767px] bg-gray-100 p-16 md:bottom-auto md:h-screen md:w-[200px] md:min-w-0 md:max-w-none">
       <Link href="/" className="hidden items-center gap-8 pb-12 md:flex">
         <CodeitLogo width={26} height={26} />
         <CodeitTextLogo color="#fff" width={85} height={12} />

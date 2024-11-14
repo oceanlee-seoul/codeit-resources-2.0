@@ -123,9 +123,8 @@ function ReservationForm({ rooms, members }: ReservationFormProps) {
         <Input
           id="title"
           label="미팅 제목"
-          register={methods.register("title", {
-            required: "미팅 제목을 입력해주세요.",
-          })}
+          register={methods.register("title")}
+          errorMessage={title ? formState.errors.title?.message : undefined}
         />
 
         <Controller
@@ -192,7 +191,16 @@ function ReservationForm({ rooms, members }: ReservationFormProps) {
                 field: { onChange, value },
                 fieldState: { error },
               }) => (
-                <Dropdown variant="endTime" value={value} onChange={onChange}>
+                <Dropdown
+                  variant="endTime"
+                  value={value}
+                  onChange={(selectedTime) => {
+                    // 24:00이 선택되면 23:59로 변환
+                    const adjustedTime =
+                      selectedTime === "24:00" ? "23:59" : selectedTime;
+                    onChange(adjustedTime);
+                  }}
+                >
                   <Dropdown.Toggle
                     isError={!!error}
                     errorMessage={error ? error.message : ""}

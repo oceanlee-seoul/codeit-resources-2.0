@@ -1,5 +1,5 @@
 /* eslint-disable no-param-reassign */
-import { MouseEvent, RefObject, useState } from "react";
+import { MouseEvent, RefObject, TouchEvent, useState } from "react";
 
 export default function useTabDrag(
   containerRef: RefObject<HTMLElement> | null,
@@ -13,6 +13,9 @@ export default function useTabDrag(
       handleMouseDown: () => {},
       handleMouseMove: () => {},
       handleMouseUpOrLeave: () => {},
+      handleTouchStart: () => {},
+      handleTouchMove: () => {},
+      handleTouchEnd: () => {},
     };
   }
 
@@ -35,9 +38,33 @@ export default function useTabDrag(
     setIsDragging(false);
   };
 
+  // 모바일용 터치 드래그 이벤트
+  const handleTouchStart = (e: TouchEvent<HTMLDivElement>) => {
+    setIsDragging(true);
+    setStartX(e.touches[0].pageX - (containerRef.current?.offsetLeft || 0));
+    setScrollLeft(containerRef.current?.scrollLeft || 0);
+  };
+
+  const handleTouchMove = (e: TouchEvent<HTMLDivElement>) => {
+    if (!isDragging) return;
+    e.preventDefault();
+    const x = e.touches[0].pageX - (containerRef.current?.offsetLeft || 0);
+    const walk = (x - startX) * 1.5;
+    if (containerRef.current) {
+      containerRef.current.scrollLeft = scrollLeft - walk;
+    }
+  };
+
+  const handleTouchEnd = () => {
+    setIsDragging(false);
+  };
+
   return {
     handleMouseDown,
     handleMouseMove,
     handleMouseUpOrLeave,
+    handleTouchStart,
+    handleTouchMove,
+    handleTouchEnd,
   };
 }

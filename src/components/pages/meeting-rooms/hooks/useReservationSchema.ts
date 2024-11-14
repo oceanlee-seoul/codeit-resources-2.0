@@ -8,7 +8,15 @@ function useReservationSchema() {
 
   return z
     .object({
-      title: z.string().min(1, "미팅 제목을 입력해주세요"),
+      title: z
+        .string()
+        .min(1, "미팅 제목을 입력해주세요")
+        .max(20, "미팅 제목은 20자 이내로 입력해주세요")
+        .trim()
+        .refine(
+          (value) => value.length > 0,
+          "미팅 제목은 공백만으로 구성될 수 없습니다",
+        ),
       resourceId: z.string().min(1, "선택해주세요"),
       startTime: z
         .string()
