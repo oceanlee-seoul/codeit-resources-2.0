@@ -1,6 +1,7 @@
 import { Member } from "@/components/commons/Dropdown/dropdownType";
-import { Reservation, RoomReservation } from "@/lib/api/amplify/helper";
+import { Resource, RoomReservation } from "@/lib/api/amplify/helper";
 import * as amplifyUtils from "@/lib/api/amplify/reservation";
+import { getResourceList } from "@/lib/api/amplify/resource";
 import { createEvent, getEvents, updateEvent } from "@/lib/api/googleCalendar";
 import {
   googleEventToReservation,
@@ -14,12 +15,10 @@ export const getRoomReservationList = async (
   req: NextApiRequest,
   res: NextApiResponse,
 ) => {
-  const { email, accessToken } = (await getToken({ req })) as JWT;
+  const { accessToken } = (await getToken({ req })) as JWT;
 
-  // TODO 정렬 처리
-  // const orderBy = req.query.orderBy as string;
-
-  const calendarId = email || "primary";
+  const response = await getResourceList({ resourceType: "ROOM" });
+  const rooms = response?.data as Resource[];
   const params = req.query;
 
   const googleParams = {
@@ -31,17 +30,32 @@ export const getRoomReservationList = async (
     timeMax: `${params.date}T${params.endTime || "23:59"}:00+09:00`,
     timeMin: `${params.date}T${params.startTime || "00:00"}:00+09:00`,
   };
-  // const amplifyParams = {
-  //   ...(params.date ? { date: { eq: params.date } } : {}),
-  //   status: { eq: "CONFIRMED" },
-  // };
 
   try {
-    const googleEvents = await getEvents(
-      calendarId,
-      accessToken || "",
-      googleParams,
-    );
+    let googleEvents;
+    if (params.calendarId) {
+      const calendarEvents = await getEvents(
+        params.calendarId as string,
+        accessToken || "",
+        googleParams,
+      );
+      googleEvents = calendarEvents.items;
+    } else {
+      const googleEventsArray = await Promise.all(
+        rooms?.map((room: Resource) =>
+          getEvents(
+            room.googleResourceId || "",
+            accessToken || "",
+            googleParams,
+          ),
+        ),
+      );
+      googleEvents = googleEventsArray.reduce(
+        (acc, event) => [...acc, ...event.items],
+        [],
+      );
+    }
+
     // console.log(
     //   "googleEvents",
     //   googleEvents.items.length,
@@ -59,11 +73,10 @@ export const getRoomReservationList = async (
       //   amplifyParams,
       // );
       const amplifyData: RoomReservation[] = await Promise.all(
-        googleEvents.items.map((event: GoogleCalendarEventRequest) =>
+        googleEvents.map((event: GoogleCalendarEventRequest) =>
           googleEventToReservation(event),
         ),
       );
-      // console.log("amplifyData", amplifyData);
       return res.status(201).json(amplifyData);
     }
     return res.status(500).json({ error: "Failed to get events" });
@@ -71,6 +84,8 @@ export const getRoomReservationList = async (
     return res.status(500).json({ error: "Internal Server Error" });
   }
 };
+
+// export const getMyRoomReservationList = async () => {};
 
 export const createReservation = async (
   req: NextApiRequest,

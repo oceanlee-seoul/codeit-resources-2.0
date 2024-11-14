@@ -20,9 +20,6 @@ export default async function handler(
       case "PATCH":
         return await updateReservation(req, res);
 
-      // case "DELETE":
-      //   return await deleteReservation(req, res);
-
       default:
         res.setHeader("Allow", ["PATCH", "DELETE"]);
         return res

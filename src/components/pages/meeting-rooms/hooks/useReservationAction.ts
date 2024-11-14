@@ -11,9 +11,9 @@ import { userAtom } from "@/store/authUserAtom";
 import { isOpenDrawerAtom } from "@/store/isOpenDrawerAtom";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAtomValue, useSetAtom } from "jotai";
+import { useCallback } from "react";
 
-import { pickedReservationAtom } from "../context";
-import pickedDateAtom from "../context/pickedDate";
+import { pickedDateAtom, pickedReservationAtom } from "../context";
 
 const useReservationAction = (reservation?: RoomReservation) => {
   const user = useAtomValue(userAtom);
@@ -44,16 +44,21 @@ const useReservationAction = (reservation?: RoomReservation) => {
   const createRoomMutation = useMutation({
     mutationFn: (re: RoomReservation) => createReservation(re),
     onSuccess: () => {
-      setPickedReservation(null);
-      success("회의실 예약이 생성되었습니다.");
       queryClient.invalidateQueries({
         queryKey: [QUERY_KEY.ROOM_RESERVATION_LIST, pickedDate],
       });
+      success("회의실 예약이 생성되었습니다.");
     },
     onError: () => {
       error("회의실 예약 생성에 실패했습니다.");
     },
   });
+
+  const clearStatus = useCallback(() => {
+    closeModal();
+    setIsOpenDrawer(false);
+    setPickedReservation(null);
+  }, [setIsOpenDrawer, setPickedReservation]);
 
   // 회의실 예약 업데이트
   const updateRoomMutation = useMutation({
@@ -64,10 +69,10 @@ const useReservationAction = (reservation?: RoomReservation) => {
       return null;
     },
     onSuccess: () => {
-      success("회의실 예약이 업데이트되었습니다.");
       queryClient.invalidateQueries({
         queryKey: [QUERY_KEY.ROOM_RESERVATION_LIST, pickedDate],
       });
+      success("회의실 예약이 업데이트되었습니다.");
     },
     onError: () => {
       error("회의실 예약 업데이트에 실패했습니다.");
@@ -79,7 +84,7 @@ const useReservationAction = (reservation?: RoomReservation) => {
       openModal("deleteRoomReservationModal", {
         onConfirm: () => {
           deleteRoomMutation.mutate();
-          closeModal();
+          clearStatus();
         },
       });
     },
@@ -87,8 +92,7 @@ const useReservationAction = (reservation?: RoomReservation) => {
       openModal("createRoomReservationModal", {
         onConfirm: () => {
           createRoomMutation.mutate(re);
-          closeModal();
-          setIsOpenDrawer(false);
+          clearStatus();
         },
       });
     },
@@ -96,8 +100,7 @@ const useReservationAction = (reservation?: RoomReservation) => {
       openModal("updateRoomReservationModal", {
         onConfirm: () => {
           updateRoomMutation.mutate(re);
-          closeModal();
-          setIsOpenDrawer(false);
+          clearStatus();
         },
       });
     },

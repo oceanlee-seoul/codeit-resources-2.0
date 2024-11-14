@@ -34,6 +34,7 @@ export const useGetUserReservation = () => {
           date: currentDate,
           startTime: currentTime,
           q: user?.email || "",
+          calendarId: user?.email || "primary",
         });
 
         return response.data;
@@ -79,7 +80,7 @@ export const useGetUserReservation = () => {
         queryFn: () => getTodayUserReservation("SEAT"),
       },
       {
-        queryKey: [QUERY_KEY.SEAT_LIST, currentDate, user?.id],
+        queryKey: [QUERY_KEY.SEAT_LIST, currentDate, user?.id, "fixedSeat"],
         staleTime: DEFAULT_STALE_TIME,
         queryFn: () => getSeatResourceListByResourceStatus("FIXED"),
       },
