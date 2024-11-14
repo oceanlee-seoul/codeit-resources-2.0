@@ -3,6 +3,44 @@ import NextAuth, { NextAuthOptions } from "next-auth";
 import { JWT } from "next-auth/jwt";
 import GoogleProvider from "next-auth/providers/google";
 
+/** --- 토큰 갱신 로직 --- */
+async function refreshAccessToken(token: Record<string, unknown>) {
+  try {
+    const response = await fetch("https://oauth2.googleapis.com/token", {
+      method: "POST",
+      body: new URLSearchParams({
+        client_id: process.env.GOOGLE_CLIENT_ID!,
+        client_secret: process.env.GOOGLE_CLIENT_SECRET!,
+        grant_type: "refresh_token",
+        refresh_token: token.refreshToken as string,
+      }),
+    });
+
+    const refreshedTokens = await response.json();
+
+    if (!response.ok) {
+      throw refreshedTokens;
+    }
+
+    return {
+      ...token,
+      accessToken: refreshedTokens.access_token,
+      accessTokenExpires: Math.floor(
+        Date.now() / 1000 + refreshedTokens.expires_in,
+      ),
+      refreshToken: refreshedTokens.refresh_token ?? token.refreshToken,
+    };
+  } catch (error) {
+    console.log(error);
+
+    return {
+      ...token,
+      error: "RefreshAccessTokenError",
+    };
+  }
+}
+/** -------------------- */
+
 interface Token extends JWT {
   accessToken?: string;
   refreshToken?: string;
@@ -61,11 +99,24 @@ export const authOptions: NextAuthOptions = {
         const newToken = {
           ...token,
           accessToken: account.access_token,
+          accessTokenExpires: (account.expires_at || 0) * 1000,
           refreshToken: account.refresh_token,
         };
         return newToken;
       }
-      return token;
+
+      if (process.env.NODE_ENV === "development" && !token.refreshToken) {
+        console.log("Skipping refresh in development mode on initial call");
+        return token;
+      }
+
+      if (Date.now() < (token.accessTokenExpires as number)) {
+        return token;
+      }
+
+      if (!token.refreshToken) throw new TypeError("Missing refresh_token");
+
+      return refreshAccessToken(token);
     },
     async session({ session, token }) {
       return {
