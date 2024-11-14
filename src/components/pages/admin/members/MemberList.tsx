@@ -1,8 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars, jsx-a11y/click-events-have-key-events, jsx-a11y/interactive-supports-focus */
-import Badge from "@/components/commons/Badge";
 import Drawer from "@/components/commons/Drawer";
-import ProfileImage from "@/components/commons/ProfileImage";
-import Skeleton from "@/components/commons/Skeleton";
 import { OrderType } from "@/constants/dropdownConstants";
 import QUERY_KEY, { DEFAULT_STALE_TIME } from "@/constants/queryKey";
 import { Team } from "@/lib/api/amplify/helper";
@@ -14,7 +11,9 @@ import { AnimatePresence } from "framer-motion";
 import { useRouter } from "next/router";
 import { Fragment, useEffect, useMemo } from "react";
 
-import MemberEditDrawer from "./MemberEditDrawer";
+import MemberCard from "./MemberCard";
+import MemberSkeleton from "./MemberSkeleton";
+import MemberEditDrawer from "./form/MemberEditDrawer";
 
 interface MemberListProps {
   openKey: string | null;
@@ -53,19 +52,7 @@ function MemberList({ openKey, setOpenKey, teamList }: MemberListProps) {
   }, [categoryId, orderBy]);
 
   if (isLoading) {
-    return (
-      <div className="mt-24 flex flex-col gap-16">
-        {[1, 2, 3, 4, 5].map((item) => (
-          <div key={item} className="rounded-12 border bg-gray-0 px-24 py-16">
-            <div className="flex items-center gap-16">
-              <ProfileImage size="sm" />
-              <Skeleton className="h-20 w-44 rounded-6" />
-              <Skeleton className="h-20 w-150 rounded-6" />
-            </div>
-          </div>
-        ))}
-      </div>
-    );
+    return <MemberSkeleton />;
   }
 
   if (error) {
@@ -82,7 +69,7 @@ function MemberList({ openKey, setOpenKey, teamList }: MemberListProps) {
 
   if (data) {
     return (
-      <div className="mt-24 flex flex-col gap-16">
+      <div className="mt-24 flex max-h-screen-350 flex-col gap-16 overflow-x-auto md:max-h-screen-300">
         {data.length ? (
           <>
             {data.map((item) => (
@@ -90,31 +77,9 @@ function MemberList({ openKey, setOpenKey, teamList }: MemberListProps) {
                 <div
                   role="button"
                   onClick={() => setOpenKey(item.id)}
-                  className="flex cursor-pointer items-center justify-between rounded-12 border bg-gray-0 px-24 py-16 duration-300 hover:bg-gray-10"
+                  className="flex cursor-pointer items-center justify-between rounded-12 border bg-gray-0 px-16 py-10 duration-300 hover:bg-gray-10 md:px-22 md:py-12"
                 >
-                  <div className="flex flex-col gap-12 lg:flex-row lg:gap-0">
-                    <div className="flex items-center gap-12 lg:gap-16">
-                      <ProfileImage
-                        imagePath={item.profileImage ?? undefined}
-                        size="sm"
-                      />
-                      <span className="min-w-50 text-16-400 text-gray-100">
-                        {item.username}
-                      </span>
-                      <span className="overflow-hidden truncate text-13-400 text-gray-100-opacity-60 lg:text-14-400">
-                        {item.email}
-                      </span>
-                    </div>
-                    <div className="hidden flex-wrap items-center gap-4 md:flex lg:ml-12">
-                      {item.teams?.map((teamId: string | null) =>
-                        teamId ? (
-                          <Badge key={teamId} variant="secondarySmall">
-                            {teamMap[teamId] || "Unknown Team"}
-                          </Badge>
-                        ) : null,
-                      )}
-                    </div>
-                  </div>
+                  <MemberCard user={item} teamMap={teamMap} />
                   <div className="hidden md:flex">
                     <ChevronRight />
                   </div>

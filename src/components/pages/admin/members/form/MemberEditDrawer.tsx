@@ -1,5 +1,4 @@
 import Button from "@/components/commons/Button";
-import ProfileImage from "@/components/commons/ProfileImage";
 import QUERY_KEY from "@/constants/queryKey";
 import useModal from "@/hooks/useModal";
 import useToast from "@/hooks/useToast";
@@ -43,6 +42,7 @@ function MemberEditDrawer({
       username: userData?.username,
       email: userData?.email,
       teams: [],
+      image: userData.profileImage,
     },
   });
 

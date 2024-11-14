@@ -1,12 +1,17 @@
 import { z } from "zod";
 
+const ALLOWED_DOMAINS = ["codeit.kr", "dev.resource.codeit.kr"] as const;
+
 const emailSchema = z
   .string()
   .min(1, "이메일은 필수 입력입니다.")
   .email("이메일 형식으로 작성해 주세요.")
-  .refine((email) => email.endsWith("@codeit.kr"), {
-    message: "이메일 도메인은 @codeit.kr 이어야 합니다.",
-  });
+  .refine(
+    (email) => ALLOWED_DOMAINS.some((domain) => email.endsWith(`@${domain}`)),
+    {
+      message: "이메일 도메인은 @codeit.kr 이어야 합니다.",
+    },
+  );
 
 const memberSchema = z.object({
   role: z.enum(["MEMBER", "ADMIN"]),
@@ -22,6 +27,7 @@ export type TeamInput = {
   email: string;
   teams: string[];
   role: "MEMBER" | "ADMIN";
+  image?: string | null;
 };
 
 export { emailSchema, memberSchema };

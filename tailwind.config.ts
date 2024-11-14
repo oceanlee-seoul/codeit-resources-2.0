@@ -14,6 +14,10 @@ const config: Config = {
   presets: [tailwindPresetPxToRem],
   theme: {
     extend: {
+      maxHeight: {
+        "screen-300": "calc(100vh - 300px)",
+        "screen-350": "calc(100vh - 350px)",
+      },
       colors: {
         ...colors,
         background: "var(--background)",

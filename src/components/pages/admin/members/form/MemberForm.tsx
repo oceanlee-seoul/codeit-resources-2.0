@@ -57,6 +57,26 @@ function MemberForm({
             어드민
           </Radio.Item>
         </Radio>
+
+        {mode === "edit" && (
+          <div className="flex flex-col items-center gap-16">
+            <ProfileImage imagePath={watch("image") || undefined} size="xl" />
+            <div className="flex items-center gap-10 rounded-full border px-12 py-3">
+              <div className="relative size-2.5">
+                <div
+                  className={`absolute inset-0 rounded-full ${isValidUser ? "bg-green-500" : "bg-orange-500"}`}
+                />
+                <div
+                  className={`absolute inset-0 animate-ping rounded-full opacity-75 ${isValidUser ? "bg-green-500" : "bg-orange-500"}`}
+                  style={{ animationDuration: "2s" }}
+                />
+              </div>
+              <span className="text-13-400 text-gray-80">
+                {isValidUser ? "로그인 완료" : "로그인 대기"}
+              </span>
+            </div>
+          </div>
+        )}
         <Input
           errorMessage={errors.username?.message}
           id="name"
@@ -76,7 +96,6 @@ function MemberForm({
           onRemove={handleRemove}
           departmentList={teamList}
         />
-        {mode === "edit" && <ProfileImage size="xl" />}
       </div>
 
       <div>

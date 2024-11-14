@@ -5,7 +5,7 @@ interface BadgeProps extends ComponentProps<"span"> {
   /** 뱃지의 내용을 지정합니다. */
   children: ReactNode;
   /** 뱃지의 모양을 지정합니다. */
-  variant: "primary" | "secondary" | "secondarySmall";
+  variant: "primary" | "secondary" | "secondarySmall" | "secondarySmallSquare";
 }
 
 function Badge({ children, variant = "primary" }: BadgeProps) {
@@ -16,6 +16,8 @@ function Badge({ children, variant = "primary" }: BadgeProps) {
       variant === "secondary",
     "rounded-32 border-gray-100-opacity-5 text-11-500 border bg-purple-5 px-8 py-2 text-purple-50 text-nowrap":
       variant === "secondarySmall",
+    "rounded-4 border-gray-100-opacity-5 text-11-500 border bg-purple-5 px-6 text-purple-50 text-nowrap":
+      variant === "secondarySmallSquare",
   });
 
   return <span className={badgeStyle}>{children}</span>;
