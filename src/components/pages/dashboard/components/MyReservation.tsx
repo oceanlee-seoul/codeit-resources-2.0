@@ -1,3 +1,4 @@
+import ScrollContainer from "@/components/Layout/Scroll/ScrollContainer";
 import { RESOURCE_LABELS } from "@/constants/common";
 import {
   Reservation,
@@ -36,19 +37,23 @@ function MyReservation({
         </span>
       </h1>
       <span className="h-1 w-full border-b-[1px] border-gray-100-opacity-10" />
-      <div className="flex scroll-m-2 gap-16 overflow-x-auto pb-16">
-        {reservationList.length === 0 ? (
-          <EmptyReservation resourceType={resourceType} />
-        ) : (
-          reservationList?.map((reservation: Reservation | RoomReservation) => (
-            <ReservationCard
-              key={reservation.id}
-              reservation={reservation}
-              isDetailed={resourceType === "ROOM"}
-            />
-          ))
-        )}
-      </div>
+      <ScrollContainer>
+        <div className="flex gap-16 pb-16">
+          {reservationList.length === 0 ? (
+            <EmptyReservation resourceType={resourceType} />
+          ) : (
+            reservationList?.map(
+              (reservation: Reservation | RoomReservation) => (
+                <ReservationCard
+                  key={reservation.id}
+                  reservation={reservation}
+                  isDetailed={resourceType === "ROOM"}
+                />
+              ),
+            )
+          )}
+        </div>
+      </ScrollContainer>
     </section>
   );
 }

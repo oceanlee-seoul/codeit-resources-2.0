@@ -1,6 +1,6 @@
 import ChevronLeft from "@/../public/icons/icon-chevron-left.svg";
 import ChevronRight from "@/../public/icons/icon-chevron-right.svg";
-import ScrollProvider from "@/components/Layout/ScrollProvider";
+import ScrollProvider from "@/components/Layout/Scroll/ScrollProvider";
 import Badge from "@/components/commons/Badge";
 import Tab from "@/components/commons/Tab";
 import getDaysUntilEndOfMonth, {
@@ -158,12 +158,10 @@ function Header({ className }: { className?: string }) {
 function Layout({ children }: { children: React.ReactNode }) {
   return (
     <ScrollProvider>
-      <div>
-        <Header className="px-16 pt-64 md:px-64 md:pt-24" />
-        <section className="min-h-screen overflow-y-visible bg-gray-5 px-16 pb-100 pt-32 md:py-24 md:pl-192 md:pr-64">
-          {children}
-        </section>
-      </div>
+      <Header className="px-16 pt-64 md:px-64 md:pt-24" />
+      <section className="min-h-screen overflow-y-visible bg-gray-5 px-16 pb-100 pt-32 md:py-24 md:pl-192 md:pr-64">
+        {children}
+      </section>
     </ScrollProvider>
   );
 }

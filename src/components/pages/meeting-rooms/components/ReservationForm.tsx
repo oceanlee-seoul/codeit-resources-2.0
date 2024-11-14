@@ -117,9 +117,15 @@ function ReservationForm({ rooms, members }: ReservationFormProps) {
   return (
     <FormProvider {...methods}>
       <form
-        className="flex h-full w-full flex-col gap-y-16 pb-32 pt-24 [&_input]:text-16-400"
+        className="relative flex h-full w-full flex-col gap-y-16 pb-32 pt-24 [&_input]:text-16-400"
         onSubmit={handleSubmit(onSubmit)}
       >
+        {pickedReservation?.id?.startsWith("google") && (
+          <span className="absolute right-0 top-0 text-12-500 text-purple-600">
+            * <b>Google Calendar</b>를 통해 예약된 회의에요
+          </span>
+        )}
+
         <Input
           id="title"
           label="미팅 제목"

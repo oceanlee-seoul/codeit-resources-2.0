@@ -1,3 +1,5 @@
+import ScrollContainer from "@/components/Layout/Scroll/ScrollContainer";
+
 import SeatButton from "./SeatButton";
 import useGetAllSeatsData from "./hooks/useGetAllSeatsData";
 import { SeatData } from "./types";
@@ -6,19 +8,21 @@ export default function SeatGrid() {
   const allSeatsData = useGetAllSeatsData();
 
   return (
-    <div className="no-scrollbar mx-16 mb-200 overflow-x-auto md:mx-60 lg:mx-118">
-      <div className="my-28 grid w-[668px] auto-rows-auto grid-cols-2 gap-40 md:mx-0 md:w-[1004px] xl:flex-shrink-0">
-        <SeatBlock seatsData={allSeatsData.A} />
-        <SeatBlock seatsData={allSeatsData.B} />
-        <SeatBlock seatsData={allSeatsData.C} />
-        <SeatBlock seatsData={allSeatsData.D} />
-        <SeatBlock seatsData={allSeatsData.E} />
-        <SeatBlock seatsData={allSeatsData.F} />
-        <SeatBlock seatsData={allSeatsData.G} />
-        <SeatBlock seatsData={allSeatsData.H} />
-        <SeatBlock seatsData={allSeatsData.I} />
-        <SeatBlock seatsData={allSeatsData.J} />
-      </div>
+    <div className="mx-16 mb-200 md:mx-60 lg:mx-118">
+      <ScrollContainer>
+        <div className="my-28 grid w-[668px] auto-rows-auto grid-cols-2 gap-40 md:mx-0 md:w-[1004px] xl:flex-shrink-0">
+          <SeatBlock seatsData={allSeatsData.A} />
+          <SeatBlock seatsData={allSeatsData.B} />
+          <SeatBlock seatsData={allSeatsData.C} />
+          <SeatBlock seatsData={allSeatsData.D} />
+          <SeatBlock seatsData={allSeatsData.E} />
+          <SeatBlock seatsData={allSeatsData.F} />
+          <SeatBlock seatsData={allSeatsData.G} />
+          <SeatBlock seatsData={allSeatsData.H} />
+          <SeatBlock seatsData={allSeatsData.I} />
+          <SeatBlock seatsData={allSeatsData.J} />
+        </div>
+      </ScrollContainer>
     </div>
   );
 }
