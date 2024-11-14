@@ -37,7 +37,7 @@ export const handleAxiosError = (error: unknown) => {
   }
 };
 
-export const BASE_URL = "http://localhost:3000/api";
+export const BASE_URL = `${process.env.NEXTAUTH_URL}/api`;
 
 export const axiosInstance = axios.create({
   baseURL: BASE_URL,
