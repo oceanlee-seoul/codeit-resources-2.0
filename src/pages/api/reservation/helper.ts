@@ -64,12 +64,16 @@ export const getRoomReservationList = async (
        *
        */
       const amplifyData: RoomReservation[] = await Promise.all(
-        googleEvents?.map(
-          (event: GoogleCalendarEventRequest) =>
-            event && googleEventToReservation(event),
-        ),
+        googleEvents?.map(async (event: GoogleCalendarEventRequest) => {
+          const data = await googleEventToReservation(event);
+          return data || null;
+        }),
       );
-      return res.status(201).json(amplifyData);
+
+      const filteredAmplifyData = amplifyData.filter(
+        (data): data is RoomReservation => data !== null,
+      );
+      return res.status(201).json(filteredAmplifyData);
     }
     return res.status(500).json({ error: "Failed to get events" });
     // eslint-disable-next-line

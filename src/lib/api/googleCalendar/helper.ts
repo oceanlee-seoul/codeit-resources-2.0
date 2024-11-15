@@ -97,22 +97,7 @@ export async function googleEventToReservation(
   });
 
   if (errors || amplifyResource.length === 0) {
-    return {
-      id: "deletedData",
-      title: "",
-      resourceId: "",
-      resourceType: "ROOM",
-      resourceSubtype: "",
-      resourceName: "",
-
-      date: startDateTime[1],
-      startTime: startDateTime[2],
-      endTime: endDateTime[2],
-
-      status: "CANCELED",
-      participants: [],
-      googleEventId: event.id,
-    };
+    return null;
   }
 
   const members = await getMemberList();
