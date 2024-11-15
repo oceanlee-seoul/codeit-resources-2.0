@@ -17,7 +17,7 @@ import { Resource } from "@/lib/api/amplify/helper";
 import { getGroupedResourceListBySubtype } from "@/lib/api/amplify/resource/utils";
 import { isOpenDrawerAtom } from "@/store/isOpenDrawerAtom";
 import { containerRefAtom, targetRefAtom } from "@/store/scrollAtom";
-import { useAtom, useAtomValue, useSetAtom } from "jotai";
+import { useAtomValue, useSetAtom } from "jotai";
 import { Suspense, useEffect, useMemo } from "react";
 
 function MeetingRoomsPage() {
@@ -26,7 +26,7 @@ function MeetingRoomsPage() {
   const pickedDate = useAtomValue(pickedDateAtom);
   const setPickedReservation = useSetAtom(pickedReservationAtom);
 
-  const [isOpenDrawer, setIsOpenDrawer] = useAtom(isOpenDrawerAtom);
+  const setIsOpenDrawer = useSetAtom(isOpenDrawerAtom);
 
   // 리소스를 subtype별로 그룹화
   const groupedResources = useMemo(

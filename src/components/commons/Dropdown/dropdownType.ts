@@ -95,6 +95,8 @@ export interface MembersSelectDropdownProps {
   onRemove: (value: Member) => void;
   /** 선택할 수 있는 모든 멤버 목록 */
   allMembers: Member[];
+  /** 예약자는 체크 해제 불가능 */
+  disabledMembers?: string[];
 }
 
 export interface MemberItemProps {
@@ -106,6 +108,8 @@ export interface MemberItemProps {
   onSelect: (member: Member) => void;
   /** 선택된 멤버를 제거하는 함수 */
   onRemove: (member: Member) => void;
+  /** 예약자인지 아닌지 */
+  disabled?: boolean;
 }
 
 export interface PopoverContextType {

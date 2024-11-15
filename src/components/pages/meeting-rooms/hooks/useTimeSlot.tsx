@@ -108,6 +108,7 @@ const useTimeSlot = ({ slot, room }: UseTimeSlotProps) => {
       }
     } else {
       // 2. 예약이 없을 경우
+
       setIsOpenDrawer(true);
       setPickedReservation({
         startTime: time,
@@ -115,7 +116,19 @@ const useTimeSlot = ({ slot, room }: UseTimeSlotProps) => {
         resourceSubtype: room.resourceSubtype,
         resourceName: room.name,
         resourceId: room.id,
-        participants: pickedReservation?.participants,
+        participants: currentUser
+          ? [
+              {
+                id: currentUser.id,
+                name: currentUser.username,
+                email: currentUser.email,
+                teams: (currentUser.teams || []).filter(
+                  (team): team is string => team !== null,
+                ),
+                profileImage: currentUser.profileImage || null,
+              },
+            ]
+          : [],
       });
     }
   }

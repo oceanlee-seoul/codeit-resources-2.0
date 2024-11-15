@@ -36,6 +36,7 @@ export default function MembersSelectDropdown({
   onSelect,
   onRemove,
   allMembers,
+  disabledMembers = [],
 }: MembersSelectDropdownProps) {
   const { isOpen, toggleDropdown, closeDropdown, dropdownRef } = useDropdown();
 
@@ -55,7 +56,10 @@ export default function MembersSelectDropdown({
     <MembersSelectDropdownContext.Provider value={contextProviderValue}>
       <div ref={dropdownRef} className="relative">
         <Toggle />
-        <SearchWrapper allMembers={allMembers} />
+        <SearchWrapper
+          allMembers={allMembers}
+          disabledMembers={disabledMembers}
+        />
       </div>
     </MembersSelectDropdownContext.Provider>
   );
@@ -106,7 +110,13 @@ function Toggle() {
   );
 }
 
-function SearchWrapper({ allMembers }: { allMembers: Member[] }) {
+function SearchWrapper({
+  allMembers,
+  disabledMembers,
+}: {
+  allMembers: Member[];
+  disabledMembers: string[];
+}) {
   const { isOpen, selectedMembers, onSelect, onRemove } =
     useMembersSelectDropdownContextType(); // 컨텍스트 사용
 
@@ -144,19 +154,18 @@ function SearchWrapper({ allMembers }: { allMembers: Member[] }) {
           </div>
 
           {/* 필터링된 멤버 목록을 렌더링 */}
-          <div className="flex w-full flex-col gap-3 overflow-x-auto overflow-y-auto pr-15">
-            {filteredMembers.map((member) => (
-              <MemberItem
-                key={member.id}
-                member={member}
-                isSelected={selectedMembers.some(
-                  (selectedMember) => selectedMember.name === member.name,
-                )}
-                onSelect={onSelect}
-                onRemove={onRemove}
-              />
-            ))}
-          </div>
+          {filteredMembers.map((member) => (
+            <MemberItem
+              key={member.id}
+              member={member}
+              isSelected={selectedMembers.some(
+                (selectedMember) => selectedMember.name === member.name,
+              )}
+              onSelect={onSelect}
+              onRemove={onRemove}
+              disabled={disabledMembers.includes(member.id)}
+            />
+          ))}
         </motion.div>
       )}
     </AnimatePresence>
@@ -168,8 +177,10 @@ function MemberItem({
   isSelected,
   onSelect,
   onRemove,
+  disabled,
 }: MemberItemProps) {
   const handleClick = () => {
+    if (disabled && isSelected) return; // 예약자는 체크 선택 해제 불가
     if (isSelected) {
       onRemove(member); // 선택 해제
     } else {
@@ -183,12 +194,17 @@ function MemberItem({
       className={clsx(
         "flex items-center gap-5 rounded-8 px-12 py-6 text-15-500",
         {
-          "bg-purple-opacity-10 text-purple-80": isSelected,
+          "bg-purple-opacity-10 text-purple-80": isSelected && !disabled,
+          // 예약자인 경우의 스타일
+          "cursor-default bg-gray-20 text-gray-100-opacity-80":
+            disabled && isSelected,
           "text-gray-100-opacity-80 hover:bg-purple-opacity-5 hover:text-purple-80":
             !isSelected,
+          "cursor-not-allowed opacity-50": disabled && !isSelected,
         },
       )}
       onClick={handleClick}
+      disabled={disabled && !isSelected}
     >
       {isSelected ? (
         <CheckedBox className="mr-5 w-16 flex-shrink-0" />

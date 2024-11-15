@@ -237,6 +237,7 @@ function ReservationForm({ rooms, members }: ReservationFormProps) {
                 onChange(value.filter((m) => m.id !== member.id));
               }}
               allMembers={members}
+              disabledMembers={currentUser ? [currentUser.id] : []}
             />
           )}
         />
