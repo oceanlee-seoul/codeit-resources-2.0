@@ -79,7 +79,7 @@ const DATE_TIME_REGEX = /^(\d{4}-\d{2}-\d{2})T(\d{2}:\d{2})/;
 export async function googleEventToReservation(
   event: GoogleCalendarEventRequest,
   // token?: JWT,
-): Promise<Partial<RoomReservation>> {
+): Promise<Partial<RoomReservation> | null> {
   if (!event.start.dateTime || !event.end.dateTime || !event.attendees) {
     throw new Error("Google Calendar Event is not valid.");
   }
@@ -97,7 +97,22 @@ export async function googleEventToReservation(
   });
 
   if (errors || amplifyResource.length === 0) {
-    throw new Error("Failed to fetch resource info from Amplify");
+    return {
+      id: "deletedData",
+      title: "",
+      resourceId: "",
+      resourceType: "ROOM",
+      resourceSubtype: "",
+      resourceName: "",
+
+      date: startDateTime[1],
+      startTime: startDateTime[2],
+      endTime: endDateTime[2],
+
+      status: "CANCELED",
+      participants: [],
+      googleEventId: event.id,
+    };
   }
 
   const members = await getMemberList();
@@ -127,10 +142,10 @@ export async function googleEventToReservation(
   return {
     id: reservation?.[0]?.id || `googleCalenderOnly-${event.id}`,
     title: event.summary,
-    resourceId: amplifyResource[0]?.id,
+    resourceId: amplifyResource[0]?.id || "",
     resourceType: amplifyResource[0].resourceType || "ROOM",
-    resourceSubtype: amplifyResource[0].resourceSubtype,
-    resourceName: amplifyResource[0].name,
+    resourceSubtype: amplifyResource[0].resourceSubtype || "",
+    resourceName: amplifyResource[0].name || "",
 
     date: startDateTime[1],
     startTime: startDateTime[2],
