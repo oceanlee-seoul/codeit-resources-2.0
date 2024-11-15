@@ -14,6 +14,7 @@ const handleError = (error: any) => {
     : "An unexpected error occurred";
 
   // 여기서 필요한 경우 로깅이나 추가 처리 가능
+  // eslint-disable-next-line
   console.error(errorMessage);
   return null; // 오류 발생 시 null 반환
 };
@@ -106,5 +107,25 @@ export const deleteEvent = async (
     return true; // 삭제 성공 시 true 반환
   } catch (error) {
     return handleError(error);
+  }
+};
+
+export const checkGoogleCalendarId = async (
+  calendarID: string,
+  accessToken: string,
+) => {
+  try {
+    await axiosInstance.get(END_POINTS.events(calendarID), {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+      params: {
+        maxResults: 1,
+      },
+    });
+    return true;
+    // eslint-disable-next-line
+  } catch (error) {
+    return false;
   }
 };

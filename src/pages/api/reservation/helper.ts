@@ -56,11 +56,6 @@ export const getRoomReservationList = async (
       );
     }
 
-    // console.log(
-    //   "googleEvents",
-    //   googleEvents.items.length,
-    //   JSON.stringify(googleEvents.items),
-    // );
     if (googleEvents) {
       /** REVIEW
        * 1. 구글캘린더 데이터를 가져와서 렌더링 (현재)
@@ -68,10 +63,6 @@ export const getRoomReservationList = async (
        * 3. 구글캘린더, amplify DB 데이터 모두 가져온 뒤 item 수 비교해서 따로 처리해주기
        *
        */
-      // const amplifyData = await amplifyUtils.getReservationListByResourceType(
-      //   "ROOM",
-      //   amplifyParams,
-      // );
       const amplifyData: RoomReservation[] = await Promise.all(
         googleEvents?.map(
           (event: GoogleCalendarEventRequest) =>
@@ -81,12 +72,11 @@ export const getRoomReservationList = async (
       return res.status(201).json(amplifyData);
     }
     return res.status(500).json({ error: "Failed to get events" });
+    // eslint-disable-next-line
   } catch (error) {
     return res.status(500).json({ error: "Internal Server Error" });
   }
 };
-
-// export const getMyRoomReservationList = async () => {};
 
 export const createReservation = async (
   req: NextApiRequest,
@@ -104,7 +94,6 @@ export const createReservation = async (
       event,
       accessToken || "",
     );
-    // console.log("createdEvent", createdEvent);
     if (createdEvent) {
       const amplifyData = await amplifyUtils.createReservation({
         ...reservation,
@@ -114,12 +103,12 @@ export const createReservation = async (
           ) || [],
         googleEventId: createdEvent.id,
       });
-      // console.log("amplifyData", amplifyData);
       if (amplifyData) {
         return res.status(201).json(amplifyData);
       }
     }
     return res.status(500).json({ error: "Failed to create event" });
+    // eslint-disable-next-line
   } catch (error) {
     return res.status(500).json({ error: "Internal Server Error" });
   }
@@ -134,7 +123,7 @@ export const updateReservation = async (
   const calendarID = email || "primary";
   const { data: reservation, user } = req.body;
   const event = await reservationToGoogleEvent(reservation, { email });
-  // console.log("event", event);
+
   const { reservationId } = req.query;
   const isOnlyGoogleEvent =
     typeof reservationId === "string" &&
@@ -175,6 +164,7 @@ export const updateReservation = async (
       }
     }
     return res.status(500).json({ error: "Failed to update event" });
+    // eslint-disable-next-line
   } catch (error) {
     return res.status(500).json({ error: "Internal Server Error" });
   }

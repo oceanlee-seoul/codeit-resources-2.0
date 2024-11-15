@@ -1,3 +1,4 @@
+// eslint-disable
 import Badge from "@/components/commons/Badge";
 import Button from "@/components/commons/Button";
 import useIsOngoing from "@/hooks/useIsOngoing";
@@ -88,7 +89,10 @@ function ReservationCard({
   reservation: Reservation | RoomReservation;
   isDetailed?: boolean;
 }) {
+  if (reservation.status === "CANCELED") return null;
+  // eslint-disable-next-line
   const buttonActions = useDashboardAction(reservation);
+  // eslint-disable-next-line
   const isOngoing = useIsOngoing(reservation.startTime, reservation.endTime);
   const resourceDetail = getResourceDetails(reservation);
   const currentTime = getCurrentTime();

@@ -9,11 +9,13 @@ import {
   deleteResource,
   updateResource,
 } from "@/lib/api/amplify/resource";
+import { checkGoogleCalendarId } from "@/lib/api/googleCalendar";
 import ArrowDown from "@public/icons/icon-arrow-down.svg";
 import IconKebab from "@public/icons/icon-kebab.svg";
 import IconPlus from "@public/icons/icon-plus.svg";
 import { useQueryClient } from "@tanstack/react-query";
 import { AnimatePresence, motion } from "framer-motion";
+import { getSession } from "next-auth/react";
 import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 
@@ -69,6 +71,18 @@ export default function MeetingRoomList({
     const name = watch("name").trim();
     const googleResourceId = watch("googleResourceId").trim();
     if (!name || !googleResourceId) {
+      handleCancelEdit(id);
+      return;
+    }
+
+    const session = await getSession();
+    const checkGoogleCalendar = await checkGoogleCalendarId(
+      googleResourceId,
+      session?.accessToken || "",
+    );
+
+    if (!checkGoogleCalendar) {
+      error("존재하지 않는 리소스입니다. ID를 확인해주세요.");
       handleCancelEdit(id);
       return;
     }
@@ -129,6 +143,19 @@ export default function MeetingRoomList({
     const isDuplicate = listItems.some(
       (item) => item.id !== id && item.name.trim() === name,
     );
+
+    const session = await getSession();
+    const checkGoogleCalendar = await checkGoogleCalendarId(
+      googleResourceId,
+      session?.accessToken || "",
+    );
+
+    if (!checkGoogleCalendar) {
+      error("존재하지 않는 리소스입니다. ID를 확인해주세요.");
+      setEditId(null);
+      reset();
+      return;
+    }
 
     if (isDuplicate) {
       error("이미 존재하는 이름입니다. 다른 이름을 사용해 주세요.");

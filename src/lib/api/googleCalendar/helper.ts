@@ -89,12 +89,13 @@ export async function googleEventToReservation(
   const endDateTime = event.end.dateTime.match(DATE_TIME_REGEX) ?? [];
 
   const resource = event.attendees.find((attendee) => attendee.resource) ?? {};
+
   const { data: amplifyResource, errors } = await client.models.Resource.list({
     filter: {
       googleResourceId: { eq: resource.email },
     },
   });
-  // console.log("amplifyResource", amplifyResource);
+
   if (errors || amplifyResource.length === 0) {
     throw new Error("Failed to fetch resource info from Amplify");
   }
@@ -117,6 +118,12 @@ export async function googleEventToReservation(
     filter: { googleEventId: { eq: event?.id || "" } },
   });
 
+  const status =
+    resource.responseStatus === "cancelled" ||
+    resource.responseStatus === "declined"
+      ? "CANCELED"
+      : "CONFIRMED";
+
   return {
     id: reservation?.[0]?.id || `googleCalenderOnly-${event.id}`,
     title: event.summary,
@@ -129,7 +136,7 @@ export async function googleEventToReservation(
     startTime: startDateTime[2],
     endTime: endDateTime[2],
 
-    status: resource.responseStatus === "cancelled" ? "CANCELED" : "CONFIRMED",
+    status,
     participants: formattedParticipants,
     googleEventId: event.id,
   };
