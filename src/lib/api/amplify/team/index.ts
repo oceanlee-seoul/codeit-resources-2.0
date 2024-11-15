@@ -1,4 +1,4 @@
-import { client } from "../helper";
+import { Team, client } from "../helper";
 
 /**
  * @description [팀 이름 중복 확인]
@@ -34,10 +34,25 @@ export const getTeamListData = async () => {
 };
 
 /**
- * @description [팀 삭제하기]
+ * @description 팀 삭제하면서, 해당 팀에 소속된 유저의 teams 배열 업데이트
+ *
+ * @param teamId 삭제할 팀id
  */
-export const deleteTeamData = async (id: string) =>
-  client.models.Team.delete({ id });
+export const deleteTeamAndUpdateUsers = async (
+  teamId: string,
+): Promise<Team> => {
+  const response = await fetch(`/api/team?teamId=${teamId}`, {
+    method: "DELETE",
+  });
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error("팀을 삭제하지 못했습니다.");
+  }
+
+  return data;
+};
 
 /**
  * @description [팀 이름 수정하기]

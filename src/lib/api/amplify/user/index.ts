@@ -1,7 +1,6 @@
 import { OrderType } from "@/constants/dropdownConstants";
 
-import { Role, client } from "../helper";
-import { fetchUsersByRole, sortUserList } from "./utils";
+import { Role, User, client } from "../helper";
 
 /**
  * @description [특정 유저 정보 가져오기]
@@ -67,28 +66,22 @@ export const deleteUserData = async (id: string) =>
  * oldest 오래된순
  * alphabetical 가나다순
  */
-export const getUserListData = async (category: string, order: OrderType) => {
-  switch (category) {
-    case "0":
-      // eslint-disable-next-line
-      const userList = (await client.models.User.list()).data;
-      return sortUserList(userList, order);
-    case "1":
-      return fetchUsersByRole("MEMBER", order);
-    case "2":
-      return fetchUsersByRole("ADMIN", order);
-    default:
-      // eslint-disable-next-line
-      const userListByTeam = (
-        await client.models.User.list({
-          filter: { teams: { contains: category } },
-        })
-      ).data;
-      return sortUserList(userListByTeam, order);
-  }
-};
+export const getUserListData = async (
+  category: string,
+  order: OrderType,
+): Promise<User[]> => {
+  const response = await fetch(
+    `/api/users?category=${category}&order=${order}`,
+    { method: "GET" },
+  );
 
-// #################### ver 2.0 ####################
+  if (!response.ok) {
+    throw new Error("데이터를 가져오지 못했습니다.");
+  }
+
+  const data = await response.json();
+  return data;
+};
 
 /**
  * 해당 이메일을 가진 유저 가져오기

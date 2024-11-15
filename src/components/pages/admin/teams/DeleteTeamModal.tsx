@@ -3,7 +3,7 @@ import Input from "@/components/commons/Input";
 import QUERY_KEY from "@/constants/queryKey";
 import useModal from "@/hooks/useModal";
 import useToast from "@/hooks/useToast";
-import { deleteTeamAndUpdateUsers } from "@/lib/api/amplify/team/utils";
+import { deleteTeamAndUpdateUsers } from "@/lib/api/amplify/team";
 import LoadingSpinner from "@public/gifs/loading-spinner.svg";
 import IconAlert from "@public/icons/icon-modal-alert.svg";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -24,11 +24,7 @@ function DeleteTeamModal({ teamId, teamName }: DeleteTeamModalProps) {
   const { mutate, isPending } = useMutation({
     mutationFn: () => deleteTeamAndUpdateUsers(teamId),
     onSuccess: (res) => {
-      if (res.data) {
-        success(`${res.data.name} 팀이 삭제되었습니다.`);
-      } else {
-        error("팀을 삭제하는데 실패하였습니다.");
-      }
+      success(`${res.name} 팀이 삭제되었습니다.`);
       queryClient.invalidateQueries({ queryKey: [QUERY_KEY.TEAM_LIST] });
     },
     onError: () => {
@@ -61,6 +57,7 @@ function DeleteTeamModal({ teamId, teamName }: DeleteTeamModalProps) {
           label="삭제할 팀 이름을 입력해주세요"
           value={input}
           onChange={(e) => setInput(e.target.value)}
+          autoComplete="off"
         />
       </div>
       <div className="flex gap-20">

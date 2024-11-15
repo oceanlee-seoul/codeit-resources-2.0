@@ -20,11 +20,9 @@ function TeamBadges({ teams, teamMap }: TeamBadgesProps) {
       {teams?.map((teamId: string | null) =>
         teamId ? (
           <Badge key={teamId} variant="secondarySmallSquare">
-            {teamMap[teamId] || "알 수 없는 팀"}
+            {teamMap[teamId]}
           </Badge>
-        ) : (
-          <span key="no-team">소속된 팀이 없습니다.</span>
-        ),
+        ) : null,
       )}
     </div>
   );
