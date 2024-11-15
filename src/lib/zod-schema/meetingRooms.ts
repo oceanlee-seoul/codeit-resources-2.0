@@ -11,6 +11,10 @@ const meetingRoomZodSchema = z.object({
     .trim()
     .min(1, { message: "회의실 이름은 필수값 입니다." })
     .max(10, { message: "회의실 이름은 최대 10글자까지만 가능합니다." }),
+  googleResourceId: z
+    .string()
+    .trim()
+    .min(1, { message: "구글 리소스 아이디는 필수값 입니다." }),
 });
 
 export { meetingRoomZodSchema };

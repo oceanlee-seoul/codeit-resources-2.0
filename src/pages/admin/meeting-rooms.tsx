@@ -3,6 +3,7 @@ import Error from "@/components/commons/Error";
 import ErrorBoundary from "@/components/commons/ErrorBoundary";
 import AdminMeetingRoomsSkeleton from "@/components/pages/admin/meeting-rooms/AdminMeetingRoomSkeleton";
 import EmptyMeetingRooms from "@/components/pages/admin/meeting-rooms/EmptyMeetingRooms";
+import GoogleResourceIDPopover from "@/components/pages/admin/meeting-rooms/GoogleResourceIDPopover";
 import MeetingRoomList from "@/components/pages/admin/meeting-rooms/MeetingRoomList";
 import { useGetReservations } from "@/components/pages/meeting-rooms/hooks/useGetReservations";
 import useModal from "@/hooks/useModal";
@@ -34,6 +35,7 @@ function AdminMeetingRoomPage() {
         <h1 className="text-24-700 text-gray-100 md:text-28-700">
           회의실 설정
         </h1>
+        <GoogleResourceIDPopover />
       </div>
       <div className="mt-40 flex flex-col gap-16">{content}</div>
       <div>

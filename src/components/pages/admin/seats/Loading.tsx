@@ -1,6 +1,6 @@
 export default function Loading() {
   return (
-    <div className="mx-16 mb-200 overflow-x-auto md:mx-60 lg:mx-118">
+    <div className="no-scrollbar mx-16 mb-200 overflow-x-auto md:mx-60 lg:mx-118">
       <div className="my-28 grid w-[668px] auto-rows-auto grid-cols-2 gap-40 md:mx-0 md:w-[1004px] xl:flex-shrink-0">
         <SeatBlockSkeleton length={4} />
         <SeatBlockSkeleton length={5} />

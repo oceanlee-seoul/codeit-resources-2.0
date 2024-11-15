@@ -10,6 +10,7 @@ type CreateResourceParams = {
   name: string;
   description?: string;
   image?: string;
+  googleResourceId?: string;
 };
 
 /**
@@ -132,6 +133,7 @@ export const useSubscribeResource = (
 interface UpdateResourceNameParams {
   id: string;
   name: string;
+  googleResourceId: string;
 }
 
 /**
@@ -148,7 +150,7 @@ interface UpdateResourceNameParams {
  * ```
  */
 
-export const updateResourceName = async (params: UpdateResourceNameParams) =>
+export const updateResource = async (params: UpdateResourceNameParams) =>
   client.models.Resource.update(params);
 
 interface EditResourceParams {

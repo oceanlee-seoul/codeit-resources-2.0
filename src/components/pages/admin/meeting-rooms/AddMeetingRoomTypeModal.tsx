@@ -9,11 +9,13 @@ import { meetingRoomZodSchema } from "@/lib/zod-schema/meetingRooms";
 import { zodResolver } from "@hookform/resolvers/zod";
 import LoadingSpinner from "@public/gifs/loading-spinner.svg";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import Link from "next/link";
 import { SubmitHandler, useForm, useWatch } from "react-hook-form";
 
 type AddMeetingRoomType = {
   resourceSubtype: string;
   name: string;
+  googleResourceId: string;
 };
 
 export default function AddMeetingRoomTypeModal() {
@@ -48,6 +50,7 @@ export default function AddMeetingRoomTypeModal() {
         resourceType: "ROOM",
         resourceSubtype: data.resourceSubtype,
         name: data.name,
+        googleResourceId: data.googleResourceId,
       }),
     onSuccess: (res) => {
       if (res.data) {
@@ -91,6 +94,20 @@ export default function AddMeetingRoomTypeModal() {
             isDuplicateName ? "이미 존재하는 이름입니다." : errors.name?.message
           }
         />
+        <Input
+          register={register("googleResourceId")}
+          label="구글 리소스 아이디"
+          id="googleResourceId"
+          errorMessage={errors.googleResourceId?.message}
+        />
+        <Link
+          href="https://calendar.google.com/calendar/u/1/r/settings"
+          className="w-max text-14-500 text-gray-80 underline"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          구글 리소스 아이디 확인하기
+        </Link>
       </div>
       <div className="flex justify-between gap-20">
         <Button
