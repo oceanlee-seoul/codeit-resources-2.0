@@ -23,7 +23,7 @@ function NavBarOption({ navOption, mobileOnly = false }: NavBarOptionProps) {
     <Link
       key={navOption.id}
       href={navOption.path}
-      className={`flex w-full flex-col items-center py-8 hover:rounded-10 hover:bg-gray-00-opacity-5 md:w-auto md:flex-row md:gap-10 md:py-10 md:pl-16 ${
+      className={`flex w-full flex-col items-center py-8 transition-all hover:rounded-10 hover:bg-gray-00-opacity-5 md:w-auto md:flex-row md:gap-10 md:py-10 md:pl-16 ${
         mobileOnly ? "md:hidden" : ""
       }`}
     >
@@ -82,7 +82,7 @@ function NavigationBar() {
       </ul>
       <Link
         href="/mypage"
-        className={`absolute bottom-16 hidden w-168 items-center gap-10 rounded-10 p-8 hover:bg-gray-00-opacity-5 md:flex ${
+        className={`absolute bottom-16 hidden w-168 items-center gap-10 rounded-10 p-8 transition-all hover:bg-gray-00-opacity-5 md:flex ${
           router.pathname === "/mypage"
             ? "text-white"
             : "text-gray-00-opacity-60"

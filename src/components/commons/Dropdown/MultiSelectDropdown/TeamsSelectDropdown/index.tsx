@@ -90,7 +90,7 @@ function Toggle() {
         <div className="flex max-h-40 max-w-full gap-2 overflow-x-auto">
           {selectedTeams.length > 0 ? (
             selectedTeams.map((value) => (
-              <Badge key={value.id} variant="secondarySmall">
+              <Badge key={value.id} variant="secondarySmallSquare">
                 {value.name}
               </Badge>
             ))

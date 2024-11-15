@@ -125,36 +125,38 @@ function SearchWrapper({ allMembers }: { allMembers: Member[] }) {
     <AnimatePresence>
       {isOpen && (
         <motion.div
-          className="dropdown-wrapper-base max-h-168 w-full"
+          className="dropdown-wrapper-base max-h-300 w-full"
           initial="hidden"
           animate="visible"
           exit="exit"
           variants={VARIANTS.fade}
           transition={{ duration: 0.1 }}
         >
-          <div className="relative">
-            <SearchIcon className="absolute left-10 top-12" />
+          <div>
+            <SearchIcon className="absolute left-15 top-18" />
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="mb-2 h-40 w-full rounded-8 border border-gray-30 bg-gray-10 pl-30 pr-2 text-16-400"
+              className="mb-4 h-40 w-full rounded-8 border border-gray-30 bg-gray-10 pl-30 pr-2 text-16-400"
               placeholder="이름 및 부서로 검색"
             />
           </div>
 
           {/* 필터링된 멤버 목록을 렌더링 */}
-          {filteredMembers.map((member) => (
-            <MemberItem
-              key={member.id}
-              member={member}
-              isSelected={selectedMembers.some(
-                (selectedMember) => selectedMember.name === member.name,
-              )}
-              onSelect={onSelect}
-              onRemove={onRemove}
-            />
-          ))}
+          <div className="flex w-full flex-col gap-3 overflow-x-auto overflow-y-auto pr-15">
+            {filteredMembers.map((member) => (
+              <MemberItem
+                key={member.id}
+                member={member}
+                isSelected={selectedMembers.some(
+                  (selectedMember) => selectedMember.name === member.name,
+                )}
+                onSelect={onSelect}
+                onRemove={onRemove}
+              />
+            ))}
+          </div>
         </motion.div>
       )}
     </AnimatePresence>
@@ -201,7 +203,7 @@ function MemberItem({
       <div className="flex-grow overflow-x-auto">
         <div className="flex gap-3">
           {member.teams.map((dept) => (
-            <Badge key={dept} variant="secondarySmall">
+            <Badge key={dept} variant="secondarySmallSquare">
               {dept}
             </Badge>
           ))}

@@ -100,39 +100,41 @@ export default function UserSelect() {
             variants={VARIANTS.fade}
             transition={{ duration: 0.1 }}
           >
-            <div className="relative">
-              <SearchIcon className="absolute left-10 top-12" />
+            <div>
+              <SearchIcon className="absolute left-15 top-18" />
               <input
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="mb-2 h-40 w-full rounded-8 border border-gray-30 bg-gray-10 pl-30 pr-2 text-16-400 outline-none"
+                className="mb-4 h-40 w-full rounded-8 border border-gray-30 bg-gray-10 pl-30 pr-2 text-16-400 outline-none"
                 placeholder="이름으로 검색"
               />
             </div>
 
-            {filteredUsers.map((user) => (
-              <button
-                type="button"
-                key={user.id}
-                onClick={() => handleSelect(user.id)}
-                className={clsx(
-                  "flex items-center gap-8 rounded-8 px-12 py-6 text-15-500",
-                  {
-                    "bg-purple-opacity-10 text-purple-80":
-                      user.id === selectedParticipant,
-                    "text-gray-100-opacity-80 hover:bg-purple-opacity-5 hover:text-purple-80":
-                      user.id !== selectedParticipant,
-                  },
-                )}
-              >
-                <ProfileImage
-                  imagePath={user.profileImage ?? undefined}
-                  size="sm"
-                />
-                {user.username}
-              </button>
-            ))}
+            <div className="flex w-full flex-col gap-3 overflow-x-auto overflow-y-auto pr-15">
+              {filteredUsers.map((user) => (
+                <button
+                  type="button"
+                  key={user.id}
+                  onClick={() => handleSelect(user.id)}
+                  className={clsx(
+                    "flex items-center gap-8 rounded-8 px-12 py-6 text-15-500",
+                    {
+                      "bg-purple-opacity-10 text-purple-80":
+                        user.id === selectedParticipant,
+                      "text-gray-100-opacity-80 hover:bg-purple-opacity-5 hover:text-purple-80":
+                        user.id !== selectedParticipant,
+                    },
+                  )}
+                >
+                  <ProfileImage
+                    imagePath={user.profileImage ?? undefined}
+                    size="sm"
+                  />
+                  {user.username}
+                </button>
+              ))}
+            </div>
           </motion.div>
         )}
       </AnimatePresence>

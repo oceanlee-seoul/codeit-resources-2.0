@@ -97,7 +97,7 @@ export default function ProfileSection() {
                   <div className="flex gap-3">
                     {myTeamList && myTeamList.length > 0 ? (
                       myTeamList.map((team) => (
-                        <Badge key={team?.id} variant="secondarySmall">
+                        <Badge key={team?.id} variant="secondarySmallSquare">
                           {team?.name}
                         </Badge>
                       ))
@@ -140,7 +140,7 @@ export default function ProfileSection() {
                 <div className="flex gap-3">
                   {myTeamList && myTeamList.length > 0 ? (
                     myTeamList.map((team) => (
-                      <Badge key={team?.id} variant="secondarySmall">
+                      <Badge key={team?.id} variant="secondarySmallSquare">
                         {team?.name}
                       </Badge>
                     ))
