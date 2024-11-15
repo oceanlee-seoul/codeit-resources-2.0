@@ -73,8 +73,9 @@ export const getRoomReservationList = async (
       //   amplifyParams,
       // );
       const amplifyData: RoomReservation[] = await Promise.all(
-        googleEvents.map((event: GoogleCalendarEventRequest) =>
-          googleEventToReservation(event),
+        googleEvents?.map(
+          (event: GoogleCalendarEventRequest) =>
+            event && googleEventToReservation(event),
         ),
       );
       return res.status(201).json(amplifyData);

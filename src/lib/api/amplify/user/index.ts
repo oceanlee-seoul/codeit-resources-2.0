@@ -1,5 +1,6 @@
 import { OrderType } from "@/constants/dropdownConstants";
 
+import { axiosInstance } from "../../helper";
 import { Role, User, client } from "../helper";
 
 /**
@@ -70,17 +71,14 @@ export const getUserListData = async (
   category: string,
   order: OrderType,
 ): Promise<User[]> => {
-  const response = await fetch(
-    `/api/users?category=${category}&order=${order}`,
-    { method: "GET" },
-  );
-
-  if (!response.ok) {
+  try {
+    const response = await axiosInstance(
+      `/users?category=${category}&order=${order}`,
+    );
+    return response.data;
+  } catch (error) {
     throw new Error("데이터를 가져오지 못했습니다.");
   }
-
-  const data = await response.json();
-  return data;
 };
 
 /**
