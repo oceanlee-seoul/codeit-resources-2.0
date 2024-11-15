@@ -9,7 +9,7 @@ interface ButtonProps extends ComponentProps<"button"> {
   /** 버튼 태그의 type 속성을 지정합니다. */
   type?: "button" | "submit" | "reset";
   /** 버튼 스타일의 타입을 나타냅니다. */
-  variant?: "primary" | "secondary";
+  variant?: "primary" | "secondary" | "danger";
   /** 버튼의 너비를 지정합니다. (ex: w-100) 지정하지 않으면 100%로 설정됩니다. */
   width?: string;
   /** 버튼의 높이를 지정합니다. (ex: h-100) 지정하지 않으면 100%로 설정됩니다. */
@@ -31,18 +31,20 @@ function Button({
   ...buttonProps
 }: ButtonProps) {
   const buttonStyle = clsx(
-    "rounded-8 transition-all disabled:bg-gray-100-opacity-10 disabled:text-gray-100-opacity-30 disabled:cursor-not-allowed disabled:border-none",
+    "rounded-8 transition-all disabled:cursor-not-allowed disabled:border-none disabled:bg-gray-100-opacity-10 disabled:text-gray-100-opacity-30",
     width,
     height,
     {
       "bg-purple-70 text-gray-0 hover:bg-[#7200CC]": variant === "primary",
-      "bg-gray-00-opacity-40 text-gray-100-opacity-80 border-gray-100-opacity-20 border hover:bg-gray-100-opacity-20 hover:text-[#333236]":
+      "border border-gray-100-opacity-20 bg-gray-00-opacity-40 text-gray-100-opacity-80 hover:bg-gray-100-opacity-20 hover:text-[#333236]":
         variant === "secondary",
+      "border border-status-negative bg-white text-status-negative hover:bg-status-negative/10":
+        variant === "danger",
     },
     {
-      "px-24 py-8 rounded-8 text-16-500": size === "default",
-      "px-12 py-6 rounded-6 text-13-500": size === "small",
-      "px-16 py-8 rounded-6 text-14-500": size === "modal",
+      "rounded-8 px-24 py-8 text-16-500": size === "default",
+      "rounded-6 px-12 py-6 text-13-500": size === "small",
+      "rounded-6 px-16 py-8 text-14-500": size === "modal",
     },
   );
 

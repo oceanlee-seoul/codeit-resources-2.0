@@ -24,6 +24,13 @@ function SettingLinkItem({
 export default function SettingsLinksSection() {
   return (
     <section className="flex flex-col md:hidden">
+      <div className="flex items-end gap-12">
+        <h2 className="text-24-700 text-gray-100">어드민 기능</h2>
+        <span className="text-14-500 text-gray-70">
+          리소스들을 관리할 수 있어요
+        </span>
+      </div>
+      <hr className="my-16" />
       <SettingLinkItem to="/admin/members">멤버 관리</SettingLinkItem>
       <SettingLinkItem to="/admin/teams">팀 관리</SettingLinkItem>
       <SettingLinkItem to="/admin/meeting-rooms">회의실 설정</SettingLinkItem>

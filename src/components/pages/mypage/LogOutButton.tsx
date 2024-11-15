@@ -2,12 +2,11 @@ import Button from "@/components/commons/Button";
 import useToast from "@/hooks/useToast";
 import { clearAllCookies } from "@/lib/utils/cookieUtils";
 import LoadingSpinner from "@public/gifs/loading-spinner.svg";
-import { signOut } from "aws-amplify/auth";
 import { signOut as signOutGoogle } from "next-auth/react";
 import { useRouter } from "next/router";
 import { useState } from "react";
 
-export default function AccountSection() {
+function LogOutButton() {
   const { success, error } = useToast();
   const router = useRouter();
   const [isPending, setIsPending] = useState(false);
@@ -16,7 +15,6 @@ export default function AccountSection() {
     setIsPending(true);
     try {
       await signOutGoogle({ redirect: false, callbackUrl: "/sign-in" });
-      await signOut();
       localStorage.clear();
       clearAllCookies();
       success("성공적으로 로그아웃되었습니다.");
@@ -31,14 +29,33 @@ export default function AccountSection() {
   };
 
   return (
-    <section>
-      <h2 className="text-24-700 text-gray-100">계정</h2>
-      <hr className="mt-10" />
-      <div className="mt-20 h-45 w-110">
-        <Button variant="secondary" onClick={handleLogout}>
-          {isPending ? <LoadingSpinner /> : "로그아웃"}
-        </Button>
-      </div>
-    </section>
+    <div className="mb-20 mt-50 flex items-center justify-center px-20">
+      <Button variant="danger" disabled={isPending} onClick={handleLogout}>
+        {isPending ? (
+          <LoadingSpinner height={27} width="100%" />
+        ) : (
+          <div className="flex items-center justify-center gap-6">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+              <polyline points="16 17 21 12 16 7" />
+              <line x1="21" y1="12" x2="9" y2="12" />
+            </svg>
+            <span>로그아웃</span>
+          </div>
+        )}
+      </Button>
+    </div>
   );
 }
+
+export default LogOutButton;
