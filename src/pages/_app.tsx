@@ -17,7 +17,7 @@ import { useState } from "react";
 
 Amplify.configure(outputs);
 
-const AUTH_PATHS = ["/sign-in", "/find-password"];
+const AUTH_PATHS = ["/sign-in", "/on-boarding"];
 
 function App({
   Component,

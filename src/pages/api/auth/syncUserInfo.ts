@@ -1,10 +1,5 @@
 import { User } from "@/lib/api/amplify/helper";
-import {
-  CreateUserParams,
-  createUserData,
-  getUserListByEmail,
-  updateUserData,
-} from "@/lib/api/amplify/user";
+import { getUserListByEmail, updateUserData } from "@/lib/api/amplify/user";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { JWT, getToken } from "next-auth/jwt";
 
@@ -59,25 +54,6 @@ async function handleExistingUser(userData: User, token: Token) {
   return { data: updateResult.data };
 }
 
-// 신규 유저 생성
-async function createNewUser(token: Token) {
-  const newUserParams: CreateUserParams = {
-    username: token.name,
-    email: token.email,
-    profileImage: token.picture || undefined,
-    role: "MEMBER",
-    teams: [],
-    isValid: true,
-  };
-
-  const newUser = await createUserData(newUserParams);
-  if (!newUser.data) {
-    throw new Error("신규 유저를 생성하지 못했습니다.");
-  }
-
-  return { data: newUser.data };
-}
-
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse,
@@ -99,9 +75,8 @@ export default async function handler(
       return res.status(200).json(result);
     }
 
-    // 신규 유저 생성
-    const result = await createNewUser(token);
-    return res.status(200).json(result);
+    // 신규 유저인 경우
+    return res.status(200).json("new");
   } catch (error) {
     return res
       .status(500)

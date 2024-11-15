@@ -1,6 +1,6 @@
 import useToast from "@/hooks/useToast";
 import { adminAtom, userAtom } from "@/store/authUserAtom";
-import { useSetAtom } from "jotai";
+import { useAtom, useSetAtom } from "jotai";
 import { signOut, useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import React, { useEffect, useRef } from "react";
@@ -8,7 +8,7 @@ import React, { useEffect, useRef } from "react";
 import NavigationBar from "./NavigationBar";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
-  const setUser = useSetAtom(userAtom);
+  const [user, setUser] = useAtom(userAtom);
   const setIsAdmin = useSetAtom(adminAtom);
   const router = useRouter();
 
@@ -35,11 +35,13 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             throw new Error(errorData.error);
           }
 
-          const { data: userData } = await response.json();
+          const result = await response.json();
 
-          if (userData) {
-            setUser(userData);
-            setIsAdmin(userData?.role === "ADMIN");
+          if (result.data) {
+            setUser(result.data);
+            setIsAdmin(result.data.role === "ADMIN");
+          } else {
+            router.push("/on-boarding");
           }
         }
       } catch (err) {
@@ -60,6 +62,10 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     };
     getGoogleUser();
   }, [session]);
+
+  if (!user) {
+    return null;
+  }
 
   return (
     <div>
