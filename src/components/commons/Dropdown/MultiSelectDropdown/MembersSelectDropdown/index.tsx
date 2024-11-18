@@ -1,9 +1,11 @@
+/* eslint-disable no-nested-ternary */
 import Badge from "@/components/commons/Badge";
 import ProfileImage from "@/components/commons/ProfileImage";
 import { VARIANTS } from "@/constants/dropdownConstants";
 import useDropdown from "@/hooks/useDropdown";
 import ArrowDown from "@public/icons/icon-arrow-down.svg";
 import CheckedBox from "@public/icons/icon-checkbox-active.svg";
+import DisabledCheckedBox from "@public/icons/icon-checkbox-disabled.svg";
 import UnCheckedBox from "@public/icons/icon-checkbox.svg";
 import SearchIcon from "@public/icons/icon-search.svg";
 import clsx from "clsx";
@@ -207,7 +209,11 @@ function MemberItem({
       disabled={disabled && !isSelected}
     >
       {isSelected ? (
-        <CheckedBox className="mr-5 w-16 flex-shrink-0" />
+        disabled ? (
+          <DisabledCheckedBox className="mr-5 w-16 flex-shrink-0" />
+        ) : (
+          <CheckedBox className="mr-5 w-16 flex-shrink-0" />
+        )
       ) : (
         <UnCheckedBox className="mr-5 w-16 flex-shrink-0" />
       )}

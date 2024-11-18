@@ -6,9 +6,11 @@ import {
   getResourceListByName,
 } from "@/lib/api/amplify/resource";
 import { getUserData } from "@/lib/api/amplify/user";
+import { isOpenDrawerAtom } from "@/store/isOpenDrawerAtom";
 import DeleteButton from "@public/icons/icon-delete-button.svg";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import clsx from "clsx";
+import { useSetAtom } from "jotai";
 
 import { useDrawerContext } from "./context/drawer";
 
@@ -22,11 +24,8 @@ export default function SeatButton({ name, status, participant }: Props) {
   const queryClient = useQueryClient();
   const { success, error } = useToast();
   const { openModal, closeModal } = useModal();
-  const {
-    setIsOpen: setDrawerOpen,
-    setSeatInfo,
-    seatInfo,
-  } = useDrawerContext();
+  const { setSeatInfo, seatInfo } = useDrawerContext();
+  const setIsOpenDrawer = useSetAtom(isOpenDrawerAtom);
 
   const { data: seatOwnerResponse } = useQuery({
     queryKey: [QUERY_KEY.SEAT_BUTTON, name],
@@ -74,7 +73,7 @@ export default function SeatButton({ name, status, participant }: Props) {
       });
     }
 
-    setDrawerOpen(true);
+    setIsOpenDrawer(true);
   };
 
   const handleDeleteButtonClick = () => {

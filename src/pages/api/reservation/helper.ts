@@ -29,6 +29,8 @@ export const getRoomReservationList = async (
     // 조회를 시작할 시간(start) ~ 끝낼 (end)
     timeMax: `${params.date}T${params.endTime || "23:59"}:00+09:00`,
     timeMin: `${params.date}T${params.startTime || "00:00"}:00+09:00`,
+    timeZone: "Asia/Seoul",
+    singleEvents: true,
   };
 
   try {
@@ -69,9 +71,11 @@ export const getRoomReservationList = async (
           return data || null;
         }),
       );
-
       const filteredAmplifyData = amplifyData.filter(
-        (data): data is RoomReservation => data !== null,
+        (data): data is RoomReservation => {
+          if (!data) return false;
+          return data.status !== "CANCELED";
+        },
       );
       return res.status(201).json(filteredAmplifyData);
     }

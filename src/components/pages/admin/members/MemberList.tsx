@@ -1,28 +1,31 @@
-/* eslint-disable @typescript-eslint/no-unused-vars, jsx-a11y/click-events-have-key-events, jsx-a11y/interactive-supports-focus */
+/* eslint-disable jsx-a11y/click-events-have-key-events, jsx-a11y/interactive-supports-focus */
 import Drawer from "@/components/commons/Drawer";
 import { OrderType } from "@/constants/dropdownConstants";
 import QUERY_KEY, { DEFAULT_STALE_TIME } from "@/constants/queryKey";
 import { Team } from "@/lib/api/amplify/helper";
 import { getUserListData } from "@/lib/api/amplify/user";
+import { isOpenDrawerAtom } from "@/store/isOpenDrawerAtom";
 import ChevronRight from "@public/icons/icon-chevron-right.svg";
 import IconAlert from "@public/icons/icon-modal-alert.svg";
 import { useQuery } from "@tanstack/react-query";
-import { AnimatePresence } from "framer-motion";
+import { useAtom, useSetAtom } from "jotai";
 import { useRouter } from "next/router";
 import { Fragment, useEffect, useMemo } from "react";
 
 import MemberCard from "./MemberCard";
 import MemberSkeleton from "./MemberSkeleton";
+import MemberAddDrawer from "./form/MemberAddDrawer";
 import MemberEditDrawer from "./form/MemberEditDrawer";
+import { selectUserAtom } from "./store/selectUser";
 
 interface MemberListProps {
-  openKey: string | null;
-  setOpenKey: (value: string | null) => void;
   teamList: Team[];
 }
 
-function MemberList({ openKey, setOpenKey, teamList }: MemberListProps) {
+function MemberList({ teamList }: MemberListProps) {
   const router = useRouter();
+  const setIsOpenDrawer = useSetAtom(isOpenDrawerAtom);
+  const [selectUser, setSelectUser] = useAtom(selectUserAtom);
   const { query } = router;
 
   // URL 파라미터에서 카테고리 id와 order 값을 가져오기
@@ -48,7 +51,7 @@ function MemberList({ openKey, setOpenKey, teamList }: MemberListProps) {
   );
 
   useEffect(() => {
-    setOpenKey(null);
+    setIsOpenDrawer(false);
   }, [categoryId, orderBy]);
 
   if (isLoading) {
@@ -76,7 +79,10 @@ function MemberList({ openKey, setOpenKey, teamList }: MemberListProps) {
               <Fragment key={item.id}>
                 <div
                   role="button"
-                  onClick={() => setOpenKey(item.id)}
+                  onClick={() => {
+                    setSelectUser(item);
+                    setIsOpenDrawer(true);
+                  }}
                   className="flex cursor-pointer items-center justify-between rounded-12 border bg-gray-0 px-16 py-10 duration-300 hover:bg-gray-10 md:px-22 md:py-12"
                 >
                   <MemberCard user={item} teamMap={teamMap} />
@@ -84,17 +90,6 @@ function MemberList({ openKey, setOpenKey, teamList }: MemberListProps) {
                     <ChevronRight />
                   </div>
                 </div>
-                <AnimatePresence>
-                  {openKey === item.id && (
-                    <Drawer onClose={() => setOpenKey(null)}>
-                      <MemberEditDrawer
-                        userData={item}
-                        setOpenKey={setOpenKey}
-                        teamList={teamList}
-                      />
-                    </Drawer>
-                  )}
-                </AnimatePresence>
               </Fragment>
             ))}
           </>
@@ -106,6 +101,22 @@ function MemberList({ openKey, setOpenKey, teamList }: MemberListProps) {
             </span>
           </div>
         )}
+        <Drawer
+          onClose={() => {
+            setIsOpenDrawer(false);
+            setSelectUser(null);
+          }}
+        >
+          {selectUser ? (
+            <MemberEditDrawer
+              key={selectUser.id}
+              userData={selectUser}
+              teamList={teamList}
+            />
+          ) : (
+            <MemberAddDrawer key="addMember" teamList={teamList} />
+          )}
+        </Drawer>
       </div>
     );
   }

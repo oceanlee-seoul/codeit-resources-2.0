@@ -3,21 +3,24 @@ import useToast from "@/hooks/useToast";
 import { Team } from "@/lib/api/amplify/helper";
 import { CreateUserParams, createUserData } from "@/lib/api/amplify/user";
 import { TeamInput, memberSchema } from "@/lib/zod-schema/user";
+import { isOpenDrawerAtom } from "@/store/isOpenDrawerAtom";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useSetAtom } from "jotai";
 import { useState } from "react";
 import { FormProvider, SubmitHandler, useForm } from "react-hook-form";
 
 import MemberForm from "./MemberForm";
 
 interface MemberAddDrawerProps {
-  setOpenKey: (value: string | null) => void;
   teamList: Team[];
 }
 
-function MemberAddDrawer({ setOpenKey, teamList }: MemberAddDrawerProps) {
+function MemberAddDrawer({ teamList }: MemberAddDrawerProps) {
   const queryClient = useQueryClient();
   const { success, error } = useToast();
+  const setIsOpenDrawer = useSetAtom(isOpenDrawerAtom);
+
   const [selectedTeams, setSelectedTeams] = useState<Team[]>([]);
 
   const methods = useForm<TeamInput>({
@@ -37,12 +40,14 @@ function MemberAddDrawer({ setOpenKey, teamList }: MemberAddDrawerProps) {
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: [QUERY_KEY.USER_LIST] });
       success(`${variables.username} 님을 추가했습니다.`);
+      methods.reset();
+      setSelectedTeams([]);
     },
     onError: (err, variables) => {
       error(err.message || `${variables.username} 님을 추가하지 못했습니다.`);
     },
     onSettled: () => {
-      setOpenKey(null);
+      setIsOpenDrawer(false);
     },
   });
 

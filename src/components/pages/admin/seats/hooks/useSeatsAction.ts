@@ -7,7 +7,9 @@ import {
   editResource,
   getResourceListByName,
 } from "@/lib/api/amplify/resource";
+import { isOpenDrawerAtom } from "@/store/isOpenDrawerAtom";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useSetAtom } from "jotai";
 
 import { useDrawerContext } from "../context/drawer";
 import { FormValue } from "../types";
@@ -19,7 +21,8 @@ export default function useSeatsAction({
 } = {}) {
   const queryClient = useQueryClient();
   const { success, error } = useToast();
-  const { setIsOpen, seatInfo, setSeatInfo } = useDrawerContext();
+  const { seatInfo, setSeatInfo } = useDrawerContext();
+  const setIsDrawerOpen = useSetAtom(isOpenDrawerAtom);
 
   const editMutation = useMutation({
     mutationFn: async ({ seatStatus, participant }: FormValue) => {
@@ -58,7 +61,7 @@ export default function useSeatsAction({
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: [QUERY_KEY.SEAT_LIST_ADMIN] });
       setSeatInfo(null);
-      setIsOpen(false);
+      setIsDrawerOpen(false);
     },
   });
 

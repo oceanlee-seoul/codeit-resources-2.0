@@ -41,7 +41,7 @@ function Toast({ id, type, message = "테스트 메시지 확인!" }: ToastProps
             width={20}
             height={20}
             alt="성공 아이콘"
-            src="icons/icon-check-bold.svg"
+            src="/icons/icon-check-bold.svg"
           />
         ) : (
           <span className="pr-4 text-17-700 text-white">!</span>

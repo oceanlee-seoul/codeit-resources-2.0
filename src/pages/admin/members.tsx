@@ -1,17 +1,17 @@
 import Button from "@/components/commons/Button";
-import Drawer from "@/components/commons/Drawer";
 import MemberList from "@/components/pages/admin/members/MemberList";
 import MemberTap from "@/components/pages/admin/members/MemberTap";
-import MemberAddDrawer from "@/components/pages/admin/members/form/MemberAddDrawer";
+import { selectUserAtom } from "@/components/pages/admin/members/store/selectUser";
 import QUERY_KEY, { DEFAULT_STALE_TIME } from "@/constants/queryKey";
 import { Team } from "@/lib/api/amplify/helper";
 import { getTeamListData } from "@/lib/api/amplify/team";
+import { isOpenDrawerAtom } from "@/store/isOpenDrawerAtom";
 import { useQuery } from "@tanstack/react-query";
-import { AnimatePresence } from "framer-motion";
-import { useState } from "react";
+import { useSetAtom } from "jotai";
 
 function AdminMemberPage() {
-  const [openKey, setOpenKey] = useState<string | null>(null);
+  const setIsOpenDrawer = useSetAtom(isOpenDrawerAtom);
+  const setSelectUser = useSetAtom(selectUserAtom);
 
   const { data, isLoading } = useQuery<Team[]>({
     queryKey: [QUERY_KEY.TEAM_LIST],
@@ -25,7 +25,8 @@ function AdminMemberPage() {
         <h1 className="text-24-700 text-gray-100 md:text-28-700">멤버 관리</h1>
         <Button
           onClick={() => {
-            setOpenKey("addMember");
+            setIsOpenDrawer(true);
+            setSelectUser(null);
           }}
           variant="secondary"
           width="w-125"
@@ -36,19 +37,8 @@ function AdminMemberPage() {
       </div>
       <div className="mt-34">
         <MemberTap tapData={data ?? []} isLoading={isLoading} />
-        <MemberList
-          openKey={openKey}
-          setOpenKey={setOpenKey}
-          teamList={data ?? []}
-        />
+        <MemberList teamList={data ?? []} />
       </div>
-      <AnimatePresence>
-        {openKey === "addMember" && (
-          <Drawer onClose={() => setOpenKey(null)}>
-            <MemberAddDrawer setOpenKey={setOpenKey} teamList={data ?? []} />
-          </Drawer>
-        )}
-      </AnimatePresence>
     </div>
   );
 }

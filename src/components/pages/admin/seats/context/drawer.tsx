@@ -25,8 +25,6 @@ interface EnableAndDisabledSeatInfo {
 type SeatInfo = FixedSeatInfo | EnableAndDisabledSeatInfo | null;
 
 interface DrawerContextType {
-  isOpen: boolean;
-  setIsOpen: Dispatch<SetStateAction<boolean>>;
   seatInfo: SeatInfo;
   setSeatInfo: Dispatch<SetStateAction<SeatInfo>>;
 }
@@ -44,13 +42,9 @@ export function useDrawerContext() {
 }
 
 export default function DrawerProvider({ children }: { children: ReactNode }) {
-  const [isOpen, setIsOpen] = useState(false);
   const [seatInfo, setSeatInfo] = useState<SeatInfo>(null);
 
-  const contextValue = useMemo(
-    () => ({ isOpen, setIsOpen, seatInfo, setSeatInfo }),
-    [isOpen, seatInfo],
-  );
+  const contextValue = useMemo(() => ({ seatInfo, setSeatInfo }), [seatInfo]);
 
   return (
     <DrawerContext.Provider value={contextValue}>

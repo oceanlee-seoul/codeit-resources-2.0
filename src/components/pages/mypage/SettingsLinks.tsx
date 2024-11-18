@@ -23,7 +23,7 @@ function SettingLinkItem({
 
 export default function SettingsLinksSection() {
   return (
-    <section className="flex flex-col md:hidden">
+    <section className="mb-100 flex flex-col md:mb-0 md:hidden">
       <div className="flex items-end gap-12">
         <h2 className="text-24-700 text-gray-100">어드민 기능</h2>
         <span className="text-14-500 text-gray-70">

@@ -1,8 +1,10 @@
 import Button from "@/components/commons/Button";
 import Drawer from "@/components/commons/Drawer";
 import Radio from "@/components/commons/Radio";
+import { isOpenDrawerAtom } from "@/store/isOpenDrawerAtom";
 import LoadingSpinner from "@public/gifs/loading-spinner.svg";
 import { AnimatePresence } from "framer-motion";
+import { useAtom } from "jotai";
 import { Suspense, useEffect } from "react";
 import { FormProvider, useForm, useWatch } from "react-hook-form";
 
@@ -12,7 +14,8 @@ import { FormValue } from "../types";
 import UserSelect from "./UserSelect";
 
 export default function EditDrawer() {
-  const { isOpen, setIsOpen, seatInfo, setSeatInfo } = useDrawerContext();
+  const { seatInfo, setSeatInfo } = useDrawerContext();
+  const [isDrawerOpen, setIsDrawerOpen] = useAtom(isOpenDrawerAtom);
 
   const { editMutation } = useSeatsAction();
 
@@ -54,13 +57,13 @@ export default function EditDrawer() {
     }
   }, [selectedSeatStatus, methods]);
 
-  if (!isOpen) return null;
+  if (!isDrawerOpen) return null;
 
   return (
     <AnimatePresence>
       <Drawer
         onClose={() => {
-          setIsOpen(false);
+          setIsDrawerOpen(false);
           setSeatInfo(null);
         }}
       >

@@ -10,7 +10,7 @@ export default function SeatGrid() {
   return (
     <div className="mx-16 mb-200 md:mx-60 lg:mx-118">
       <ScrollContainer>
-        <div className="my-28 grid w-[668px] auto-rows-auto grid-cols-2 gap-40 md:mx-0 md:w-[1004px] xl:flex-shrink-0">
+        <div className="mb-70 mt-28 grid w-[668px] auto-rows-auto grid-cols-2 gap-40 md:mx-0 md:w-[1004px] xl:flex-shrink-0">
           <SeatBlock seatsData={allSeatsData.A} />
           <SeatBlock seatsData={allSeatsData.B} />
           <SeatBlock seatsData={allSeatsData.C} />

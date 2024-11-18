@@ -1,8 +1,12 @@
 import Arrow from "@/../public/icons/icon-double-right-arrow.svg";
+import useIsMobile from "@/hooks/useIsMobile";
 import { isOpenDrawerAtom } from "@/store/isOpenDrawerAtom";
 import { AnimatePresence, motion } from "framer-motion";
-import { useAtomValue } from "jotai";
+import { useAtom } from "jotai";
 import { ReactNode } from "react";
+
+import usePreventScroll from "./usePreventScroll";
+import useRouteChangeCloseDrawer from "./useRouteChangeCloseDrawer";
 
 interface DrawerProps {
   onClose: () => void;
@@ -10,7 +14,11 @@ interface DrawerProps {
 }
 
 function Drawer({ onClose, children }: DrawerProps) {
-  const isOpenDrawer = useAtomValue(isOpenDrawerAtom);
+  const [isOpenDrawer, setIsOpenDrawer] = useAtom(isOpenDrawerAtom);
+  const isMobile = useIsMobile();
+
+  usePreventScroll(isMobile && isOpenDrawer);
+  useRouteChangeCloseDrawer(() => setIsOpenDrawer(false));
 
   return (
     <AnimatePresence>

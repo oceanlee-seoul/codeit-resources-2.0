@@ -80,7 +80,11 @@ export async function googleEventToReservation(
   event: GoogleCalendarEventRequest,
   // token?: JWT,
 ): Promise<Partial<RoomReservation> | null> {
-  if (!event.start.dateTime || !event.end.dateTime || !event.attendees) {
+  if (
+    !event?.start?.dateTime ||
+    !event?.end?.dateTime ||
+    event?.attendees?.length === 0
+  ) {
     throw new Error("Google Calendar Event is not valid.");
   }
 
@@ -88,7 +92,8 @@ export async function googleEventToReservation(
   const startDateTime = event.start.dateTime.match(DATE_TIME_REGEX) ?? [];
   const endDateTime = event.end.dateTime.match(DATE_TIME_REGEX) ?? [];
 
-  const resource = event.attendees.find((attendee) => attendee.resource) ?? {};
+  const resource =
+    event?.attendees?.find((attendee) => attendee.resource) ?? {};
 
   const { data: amplifyResource, errors } = await client.models.Resource.list({
     filter: {
@@ -96,18 +101,28 @@ export async function googleEventToReservation(
     },
   });
 
-  if (errors || amplifyResource.length === 0) {
+  if (!resource.email || errors || amplifyResource.length === 0) {
     return null;
   }
 
   const members = await getMemberList();
-  const formattedParticipants = event.attendees.reduce(
+  const formattedParticipants = event?.attendees?.reduce(
     (acc: Member[], attendee) => {
       const memberData = members.find(
         (member) => member.email === attendee.email,
       );
       if (memberData) {
         acc.push(memberData);
+      } else if (attendee?.resource) {
+        return acc;
+      } else {
+        acc.push({
+          id: `temp-${attendee.email}`,
+          name: attendee.email?.split("@")?.[0] || "unknown",
+          email: attendee.email,
+          teams: [],
+          profileImage: null,
+        });
       }
       return acc;
     },
@@ -119,25 +134,25 @@ export async function googleEventToReservation(
   });
 
   const status =
-    resource.responseStatus === "cancelled" ||
-    resource.responseStatus === "declined"
+    resource?.responseStatus === "cancelled" ||
+    resource?.responseStatus === "declined"
       ? "CANCELED"
       : "CONFIRMED";
 
   return {
     id: reservation?.[0]?.id || `googleCalenderOnly-${event.id}`,
-    title: event.summary,
+    title: event?.summary || "",
     resourceId: amplifyResource[0]?.id || "",
-    resourceType: amplifyResource[0].resourceType || "ROOM",
-    resourceSubtype: amplifyResource[0].resourceSubtype || "",
-    resourceName: amplifyResource[0].name || "",
+    resourceType: amplifyResource[0]?.resourceType || "ROOM",
+    resourceSubtype: amplifyResource[0]?.resourceSubtype || "",
+    resourceName: amplifyResource[0]?.name || "",
 
-    date: startDateTime[1],
-    startTime: startDateTime[2],
-    endTime: endDateTime[2],
+    date: startDateTime?.[1] || "1980-01-01",
+    startTime: startDateTime?.[2] || "00:00",
+    endTime: endDateTime?.[2] || "01:00",
 
     status,
-    participants: formattedParticipants,
+    participants: formattedParticipants || [],
     googleEventId: event.id,
   };
 }

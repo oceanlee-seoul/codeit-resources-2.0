@@ -5,27 +5,27 @@ import useToast from "@/hooks/useToast";
 import { Team, User } from "@/lib/api/amplify/helper";
 import { UpdateUserParams, updateUserByAdmin } from "@/lib/api/amplify/user";
 import { TeamInput, memberSchema } from "@/lib/zod-schema/user";
+import { isOpenDrawerAtom } from "@/store/isOpenDrawerAtom";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useSetAtom } from "jotai";
 import { useState } from "react";
 import { FormProvider, SubmitHandler, useForm } from "react-hook-form";
 
+import { selectUserAtom } from "../store/selectUser";
 import MemberForm from "./MemberForm";
 
 interface MemberEditDrawerProps {
   userData: User;
-  setOpenKey: (value: string | null) => void;
   teamList: Team[];
 }
 
-function MemberEditDrawer({
-  userData,
-  setOpenKey,
-  teamList,
-}: MemberEditDrawerProps) {
+function MemberEditDrawer({ userData, teamList }: MemberEditDrawerProps) {
   const { success, error } = useToast();
   const { openModal } = useModal();
   const queryClient = useQueryClient();
+  const setIsOpenDrawer = useSetAtom(isOpenDrawerAtom);
+  const setSelectUser = useSetAtom(selectUserAtom);
 
   const [selectedTeams, setSelectedTeams] = useState<Team[]>(
     userData.teams
@@ -56,7 +56,8 @@ function MemberEditDrawer({
       error(err.message || `${userData.username} 님을 수정하지 못했습니다.`);
     },
     onSettled: () => {
-      setOpenKey(null);
+      setIsOpenDrawer(false);
+      setSelectUser(null);
     },
   });
 
@@ -84,13 +85,12 @@ function MemberEditDrawer({
           onClick={() => {
             openModal("deleteMemberModal", {
               userData,
-              setOpenKey,
             });
           }}
           width="w-88"
           height="h-32"
           size="small"
-          variant="secondary"
+          variant="danger"
         >
           탈퇴하기
         </Button>

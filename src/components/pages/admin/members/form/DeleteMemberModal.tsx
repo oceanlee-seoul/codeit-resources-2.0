@@ -5,17 +5,22 @@ import useModal from "@/hooks/useModal";
 import useToast from "@/hooks/useToast";
 import { User } from "@/lib/api/amplify/helper";
 import { deleteUserData } from "@/lib/api/amplify/user";
+import { isOpenDrawerAtom } from "@/store/isOpenDrawerAtom";
 import LoadingSpinner from "@public/gifs/loading-spinner.svg";
 import IconAlert from "@public/icons/icon-modal-alert.svg";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useSetAtom } from "jotai";
 import { useState } from "react";
+
+import { selectUserAtom } from "../store/selectUser";
 
 interface DeleteMemberModalProps {
   userData: User;
-  setOpenKey: (value: null | string) => void;
 }
 
-function DeleteMemberModal({ userData, setOpenKey }: DeleteMemberModalProps) {
+function DeleteMemberModal({ userData }: DeleteMemberModalProps) {
+  const setIsOpenDrawer = useSetAtom(isOpenDrawerAtom);
+  const setSelectUser = useSetAtom(selectUserAtom);
   const [input, setInput] = useState("");
 
   const { closeModal } = useModal();
@@ -29,7 +34,8 @@ function DeleteMemberModal({ userData, setOpenKey }: DeleteMemberModalProps) {
       queryClient.invalidateQueries({
         queryKey: [QUERY_KEY.USER_LIST],
       });
-      setOpenKey(null);
+      setIsOpenDrawer(false);
+      setSelectUser(null);
     },
     onError: () => {
       error(`${userData.username} 님을 삭제하는데 실패하였습니다.`);
