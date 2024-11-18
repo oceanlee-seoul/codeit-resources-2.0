@@ -1,6 +1,10 @@
 import { z } from "zod";
 
-const ALLOWED_DOMAINS = ["codeit.kr", "dev.resource.codeit.kr"] as const;
+const ALLOWED_DOMAINS = [
+  "codeit.kr",
+  "dev.resource.codeit.kr",
+  "codeit.com",
+] as const;
 
 const emailSchema = z
   .string()
@@ -9,7 +13,7 @@ const emailSchema = z
   .refine(
     (email) => ALLOWED_DOMAINS.some((domain) => email.endsWith(`@${domain}`)),
     {
-      message: "이메일 도메인은 @codeit.kr 이어야 합니다.",
+      message: "이메일 도메인은 @codeit.com 이어야 합니다.",
     },
   );
 
