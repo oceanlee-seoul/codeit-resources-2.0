@@ -16,7 +16,7 @@ interface TeamBadgesProps {
 
 function TeamBadges({ teams, teamMap }: TeamBadgesProps) {
   return (
-    <div className="flex items-center gap-4">
+    <div className="flex flex-wrap items-center gap-4">
       {teams?.map((teamId: string | null) =>
         teamId ? (
           <Badge key={teamId} variant="secondarySmallSquare">
@@ -44,10 +44,10 @@ function MemberCard({ user, teamMap }: MemberCardProps) {
           style={{ animationDuration: "2s" }}
         />
       </div>
-      <div className="hidden md:flex">
+      <div className="hidden min-w-40 md:flex">
         <ProfileImage imagePath={user.profileImage ?? undefined} size="md" />
       </div>
-      <div className="md:hidden">
+      <div className="min-w-32 md:hidden">
         <ProfileImage imagePath={user.profileImage ?? undefined} size="sm" />
       </div>
 
@@ -55,7 +55,7 @@ function MemberCard({ user, teamMap }: MemberCardProps) {
         {/* sm, md */}
         <div className="flex flex-col lg:hidden">
           <div className="flex gap-8">
-            <span className="text-14-700 text-gray-100 md:text-15-700">
+            <span className="flex min-w-41 items-center text-14-700 text-gray-100 md:text-15-700">
               {user.username}
             </span>
             <TeamBadges teams={user.teams} teamMap={teamMap} />
@@ -67,7 +67,9 @@ function MemberCard({ user, teamMap }: MemberCardProps) {
 
         {/* lg */}
         <div className="hidden lg:flex lg:items-center lg:gap-8">
-          <span className="text-16-700 text-gray-100">{user.username}</span>
+          <span className="min-w-48 text-16-700 text-gray-100">
+            {user.username}
+          </span>
           <span className="text-13-400 text-gray-100-opacity-60">
             {user.email}
           </span>
