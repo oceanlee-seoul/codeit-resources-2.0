@@ -9,7 +9,6 @@ import { userAtom } from "@/store/authUserAtom";
 import { todayDateAtom } from "@/store/todayDateAtom";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useAtom, useAtomValue } from "jotai";
-import isEqual from "lodash.isequal";
 import { useEffect, useMemo } from "react";
 import { Controller, FormProvider, useForm } from "react-hook-form";
 
@@ -95,18 +94,7 @@ function ReservationForm({ rooms, members }: ReservationFormProps) {
 
   // 폼데이터 변경에 따라 실시간으로 전역상태를 업데이트하는 useEffect
   useEffect(() => {
-    /* 
-    필드 값들 비교 후 바뀐 데이터가 있을 때만 전역상태 업데이트
-    불필요한 업데이트와 리렌더링(깜빡임) 방지 
-    */
-    const hasChange =
-      startTime !== pickedReservation?.startTime ||
-      endTime !== pickedReservation?.endTime ||
-      resourceId !== pickedReservation?.resourceId ||
-      title !== pickedReservation?.title ||
-      !isEqual(participants, pickedReservation?.participants);
-
-    if (pickedReservation && hasChange && startTime && endTime && resourceId) {
+    if (startTime && endTime && resourceId) {
       setPickedReservation((prev) => ({
         ...prev,
         title,
@@ -118,29 +106,13 @@ function ReservationForm({ rooms, members }: ReservationFormProps) {
         participants,
       }));
     }
-  }, [participants?.length, startTime, endTime, resourceId, pickedReservation]);
+  }, [participants?.length, startTime, endTime, resourceId]);
 
   // 폼데이터 변경 또는 전역상태 pickedReservation 변경에 따라 폼 데이터를 변경시켜주는 useEffect
   useEffect(() => {
-    /* 
-    필드 값들 비교 후 바뀐 데이터가 있을 때만 전역상태 업데이트
-    불필요한 업데이트와 리렌더링(깜빡임) 방지 
-    */
-    const hasChange =
-      defaultReservation.startTime !== pickedReservation?.startTime ||
-      defaultReservation.endTime !== pickedReservation?.endTime ||
-      defaultReservation.resourceId !== pickedReservation?.resourceId ||
-      defaultReservation.title !== pickedReservation?.title ||
-      !isEqual(
-        defaultReservation.participants,
-        pickedReservation?.participants,
-      );
-
-    if (hasChange) {
-      reset(defaultReservation);
-      if (pickedReservation) methods.trigger();
-    }
-  }, [pickedReservation, defaultReservation]);
+    reset(defaultReservation);
+    if (pickedReservation) methods.trigger();
+  }, [pickedReservation, members, currentUser?.id]);
 
   return (
     <FormProvider {...methods}>
