@@ -93,8 +93,6 @@ const useTimeSlot = ({ slot, room }: UseTimeSlotProps) => {
       return;
     }
 
-    setPickedReservation(null);
-
     if (reservation) {
       // 1. 예약이 있을 경우
       if (isMyReservationNotExpired()) {
@@ -108,28 +106,30 @@ const useTimeSlot = ({ slot, room }: UseTimeSlotProps) => {
       }
     } else {
       // 2. 예약이 없을 경우
+      const currentMember = currentUser
+        ? [
+            {
+              id: currentUser?.id,
+              name: currentUser?.username,
+              email: currentUser?.email,
+              teams: (currentUser?.teams || []).filter(
+                (team): team is string => team !== null,
+              ),
+              profileImage: currentUser?.profileImage || null,
+            },
+          ]
+        : [];
 
       setIsOpenDrawer(true);
-      setPickedReservation({
+      setPickedReservation((prev) => ({
+        title: prev?.id ? "" : prev?.title,
         startTime: time,
         endTime: timeUtils.add30Minutes(time || ""),
         resourceSubtype: room.resourceSubtype,
         resourceName: room.name,
         resourceId: room.id,
-        participants: currentUser
-          ? [
-              {
-                id: currentUser.id,
-                name: currentUser.username,
-                email: currentUser.email,
-                teams: (currentUser.teams || []).filter(
-                  (team): team is string => team !== null,
-                ),
-                profileImage: currentUser.profileImage || null,
-              },
-            ]
-          : [],
-      });
+        participants: prev?.id ? currentMember : prev?.participants,
+      }));
     }
   }
 
