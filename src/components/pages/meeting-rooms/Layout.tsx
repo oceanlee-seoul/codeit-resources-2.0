@@ -159,7 +159,7 @@ function Layout({ children }: { children: React.ReactNode }) {
   return (
     <ScrollProvider>
       <Header className="px-16 pt-64 md:px-64 md:pt-24" />
-      <section className="min-h-screen overflow-y-visible bg-gray-5 px-16 pb-100 pt-32 md:py-24 md:pl-192 md:pr-64">
+      <section className="relative min-h-screen overflow-y-visible bg-gray-5 px-16 pb-100 pt-32 md:py-24 md:pl-192 md:pr-64">
         {children}
       </section>
     </ScrollProvider>

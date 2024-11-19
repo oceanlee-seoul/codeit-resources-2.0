@@ -58,8 +58,8 @@ function MeetingRoomsPage() {
       <div>
         <Layout>
           {/* gradient */}
-          <div className="z-[24] hidden h-full w-44 overflow-x-auto overflow-y-visible bg-gradient-to-r from-gray-5 from-50% to-gray-00-opacity-0 to-90% md:absolute md:block md:py-60" />
-          {/* gradient */}
+          <div className="z-[24] -my-24 hidden h-full w-44 overflow-x-auto overflow-y-visible bg-gradient-to-r from-gray-5 from-50% to-gray-00-opacity-0 to-90% md:absolute md:block" />
+          {/* -------- */}
           <ScrollContainer ref={containerRef}>
             <div className="overflow-y-visible md:py-60 md:pl-24">
               {Object.entries(groupedResources).map(
@@ -75,6 +75,9 @@ function MeetingRoomsPage() {
               )}
             </div>
           </ScrollContainer>
+          {/* gradient */}
+          <div className="z-[24] -my-24 hidden h-full w-44 overflow-x-auto overflow-y-visible bg-gradient-to-r from-transparent to-gray-5 to-50% md:absolute md:right-34 md:top-24 md:block" />
+          {/* -------- */}
         </Layout>
       </div>
       <Drawer onClose={handleDrawerClose}>
