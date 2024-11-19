@@ -85,23 +85,29 @@ export async function googleEventToReservation(
     !event?.end?.dateTime ||
     event?.attendees?.length === 0
   ) {
-    throw new Error("Google Calendar Event is not valid.");
+    return null;
   }
 
   // ["fullDate", "YYYY-MM-DD", "HH:mm"]
-  const startDateTime = event.start.dateTime.match(DATE_TIME_REGEX) ?? [];
-  const endDateTime = event.end.dateTime.match(DATE_TIME_REGEX) ?? [];
+  const startDateTime = event.start.dateTime?.match(DATE_TIME_REGEX) ?? [];
+  const endDateTime = event.end.dateTime?.match(DATE_TIME_REGEX) ?? [];
 
   const resource =
-    event?.attendees?.find((attendee) => attendee.resource) ?? {};
+    event?.attendees?.find((attendee) => attendee?.resource) ?? {};
 
   const { data: amplifyResource, errors } = await client.models.Resource.list({
     filter: {
-      googleResourceId: { eq: resource.email },
+      googleResourceId: { eq: resource?.email },
     },
   });
 
-  if (!resource.email || errors || amplifyResource.length === 0) {
+  if (
+    !resource?.email ||
+    errors ||
+    amplifyResource.length === 0 ||
+    !startDateTime?.[1] ||
+    !endDateTime?.[1]
+  ) {
     return null;
   }
 
