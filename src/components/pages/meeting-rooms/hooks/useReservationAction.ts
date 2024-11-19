@@ -67,7 +67,7 @@ const useReservationAction = (reservation?: RoomReservation) => {
 
       return { prevReservationList };
     },
-    onSettled: () => {
+    onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: [QUERY_KEY.ROOM_RESERVATION_LIST, pickedDate],
       });
@@ -115,7 +115,7 @@ const useReservationAction = (reservation?: RoomReservation) => {
       );
       error("회의실 예약 생성에 실패했습니다.");
     },
-    onSettled: () => {
+    onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: [QUERY_KEY.ROOM_RESERVATION_LIST, pickedDate],
       });
@@ -163,7 +163,7 @@ const useReservationAction = (reservation?: RoomReservation) => {
 
       return { prevReservationList };
     },
-    onSettled: () => {
+    onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: [QUERY_KEY.ROOM_RESERVATION_LIST, pickedDate],
       });
