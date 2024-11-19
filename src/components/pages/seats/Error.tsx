@@ -1,12 +1,9 @@
 import Button from "@/components/commons/Button";
 import Link from "next/link";
-import { useRouter } from "next/router";
 
 export default function Error() {
-  const router = useRouter();
-
   const refreshPage = () => {
-    router.push(router.asPath);
+    window.location.reload();
   };
 
   return (
