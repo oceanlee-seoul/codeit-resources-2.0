@@ -1,11 +1,15 @@
 import { client } from "../helper";
 
-export const getSeatReservationListByDate = async (date: string) =>
+export const getSeatReservationListByDate = async (
+  date: string,
+  nextToken: string | null = null,
+) =>
   client.models.Reservation.listByResourceTypeAndSortByResourceName(
     {
       resourceType: "SEAT",
     },
     {
+      nextToken,
       filter: {
         date: { eq: date },
         status: { eq: "CONFIRMED" },
@@ -21,7 +25,9 @@ export const getSeatReservationListByDate = async (date: string) =>
     },
   );
 
-export const getSeatValidReservationList = async () => {
+export const getSeatValidReservationList = async (
+  nextToken: string | null = null,
+) => {
   const today = new Date();
   const tomorrow = new Date(today);
   tomorrow.setDate(today.getDate() + 1);
@@ -38,6 +44,7 @@ export const getSeatValidReservationList = async () => {
       resourceType: "SEAT",
     },
     {
+      nextToken,
       filter: {
         or: [
           {

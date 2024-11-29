@@ -15,6 +15,14 @@ interface ConfirmedSeatInfo {
   seatName: string;
 }
 
+interface Reservation {
+  id: string;
+  resourceSubtype: string | null;
+  resourceName: string;
+  status: "CONFIRMED" | "CANCELED";
+  participants: (string | null)[] | null;
+}
+
 type MySeatInfo = FixedSeatInfo | ConfirmedSeatInfo | null;
 
 const ALL_SEATS = {
@@ -44,6 +52,24 @@ const initializeAllSeatsData = () =>
     ]),
   );
 
+async function fetchReservationsRecursive(
+  date: string,
+  token: string | null = null,
+  allReservations: Reservation[] = [],
+) {
+  const [{ data: reservationArray, nextToken }] = await Promise.all([
+    getSeatReservationListByDate(date, token),
+  ]);
+  // eslint-disable-next-line no-param-reassign
+  allReservations = allReservations.concat(reservationArray);
+
+  if (nextToken) {
+    return fetchReservationsRecursive(date, nextToken, allReservations);
+  }
+
+  return { data: allReservations };
+}
+
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse,
@@ -60,14 +86,13 @@ export default async function handler(
       { data: disabledResourceArray },
       { data: fixedResourceArray },
     ] = await Promise.all([
-      getSeatReservationListByDate(date),
+      fetchReservationsRecursive(date),
       getSeatResourceListByResourceStatus("DISABLED"),
       getSeatResourceListByResourceStatus("FIXED"),
     ]);
 
     const allSeatsData = initializeAllSeatsData();
     let mySeatInfo: MySeatInfo = null;
-
     // 고정 좌석에 대한 데이터를 정렬합니다.
     fixedResourceArray.forEach(({ resourceSubtype, name, owner }) => {
       const row = allSeatsData[resourceSubtype as string];

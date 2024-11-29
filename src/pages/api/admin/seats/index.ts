@@ -3,6 +3,12 @@ import { getSeatValidReservationList } from "@/lib/api/amplify/reservation";
 import { getSeatResourceListByResourceStatus } from "@/lib/api/amplify/resource";
 import { NextApiRequest, NextApiResponse } from "next";
 
+interface Reservation {
+  resourceSubtype: string | null;
+  resourceName: string;
+  status: "CONFIRMED" | "CANCELED";
+}
+
 const ALL_SEATS = {
   A: ["A0", "A1", "A2", "A3"],
   B: ["B0", "B1", "B2", "B3", "B4"],
@@ -30,6 +36,22 @@ const initializeAllSeatsData = () =>
     ]),
   );
 
+async function fetchReservationsRecursive(
+  token: string | null = null,
+  allReservations: Reservation[] = [],
+) {
+  const [{ data: reservationArray, nextToken }] = await Promise.all([
+    getSeatValidReservationList(token),
+  ]);
+  // eslint-disable-next-line no-param-reassign
+  allReservations = allReservations.concat(reservationArray);
+
+  if (nextToken) {
+    return fetchReservationsRecursive(nextToken, allReservations);
+  }
+  return { data: allReservations };
+}
+
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse,
@@ -40,7 +62,7 @@ export default async function handler(
       { data: disabledResourceArray },
       { data: fixedResourceArray },
     ] = await Promise.all([
-      getSeatValidReservationList(),
+      fetchReservationsRecursive(),
       getSeatResourceListByResourceStatus("DISABLED"),
       getSeatResourceListByResourceStatus("FIXED"),
     ]);
