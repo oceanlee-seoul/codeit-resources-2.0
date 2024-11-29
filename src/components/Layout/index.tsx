@@ -1,8 +1,10 @@
+import colors from "@/constants/colors";
 import useToast from "@/hooks/useToast";
 import { adminAtom, userAtom } from "@/store/authUserAtom";
 import { useAtom, useSetAtom } from "jotai";
 import { signOut, useSession } from "next-auth/react";
 import { useRouter } from "next/router";
+import NextNProgress from "nextjs-progressbar";
 import React, { useEffect, useRef } from "react";
 
 import NavigationBar from "./NavigationBar";
@@ -69,6 +71,20 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 
   return (
     <div>
+      {" "}
+      <NextNProgress
+        color={colors.purple[70]}
+        startPosition={0.3}
+        stopDelayMs={200}
+        height={3}
+        showOnShallow
+        options={{
+          easing: "ease",
+          speed: 500,
+          showSpinner: false,
+          trickleSpeed: 900,
+        }}
+      />
       <NavigationBar />
       <main className="min-h-screen md:ml-200">{children}</main>
     </div>
