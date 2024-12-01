@@ -13,6 +13,7 @@ import type { AppProps } from "next/app";
 import dynamic from "next/dynamic";
 import Head from "next/head";
 import { useRouter } from "next/router";
+import Script from "next/script";
 import { useState } from "react";
 
 Amplify.configure(outputs);
@@ -38,30 +39,50 @@ function App({
   );
 
   return (
-    <SessionProvider session={session}>
-      <QueryClientProvider client={queryClient}>
-        <Head>
-          <link rel="icon" href="/images/codeit.svg" />
-          <link
-            rel="apple-touch-icon"
-            sizes="180x180"
-            href="/images/codeit.svg"
-          />
-          <title>Codeit Resources</title>
-        </Head>
-        <ToastProvider />
-        <MobileSizeWatcher />
-        <ModalProvider />
-        {AUTH_PATHS.includes(router.pathname) ? (
-          <Component {...pageProps} />
-        ) : (
-          <Layout>
+    <>
+      <Script
+        async
+        src="https://www.googletagmanager.com/gtag/js?id=G-9RM3QWE70S"
+      />
+      <Script
+        id="gtag-init"
+        strategy="afterInteractive"
+        dangerouslySetInnerHTML={{
+          __html: `
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-9RM3QWE70S', {
+              page_path: window.location.pathname,
+            });`,
+        }}
+      />
+
+      <SessionProvider session={session}>
+        <QueryClientProvider client={queryClient}>
+          <Head>
+            <link rel="icon" href="/images/codeit.svg" />
+            <link
+              rel="apple-touch-icon"
+              sizes="180x180"
+              href="/images/codeit.svg"
+            />
+            <title>Codeit Resources</title>
+          </Head>
+          <ToastProvider />
+          <MobileSizeWatcher />
+          <ModalProvider />
+          {AUTH_PATHS.includes(router.pathname) ? (
             <Component {...pageProps} />
-          </Layout>
-        )}
-        <ReactQueryDevtools initialIsOpen={false} />
-      </QueryClientProvider>
-    </SessionProvider>
+          ) : (
+            <Layout>
+              <Component {...pageProps} />
+            </Layout>
+          )}
+          <ReactQueryDevtools initialIsOpen={false} />
+        </QueryClientProvider>
+      </SessionProvider>
+    </>
   );
 }
 
