@@ -54,30 +54,13 @@ const useReservationAction = (reservation?: RoomReservation) => {
       if (reservation?.id) return cancelReservation(reservation, user as User);
       return null;
     },
-    onMutate: async () => {
-      const prevReservationList = await getPrevReservationList();
-
-      queryClient.setQueryData(
-        [QUERY_KEY.ROOM_RESERVATION_LIST, pickedDate],
-        (prev: ReservationListQueryReturnType) => ({
-          ...prev,
-          data: prev.data.filter((item) => item.id !== reservation?.id),
-        }),
-      );
-
-      return { prevReservationList };
-    },
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: [QUERY_KEY.ROOM_RESERVATION_LIST, pickedDate],
       });
       success("회의실 예약이 취소되었습니다");
     },
-    onError: (err, _, context) => {
-      queryClient.setQueryData(
-        [QUERY_KEY.ROOM_RESERVATION_LIST, pickedDate],
-        context?.prevReservationList,
-      );
+    onError: () => {
       error("회의실 예약 취소에 실패했습니다");
     },
   });

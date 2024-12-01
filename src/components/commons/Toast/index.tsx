@@ -1,11 +1,15 @@
-import { ToastProps, deleteToastAtom } from "@/store/toastAtom";
+import {
+  ToastProps,
+  backgroundColor,
+  defaultMessage,
+  deleteToastAtom,
+} from "@/store/toastAtom";
 import { useSetAtom } from "jotai";
-import Image from "next/image";
 import { useEffect, useState } from "react";
 
 const DURATION_TIME = 2000;
 
-function Toast({ id, type, message = "테스트 메시지 확인!" }: ToastProps) {
+function Toast({ id, type, icon, message }: ToastProps) {
   const deleteToast = useSetAtom(deleteToastAtom);
   const [isVisible, setIsVisible] = useState(false);
 
@@ -33,21 +37,13 @@ function Toast({ id, type, message = "테스트 메시지 확인!" }: ToastProps
     >
       <div
         className={`flex w-max items-center gap-8 rounded-16 px-16 py-8 shadow-[0_4px_24px_0_rgba(0,0,0,0.2)] ${
-          type === "success" ? "bg-green-80" : "bg-red-500"
+          backgroundColor[type]
         }`}
       >
-        {type === "success" ? (
-          <Image
-            width={20}
-            height={20}
-            alt="성공 아이콘"
-            src="/icons/icon-check-bold.svg"
-          />
-        ) : (
-          <span className="pr-4 text-17-700 text-white">!</span>
-        )}
-
-        <span className="text-17-500 text-white">{message}</span>
+        {icon}
+        <span className="text-17-500 text-white">
+          {message || defaultMessage[type]}
+        </span>
       </div>
     </div>
   );
