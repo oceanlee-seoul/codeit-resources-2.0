@@ -4,7 +4,6 @@ import axios from "axios";
 import { JWT } from "next-auth/jwt";
 
 import { Reservation, RoomReservation, client } from "../amplify/helper";
-import { getMemberList } from "../amplify/team/utils";
 
 export const BASE_URL = "https://www.googleapis.com/calendar/v3";
 
@@ -78,7 +77,7 @@ const DATE_TIME_REGEX = /^(\d{4}-\d{2}-\d{2})T(\d{2}:\d{2})/;
 // GoogleCalendarEvent -> Reservation 변환 함수
 export async function googleEventToReservation(
   event: GoogleCalendarEventRequest,
-  // token?: JWT,
+  members: Member[],
 ): Promise<Partial<RoomReservation> | null> {
   if (
     !event?.start?.dateTime ||
@@ -111,7 +110,6 @@ export async function googleEventToReservation(
     return null;
   }
 
-  const members = await getMemberList();
   const formattedParticipants = event?.attendees?.reduce(
     (acc: Member[], attendee) => {
       const memberData = members.find(

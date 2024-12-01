@@ -2,6 +2,7 @@ import { Member } from "@/components/commons/Dropdown/dropdownType";
 import { Resource, RoomReservation } from "@/lib/api/amplify/helper";
 import * as amplifyUtils from "@/lib/api/amplify/reservation";
 import { getResourceList } from "@/lib/api/amplify/resource";
+import { getMemberList } from "@/lib/api/amplify/team/utils";
 import { createEvent, getEvents, updateEvent } from "@/lib/api/googleCalendar";
 import {
   googleEventToReservation,
@@ -17,7 +18,9 @@ export const getRoomReservationList = async (
 ) => {
   const { accessToken } = (await getToken({ req })) as JWT;
 
+  const members = await getMemberList();
   const response = await getResourceList({ resourceType: "ROOM" });
+
   const rooms = response?.data as Resource[];
   const params = req.query;
 
@@ -35,7 +38,9 @@ export const getRoomReservationList = async (
 
   try {
     let googleEvents;
+
     if (params.calendarId) {
+      // 단일 캘린더 데이터
       const calendarEvents = await getEvents(
         params.calendarId as string,
         accessToken || "",
@@ -43,6 +48,7 @@ export const getRoomReservationList = async (
       );
       googleEvents = calendarEvents.items;
     } else {
+      // 전체 캘린더(리소스) 데이터
       const googleEventsArray = await Promise.all(
         rooms?.map((room: Resource) =>
           getEvents(
@@ -53,30 +59,22 @@ export const getRoomReservationList = async (
         ),
       );
       googleEvents = googleEventsArray.reduce(
-        (acc, event) => [...acc, ...event.items],
+        (acc, event) => acc.concat(event.items),
         [],
       );
     }
 
     if (googleEvents) {
-      /** REVIEW
-       * 1. 구글캘린더 데이터를 가져와서 렌더링 (현재)
-       * 2. amplify DB 데이터를 가져와서 렌더링
-       * 3. 구글캘린더, amplify DB 데이터 모두 가져온 뒤 item 수 비교해서 따로 처리해주기
-       *
-       */
+      // 구글 캘린더 이벤트가 존재하면 dynamoDB 데이터 스키마 형식으로 변환
       const amplifyData: RoomReservation[] = await Promise.all(
         googleEvents?.map(async (event: GoogleCalendarEventRequest) => {
-          const data = await googleEventToReservation(event);
-          return data || null;
+          const data = await googleEventToReservation(event, members);
+          return data?.status !== "CANCELED" ? data : null; // 상태가 CANCELED가 아니면 반환
         }),
       );
-      const filteredAmplifyData = amplifyData.filter(
-        (data): data is RoomReservation => {
-          if (!data) return false;
-          return data.status !== "CANCELED";
-        },
-      );
+
+      // null이나 undefined를 제거하고 RoomReservation 타입만 포함
+      const filteredAmplifyData = amplifyData.filter(Boolean);
       return res.status(201).json(filteredAmplifyData);
     }
     return res.status(500).json({ error: "Failed to get events" });
@@ -142,6 +140,8 @@ export const updateReservation = async (
     return res.status(400).json({ error: "Invalid event ID" });
   }
 
+  const members = await getMemberList();
+
   try {
     const updatedEvent = await updateEvent(
       calendarID,
@@ -167,7 +167,10 @@ export const updateReservation = async (
         }
       } else {
         // 구글 캘린더에만 있는 데이터는 구글 캘린더 업데이트 데이터를 변환해서 전달
-        const returnData = await googleEventToReservation(updatedEvent);
+        const returnData = await googleEventToReservation(
+          updatedEvent,
+          members,
+        );
         return res.status(201).json(returnData);
       }
     }

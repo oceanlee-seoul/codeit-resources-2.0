@@ -14,7 +14,7 @@ function useReservationTimeValidation() {
     resourceId: string,
   ) => {
     // 데이터가 없는 경우 충돌이 없는 것으로 처리
-    if (!roomReservations.data || roomReservations.data.length === 0) {
+    if (!roomReservations?.data || roomReservations.data.length === 0) {
       return false;
     }
 
@@ -38,7 +38,7 @@ function useReservationTimeValidation() {
   };
 
   // roomReservations의 로딩 상태를 반환
-  const isLoading = !roomReservations.data;
+  const isLoading = !roomReservations?.data;
 
   return {
     hasTimeConflict,

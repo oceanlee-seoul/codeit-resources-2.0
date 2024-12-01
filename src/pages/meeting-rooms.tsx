@@ -13,26 +13,17 @@ import {
 } from "@/components/pages/meeting-rooms/context";
 import { useGetReservations } from "@/components/pages/meeting-rooms/hooks/useGetReservations";
 import Error from "@/components/pages/seats/Error";
-import { Resource } from "@/lib/api/amplify/helper";
-import { getGroupedResourceListBySubtype } from "@/lib/api/amplify/resource/utils";
 import { isOpenDrawerAtom } from "@/store/isOpenDrawerAtom";
 import { containerRefAtom, targetRefAtom } from "@/store/scrollAtom";
 import { useAtomValue, useSetAtom } from "jotai";
-import { Suspense, useEffect, useMemo } from "react";
+import { Suspense, useEffect } from "react";
 
 function MeetingRoomsPage() {
   const { rooms, roomReservations, members } = useGetReservations();
 
   const pickedDate = useAtomValue(pickedDateAtom);
   const setPickedReservation = useSetAtom(pickedReservationAtom);
-
   const setIsOpenDrawer = useSetAtom(isOpenDrawerAtom);
-
-  // 리소스를 subtype별로 그룹화
-  const groupedResources = useMemo(
-    () => getGroupedResourceListBySubtype(rooms?.data as Resource[]),
-    [rooms],
-  );
 
   const handleDrawerClose = () => {
     setIsOpenDrawer(false);
@@ -62,17 +53,15 @@ function MeetingRoomsPage() {
           {/* -------- */}
           <ScrollContainer ref={containerRef}>
             <div className="overflow-y-visible md:py-60 md:pl-24">
-              {Object.entries(groupedResources).map(
-                ([subtype, roomList], index) => (
-                  <RoomSelection
-                    key={subtype}
-                    subType={subtype}
-                    roomList={roomList}
-                    isFirstGroup={index === 0}
-                    reservations={roomReservations?.data}
-                  />
-                ),
-              )}
+              {Object.entries(rooms).map(([subtype, roomList], index) => (
+                <RoomSelection
+                  key={subtype}
+                  subType={subtype}
+                  roomList={roomList}
+                  isFirstGroup={index === 0}
+                  reservations={roomReservations?.data}
+                />
+              ))}
             </div>
           </ScrollContainer>
           {/* gradient */}
